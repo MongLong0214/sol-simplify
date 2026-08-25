@@ -19,7 +19,7 @@
 <p align="center">
   <strong>Your agent stops inventing process nobody asked for.</strong><br>
   <sub>One markdown file. Nothing to configure, nothing to run.<br>
-  Measured: it added nothing extra in 13 of 14 test runs, and turned a 437-line document into 58.<br>
+  <b>Every single run without it invented something.</b> With it, across 14 runs: one thing, once.<br>
   <a href="benchmarks/">see how that was measured</a></sub>
 </p>
 
@@ -141,11 +141,17 @@ target, a staged rollout, an approval step for a team of one. **0 is best.**
 | Prevent a repeat of one bad merge | a PR template and permanent new rules | a test, but nothing enforcing it | **a test, and the CI check that enforces it** |
 | The agent's own gates now block all work — what now? | rebuilds them | leaves the 14,000-line machine standing | **deletes it** |
 
+Same second request, two documents: **437 lines without it, 58 with.** Nothing was dropped —
+what went missing was the release-candidate checklist, the defect taxonomy, and the six test
+tiers, none of which had been asked for.
+
 Row three is the one to check if you worry this makes an agent cut corners: when the process is
 genuinely required, it keeps all of it.
 
-Every number traces to a line in the committed output. Full detail and limits:
-[`benchmarks/`](benchmarks/).
+Across all 14 measured runs the skill added exactly one thing nobody asked for — a canary
+deployment step, on the audit scenario, in one run of three. Every run without the skill added
+between one and six. Every number traces to a line in the committed output; full detail and
+limits are in [`benchmarks/`](benchmarks/).
 
 ## FAQ
 
