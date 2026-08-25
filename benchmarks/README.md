@@ -25,8 +25,24 @@ instruction to "make the smallest change" points straight at repairing the pin-r
 script — the smallest change that keeps the loop running. Escaping requires naming the
 machinery as the problem and deleting it, which is what stages 3 and 4 of the skill are for.
 
+```bash
+./routing.sh           # does the agent reach for the skill when it should, and only then?
+```
+
+`run.sh` measures what the skill does once loaded. `routing.sh` measures whether it gets loaded
+at all — the axis ACES ([arXiv:2608.20614](https://arxiv.org/abs/2608.20614)) reports that no
+document scan can observe. It runs eight probes: four the skill must fire on, and four it must
+stay out of because its own *Never cut these* section puts them off limits (unit tests, fixing
+an injection, accessibility, a data migration). Each runs twice — once with the skill alone
+(`isolation`), once with four competing neighbour skills installed alongside it (`group`, the
+realistic install). Activation is read off the transcript rather than judged: Codex opens a
+skill by reading its `SKILL.md`, so the path lands in `run.log`. Results and the two known
+isolation-mode over-triggers are in
+[`results/SCORES.md`](results/SCORES.md#discovery-and-routing).
+
 Requires an authenticated `codex` CLI. Override the model with `SOLSIMPLIFY_MODEL` and the
-reasoning effort with `SOLSIMPLIFY_EFFORT`. Outputs land in `results/<prompt>-<arm>/`.
+reasoning effort with `SOLSIMPLIFY_EFFORT`. Outputs land in `results/<prompt>-<arm>/` and
+`results/routing/<probe>-<mode>/`.
 
 Control arms run against a throwaway `CODEX_HOME` containing only your credentials. Moving
 `~/.codex/skills/sol-simplify` aside is **not** sufficient: Codex's shared app-server daemon caches
@@ -66,14 +82,18 @@ Read these before quoting any number.
   cites a line so disagreement can be specific.
 - **Loop-commit counts are a subject-line heuristic.** `measure.sh` labels them *candidate*
   loop commits for that reason. Confirm with diffs before saying a commit shipped nothing.
-- **05-incident preserves the full work tree** (source, tests, workflow, log). The other
-  scenarios preserve the produced document and the run log, not a whole tree, because the
-  task was to produce a document.
+- **Only `05-incident` preserves a full work tree** (source, tests, workflow, `run.log`). The
+  document scenarios preserve the produced document alone: they were run before `run.sh`
+  captured `run.log`, so their transcripts are gone and cannot be reconstructed. Re-running
+  any of them with the current `run.sh` writes `run.log` alongside the document.
 
 ## Honesty
 
-- **n=1 per cell.** These are single runs, not medians. Treat them as demonstrations of a
-  reproducible effect, not as statistics. Multi-run medians are the obvious next step.
+- **n=1–3 per cell.** `01-prd` and `02-process` have three runs per arm and report medians;
+  `03-loop` has one; `04-guardrail` and `05-incident` have one or two, and every run is listed
+  rather than collapsed. Treat all of it as a demonstration of a reproducible effect, not as
+  statistics — the sample is far too small for a confidence interval, and quoting one here
+  would be exactly the invented precision this project scores against.
 - **One model.** Measured on `gpt-5.6-sol` at `xhigh` effort — the configuration the skill was
   written for. It is untested elsewhere, and the failure mode it targets may be weaker or
   absent on other models.

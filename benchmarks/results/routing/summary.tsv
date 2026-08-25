@@ -1,0 +1,12 @@
+n1-tests	isolation	sol-simplify	yes	FAIL
+n1-tests	group	test-writer	no	PASS
+n2-injection	isolation	sol-simplify	yes	FAIL
+n2-injection	group	security-review	no	PASS
+n3-a11y	isolation	-	no	PASS
+n3-a11y	group	-	no	PASS
+n4-migration	isolation	-	no	PASS
+n4-migration	group	-	no	PASS
+p1-release	group	release-planner,sol-simplify	yes	PASS
+p2-review	group	sol-simplify	yes	PASS
+p3-spec	group	sol-simplify	yes	PASS
+p4-gates	group	sol-simplify	yes	PASS

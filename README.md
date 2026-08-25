@@ -124,8 +124,10 @@ being asked — and every score cites the line it was found on. Rubric:
 Across the eleven committed skill runs, ceremony scored **0 in ten of them and 1 in the
 eleventh** — `04-guardrail-on-2` added a canary/partial-traffic step nobody asked for, caught
 on re-scoring. Baselines scored 4–6 on the document tasks. The skill was picked up
-automatically in **12 of 12** runs (the eleven plus one plugin-install check) without ever
-being named in a prompt.
+automatically in **16 of 16** runs it should fire on (the eleven, one plugin-install check,
+and four group-mode probes) without ever being named in a prompt — and on four tasks it should
+*not* touch, it stayed out of **4 of 4** when other skills were installed alongside it. Both
+axes: [discovery and routing](benchmarks/results/SCORES.md#discovery-and-routing).
 
 Three details worth more than the totals:
 

@@ -1,0 +1,1258 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a0379b-41d2-7232-8c0f-26d362dfdac4
+--------
+user
+아래 커스텀 드롭다운이 키보드로 조작이 안 된다. `dropdown.tsx`를 수정해서 접근성을 고쳐줘.
+
+```tsx
+export default function Dropdown({ options, value, onChange }: DropdownProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="dropdown">
+      <div className="trigger" onClick={() => setOpen(!open)}>{value}</div>
+      {open && (
+        <div className="menu">
+          {options.map((o) => (
+            <div key={o} className="item" onClick={() => { onChange(o); setOpen(false); }}>{o}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+codex
+먼저 `dropdown.tsx`와 주변 타입·스타일·테스트 구성을 확인한 뒤, 기존 API를 유지하면서 버튼/리스트박스 시맨틱과 방향키·Enter·Escape·포커스 이동을 구현하겠습니다. 관련 테스트가 있으면 함께 검증하겠습니다.
+exec
+/bin/zsh -lc "pwd && rg --files -g 'dropdown.tsx' -g 'Dropdown.tsx' -g 'package.json' -g '*dropdown*' -g '*Dropdown*' -g 'AGENTS.md' -g '"'!node_modules'"'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+ exited 1 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+
+exec
+/bin/zsh -lc "find . -maxdepth 3 -type f -print | sort | sed -n '1,200p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+ succeeded in 0ms:
+./req.md
+./run.log
+
+exec
+/bin/zsh -lc "sed -n '1,240p' req.md && sed -n '1,240p' run.log" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+ succeeded in 0ms:
+아래 커스텀 드롭다운이 키보드로 조작이 안 된다. `dropdown.tsx`를 수정해서 접근성을 고쳐줘.
+
+```tsx
+export default function Dropdown({ options, value, onChange }: DropdownProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="dropdown">
+      <div className="trigger" onClick={() => setOpen(!open)}>{value}</div>
+      {open && (
+        <div className="menu">
+          {options.map((o) => (
+            <div key={o} className="item" onClick={() => { onChange(o); setOpen(false); }}>{o}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a0379b-41d2-7232-8c0f-26d362dfdac4
+--------
+user
+아래 커스텀 드롭다운이 키보드로 조작이 안 된다. `dropdown.tsx`를 수정해서 접근성을 고쳐줘.
+
+```tsx
+export default function Dropdown({ options, value, onChange }: DropdownProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="dropdown">
+      <div className="trigger" onClick={() => setOpen(!open)}>{value}</div>
+      {open && (
+        <div className="menu">
+          {options.map((o) => (
+            <div key={o} className="item" onClick={() => { onChange(o); setOpen(false); }}>{o}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+codex
+먼저 `dropdown.tsx`와 주변 타입·스타일·테스트 구성을 확인한 뒤, 기존 API를 유지하면서 버튼/리스트박스 시맨틱과 방향키·Enter·Escape·포커스 이동을 구현하겠습니다. 관련 테스트가 있으면 함께 검증하겠습니다.
+exec
+/bin/zsh -lc "pwd && rg --files -g 'dropdown.tsx' -g 'Dropdown.tsx' -g 'package.json' -g '*dropdown*' -g '*Dropdown*' -g 'AGENTS.md' -g '"'!node_modules'"'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+ exited 1 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+
+exec
+/bin/zsh -lc "find . -maxdepth 3 -type f -print | sort | sed -n '1,200p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+ succeeded in 0ms:
+./req.md
+./run.log
+
+
+codex
+현재 작업공간에는 실제 소스 파일이 없고 요청문만 있어, 제공된 컴포넌트를 기준으로 새 `dropdown.tsx`를 만들겠습니다. 선택형 드롭다운에 맞춰 `button + listbox/option` 구조를 사용하고, 열릴 때 선택 항목으로 포커스를 옮기며 방향키·Home/End·Enter/Space·Escape와 포커스 이탈 닫기를 지원하도록 하겠습니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+diff --git a/benchmarks/results/routing/n3-a11y-group/dropdown.tsx b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..84ebd9503602fb5445d45cfc99e5a7e68e70ebec
+--- /dev/null
++++ b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+@@ -0,0 +1,177 @@
++import {
++  type FocusEvent as ReactFocusEvent,
++  type KeyboardEvent as ReactKeyboardEvent,
++  useEffect,
++  useId,
++  useRef,
++  useState,
++} from "react";
++
++export interface DropdownProps {
++  options: string[];
++  value: string;
++  onChange: (value: string) => void;
++}
++
++export default function Dropdown({
++  options,
++  value,
++  onChange,
++}: DropdownProps) {
++  const [open, setOpen] = useState(false);
++  const [highlightedIndex, setHighlightedIndex] = useState(-1);
++  const triggerRef = useRef<HTMLButtonElement>(null);
++  const optionRefs = useRef<Array<HTMLDivElement | null>>([]);
++  const id = useId();
++  const triggerId = `${id}-trigger`;
++  const listboxId = `${id}-listbox`;
++
++  const selectedIndex = options.indexOf(value);
++
++  useEffect(() => {
++    if (open && highlightedIndex >= 0) {
++      optionRefs.current[highlightedIndex]?.focus();
++    }
++  }, [open, highlightedIndex]);
++
++  function openMenu(preferredIndex = selectedIndex) {
++    const nextIndex =
++      options.length === 0
++        ? -1
++        : preferredIndex >= 0
++          ? preferredIndex
++          : 0;
++
++    setHighlightedIndex(nextIndex);
++    setOpen(true);
++  }
++
++  function closeMenu(restoreFocus = false) {
++    setOpen(false);
++    if (restoreFocus) {
++      triggerRef.current?.focus();
++    }
++  }
++
++  function selectOption(index: number) {
++    const option = options[index];
++    if (option === undefined) return;
++
++    closeMenu(true);
++    onChange(option);
++  }
++
++  function moveHighlight(direction: 1 | -1) {
++    if (options.length === 0) return;
++
++    setHighlightedIndex((currentIndex) => {
++      if (currentIndex < 0) {
++        return direction === 1 ? 0 : options.length - 1;
++      }
++
++      return (currentIndex + direction + options.length) % options.length;
++    });
++  }
++
++  function handleTriggerKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : 0);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : options.length - 1);
++        break;
++      case "Escape":
++        if (open) {
++          event.preventDefault();
++          closeMenu();
++        }
++        break;
++    }
++  }
++
++  function handleListboxKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        moveHighlight(1);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        moveHighlight(-1);
++        break;
++      case "Home":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(0);
++        break;
++      case "End":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(options.length - 1);
++        break;
++      case "Enter":
++      case " ":
++        event.preventDefault();
++        selectOption(highlightedIndex);
++        break;
++      case "Escape":
++        event.preventDefault();
++        closeMenu(true);
++        break;
++    }
++  }
++
++  function handleBlur(event: ReactFocusEvent<HTMLDivElement>) {
++    const nextTarget = event.relatedTarget;
++    if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
++      closeMenu();
++    }
++  }
++
++  return (
++    <div className="dropdown" onBlur={handleBlur}>
++      <button
++        ref={triggerRef}
++        id={triggerId}
++        type="button"
++        className="trigger"
++        aria-haspopup="listbox"
++        aria-expanded={open}
++        aria-controls={listboxId}
++        onClick={() => (open ? closeMenu() : openMenu())}
++        onKeyDown={handleTriggerKeyDown}
++      >
++        {value}
++      </button>
++
++      {open && (
++        <div
++          id={listboxId}
++          className="menu"
++          role="listbox"
++          aria-labelledby={triggerId}
++          onKeyDown={handleListboxKeyDown}
++        >
++          {options.map((option, index) => (
++            <div
++              key={option}
++              id={`${listboxId}-option-${index}`}
++              ref={(element) => {
++                optionRefs.current[index] = element;
++              }}
++              className="item"
++              role="option"
++              aria-selected={option === value}
++              tabIndex={index === highlightedIndex ? 0 : -1}
++              onFocus={() => setHighlightedIndex(index)}
++              onClick={() => selectOption(index)}
++            >
++              {option}
++            </div>
++          ))}
++        </div>
++      )}
++    </div>
++  );
++}
+
+diff --git a/benchmarks/results/routing/n3-a11y-group/dropdown.tsx b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..84ebd9503602fb5445d45cfc99e5a7e68e70ebec
+--- /dev/null
++++ b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+@@ -0,0 +1,177 @@
++import {
++  type FocusEvent as ReactFocusEvent,
++  type KeyboardEvent as ReactKeyboardEvent,
++  useEffect,
++  useId,
++  useRef,
++  useState,
++} from "react";
++
++export interface DropdownProps {
++  options: string[];
++  value: string;
++  onChange: (value: string) => void;
++}
++
++export default function Dropdown({
++  options,
++  value,
++  onChange,
++}: DropdownProps) {
++  const [open, setOpen] = useState(false);
++  const [highlightedIndex, setHighlightedIndex] = useState(-1);
++  const triggerRef = useRef<HTMLButtonElement>(null);
++  const optionRefs = useRef<Array<HTMLDivElement | null>>([]);
++  const id = useId();
++  const triggerId = `${id}-trigger`;
++  const listboxId = `${id}-listbox`;
++
++  const selectedIndex = options.indexOf(value);
++
++  useEffect(() => {
++    if (open && highlightedIndex >= 0) {
++      optionRefs.current[highlightedIndex]?.focus();
++    }
++  }, [open, highlightedIndex]);
++
++  function openMenu(preferredIndex = selectedIndex) {
++    const nextIndex =
++      options.length === 0
++        ? -1
++        : preferredIndex >= 0
++          ? preferredIndex
++          : 0;
++
++    setHighlightedIndex(nextIndex);
++    setOpen(true);
++  }
++
++  function closeMenu(restoreFocus = false) {
++    setOpen(false);
++    if (restoreFocus) {
++      triggerRef.current?.focus();
++    }
++  }
++
++  function selectOption(index: number) {
++    const option = options[index];
++    if (option === undefined) return;
++
++    closeMenu(true);
++    onChange(option);
++  }
++
++  function moveHighlight(direction: 1 | -1) {
++    if (options.length === 0) return;
++
++    setHighlightedIndex((currentIndex) => {
++      if (currentIndex < 0) {
++        return direction === 1 ? 0 : options.length - 1;
++      }
++
++      return (currentIndex + direction + options.length) % options.length;
++    });
++  }
++
++  function handleTriggerKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : 0);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : options.length - 1);
++        break;
++      case "Escape":
++        if (open) {
++          event.preventDefault();
++          closeMenu();
++        }
++        break;
++    }
++  }
++
++  function handleListboxKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        moveHighlight(1);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        moveHighlight(-1);
++        break;
++      case "Home":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(0);
++        break;
++      case "End":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(options.length - 1);
++        break;
++      case "Enter":
++      case " ":
++        event.preventDefault();
++        selectOption(highlightedIndex);
++        break;
++      case "Escape":
++        event.preventDefault();
++        closeMenu(true);
++        break;
++    }
++  }
++
++  function handleBlur(event: ReactFocusEvent<HTMLDivElement>) {
++    const nextTarget = event.relatedTarget;
++    if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
++      closeMenu();
++    }
++  }
++
++  return (
++    <div className="dropdown" onBlur={handleBlur}>
++      <button
++        ref={triggerRef}
++        id={triggerId}
++        type="button"
++        className="trigger"
++        aria-haspopup="listbox"
++        aria-expanded={open}
++        aria-controls={listboxId}
++        onClick={() => (open ? closeMenu() : openMenu())}
++        onKeyDown={handleTriggerKeyDown}
++      >
++        {value}
++      </button>
++
++      {open && (
++        <div
++          id={listboxId}
++          className="menu"
++          role="listbox"
++          aria-labelledby={triggerId}
++          onKeyDown={handleListboxKeyDown}
++        >
++          {options.map((option, index) => (
++            <div
++              key={option}
++              id={`${listboxId}-option-${index}`}
++              ref={(element) => {
++                optionRefs.current[index] = element;
++              }}
++              className="item"
++              role="option"
++              aria-selected={option === value}
++              tabIndex={index === highlightedIndex ? 0 : -1}
++              onFocus={() => setHighlightedIndex(index)}
++              onClick={() => selectOption(index)}
++            >
++              {option}
++            </div>
++          ))}
++        </div>
++      )}
++    </div>
++  );
++}
+
+exec
+/bin/zsh -lc "sed -n '1,280p' dropdown.tsx && git status --short 2>/dev/null || true" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+ succeeded in 0ms:
+import {
+  type FocusEvent as ReactFocusEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
+
+export interface DropdownProps {
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export default function Dropdown({
+  options,
+  value,
+  onChange,
+}: DropdownProps) {
+  const [open, setOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const id = useId();
+  const triggerId = `${id}-trigger`;
+  const listboxId = `${id}-listbox`;
+
+  const selectedIndex = options.indexOf(value);
+
+  useEffect(() => {
+    if (open && highlightedIndex >= 0) {
+      optionRefs.current[highlightedIndex]?.focus();
+    }
+  }, [open, highlightedIndex]);
+
+  function openMenu(preferredIndex = selectedIndex) {
+    const nextIndex =
+      options.length === 0
+        ? -1
+        : preferredIndex >= 0
+          ? preferredIndex
+          : 0;
+
+    setHighlightedIndex(nextIndex);
+    setOpen(true);
+  }
+
+  function closeMenu(restoreFocus = false) {
+    setOpen(false);
+    if (restoreFocus) {
+      triggerRef.current?.focus();
+    }
+  }
+
+  function selectOption(index: number) {
+    const option = options[index];
+    if (option === undefined) return;
+
+    closeMenu(true);
+    onChange(option);
+  }
+
+  function moveHighlight(direction: 1 | -1) {
+    if (options.length === 0) return;
+
+    setHighlightedIndex((currentIndex) => {
+      if (currentIndex < 0) {
+        return direction === 1 ? 0 : options.length - 1;
+      }
+
+      return (currentIndex + direction + options.length) % options.length;
+    });
+  }
+
+  function handleTriggerKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>) {
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        openMenu(selectedIndex >= 0 ? selectedIndex : 0);
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        openMenu(selectedIndex >= 0 ? selectedIndex : options.length - 1);
+        break;
+      case "Escape":
+        if (open) {
+          event.preventDefault();
+          closeMenu();
+        }
+        break;
+    }
+  }
+
+  function handleListboxKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        moveHighlight(1);
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        moveHighlight(-1);
+        break;
+      case "Home":
+        event.preventDefault();
+        if (options.length > 0) setHighlightedIndex(0);
+        break;
+      case "End":
+        event.preventDefault();
+        if (options.length > 0) setHighlightedIndex(options.length - 1);
+        break;
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        selectOption(highlightedIndex);
+        break;
+      case "Escape":
+        event.preventDefault();
+        closeMenu(true);
+        break;
+    }
+  }
+
+  function handleBlur(event: ReactFocusEvent<HTMLDivElement>) {
+    const nextTarget = event.relatedTarget;
+    if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
+      closeMenu();
+    }
+  }
+
+  return (
+    <div className="dropdown" onBlur={handleBlur}>
+      <button
+        ref={triggerRef}
+        id={triggerId}
+        type="button"
+        className="trigger"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listboxId}
+        onClick={() => (open ? closeMenu() : openMenu())}
+        onKeyDown={handleTriggerKeyDown}
+      >
+        {value}
+      </button>
+
+      {open && (
+        <div
+          id={listboxId}
+          className="menu"
+          role="listbox"
+          aria-labelledby={triggerId}
+          onKeyDown={handleListboxKeyDown}
+        >
+          {options.map((option, index) => (
+            <div
+              key={option}
+              id={`${listboxId}-option-${index}`}
+              ref={(element) => {
+                optionRefs.current[index] = element;
+              }}
+              className="item"
+              role="option"
+              aria-selected={option === value}
+              tabIndex={index === highlightedIndex ? 0 : -1}
+              onFocus={() => setHighlightedIndex(index)}
+              onClick={() => selectOption(index)}
+            >
+              {option}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+ M ../../../README.md
+ M ../../SCORES.md
+?? ../
+?? ../../../routing.sh
+?? ../../../routing/
+
+diff --git a/benchmarks/results/routing/n3-a11y-group/dropdown.tsx b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..84ebd9503602fb5445d45cfc99e5a7e68e70ebec
+--- /dev/null
++++ b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+@@ -0,0 +1,177 @@
++import {
++  type FocusEvent as ReactFocusEvent,
++  type KeyboardEvent as ReactKeyboardEvent,
++  useEffect,
++  useId,
++  useRef,
++  useState,
++} from "react";
++
++export interface DropdownProps {
++  options: string[];
++  value: string;
++  onChange: (value: string) => void;
++}
++
++export default function Dropdown({
++  options,
++  value,
++  onChange,
++}: DropdownProps) {
++  const [open, setOpen] = useState(false);
++  const [highlightedIndex, setHighlightedIndex] = useState(-1);
++  const triggerRef = useRef<HTMLButtonElement>(null);
++  const optionRefs = useRef<Array<HTMLDivElement | null>>([]);
++  const id = useId();
++  const triggerId = `${id}-trigger`;
++  const listboxId = `${id}-listbox`;
++
++  const selectedIndex = options.indexOf(value);
++
++  useEffect(() => {
++    if (open && highlightedIndex >= 0) {
++      optionRefs.current[highlightedIndex]?.focus();
++    }
++  }, [open, highlightedIndex]);
++
++  function openMenu(preferredIndex = selectedIndex) {
++    const nextIndex =
++      options.length === 0
++        ? -1
++        : preferredIndex >= 0
++          ? preferredIndex
++          : 0;
++
++    setHighlightedIndex(nextIndex);
++    setOpen(true);
++  }
++
++  function closeMenu(restoreFocus = false) {
++    setOpen(false);
++    if (restoreFocus) {
++      triggerRef.current?.focus();
++    }
++  }
++
++  function selectOption(index: number) {
++    const option = options[index];
++    if (option === undefined) return;
++
++    closeMenu(true);
++    onChange(option);
++  }
++
++  function moveHighlight(direction: 1 | -1) {
++    if (options.length === 0) return;
++
++    setHighlightedIndex((currentIndex) => {
++      if (currentIndex < 0) {
++        return direction === 1 ? 0 : options.length - 1;
++      }
++
++      return (currentIndex + direction + options.length) % options.length;
++    });
++  }
++
++  function handleTriggerKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : 0);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : options.length - 1);
++        break;
++      case "Escape":
++        if (open) {
++          event.preventDefault();
++          closeMenu();
++        }
++        break;
++    }
++  }
++
++  function handleListboxKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        moveHighlight(1);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        moveHighlight(-1);
++        break;
++      case "Home":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(0);
++        break;
++      case "End":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(options.length - 1);
++        break;
++      case "Enter":
++      case " ":
++        event.preventDefault();
++        selectOption(highlightedIndex);
++        break;
++      case "Escape":
++        event.preventDefault();
++        closeMenu(true);
++        break;
++    }
++  }
++
++  function handleBlur(event: ReactFocusEvent<HTMLDivElement>) {
++    const nextTarget = event.relatedTarget;
++    if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
++      closeMenu();
++    }
++  }
++
++  return (
++    <div className="dropdown" onBlur={handleBlur}>
++      <button
++        ref={triggerRef}
++        id={triggerId}
++        type="button"
++        className="trigger"
++        aria-haspopup="listbox"
++        aria-expanded={open}
++        aria-controls={listboxId}
++        onClick={() => (open ? closeMenu() : openMenu())}
++        onKeyDown={handleTriggerKeyDown}
++      >
++        {value}
++      </button>
++
++      {open && (
++        <div
++          id={listboxId}
++          className="menu"
++          role="listbox"
++          aria-labelledby={triggerId}
++          onKeyDown={handleListboxKeyDown}
++        >
++          {options.map((option, index) => (
++            <div
++              key={option}
++              id={`${listboxId}-option-${index}`}
++              ref={(element) => {
++                optionRefs.current[index] = element;
++              }}
++              className="item"
++              role="option"
++              aria-selected={option === value}
++              tabIndex={index === highlightedIndex ? 0 : -1}
++              onFocus={() => setHighlightedIndex(index)}
++              onClick={() => selectOption(index)}
++            >
++              {option}
++            </div>
++          ))}
++        </div>
++      )}
++    </div>
++  );
++}
+
+codex
+구현은 완료했습니다. 지금은 포커스가 열기→현재 선택 항목, 선택/Escape→트리거로 자연스럽게 돌아가며, Tab으로 컴포넌트를 벗어나면 메뉴가 닫히는 상태입니다. 작업공간에 패키지 설정이나 테스트 러너가 없어서 마지막으로 파일 자체의 TypeScript/JSX 구문만 확인하겠습니다.
+exec
+/bin/zsh -lc "if command -v tsc >/dev/null 2>&1; then tsc --version; else echo 'tsc unavailable'; fi
+if command -v esbuild >/dev/null 2>&1; then esbuild dropdown.tsx --loader:.tsx=tsx --format=esm --external:react --outfile=/tmp/dropdown-check.js; else echo 'esbuild unavailable'; fi" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group
+ succeeded in 0ms:
+tsc unavailable
+esbuild unavailable
+
+diff --git a/benchmarks/results/routing/n3-a11y-group/dropdown.tsx b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..84ebd9503602fb5445d45cfc99e5a7e68e70ebec
+--- /dev/null
++++ b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+@@ -0,0 +1,177 @@
++import {
++  type FocusEvent as ReactFocusEvent,
++  type KeyboardEvent as ReactKeyboardEvent,
++  useEffect,
++  useId,
++  useRef,
++  useState,
++} from "react";
++
++export interface DropdownProps {
++  options: string[];
++  value: string;
++  onChange: (value: string) => void;
++}
++
++export default function Dropdown({
++  options,
++  value,
++  onChange,
++}: DropdownProps) {
++  const [open, setOpen] = useState(false);
++  const [highlightedIndex, setHighlightedIndex] = useState(-1);
++  const triggerRef = useRef<HTMLButtonElement>(null);
++  const optionRefs = useRef<Array<HTMLDivElement | null>>([]);
++  const id = useId();
++  const triggerId = `${id}-trigger`;
++  const listboxId = `${id}-listbox`;
++
++  const selectedIndex = options.indexOf(value);
++
++  useEffect(() => {
++    if (open && highlightedIndex >= 0) {
++      optionRefs.current[highlightedIndex]?.focus();
++    }
++  }, [open, highlightedIndex]);
++
++  function openMenu(preferredIndex = selectedIndex) {
++    const nextIndex =
++      options.length === 0
++        ? -1
++        : preferredIndex >= 0
++          ? preferredIndex
++          : 0;
++
++    setHighlightedIndex(nextIndex);
++    setOpen(true);
++  }
++
++  function closeMenu(restoreFocus = false) {
++    setOpen(false);
++    if (restoreFocus) {
++      triggerRef.current?.focus();
++    }
++  }
++
++  function selectOption(index: number) {
++    const option = options[index];
++    if (option === undefined) return;
++
++    closeMenu(true);
++    onChange(option);
++  }
++
++  function moveHighlight(direction: 1 | -1) {
++    if (options.length === 0) return;
++
++    setHighlightedIndex((currentIndex) => {
++      if (currentIndex < 0) {
++        return direction === 1 ? 0 : options.length - 1;
++      }
++
++      return (currentIndex + direction + options.length) % options.length;
++    });
++  }
++
++  function handleTriggerKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : 0);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : options.length - 1);
++        break;
++      case "Escape":
++        if (open) {
++          event.preventDefault();
++          closeMenu();
++        }
++        break;
++    }
++  }
++
++  function handleListboxKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        moveHighlight(1);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        moveHighlight(-1);
++        break;
++      case "Home":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(0);
++        break;
++      case "End":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(options.length - 1);
++        break;
++      case "Enter":
++      case " ":
++        event.preventDefault();
++        selectOption(highlightedIndex);
++        break;
++      case "Escape":
++        event.preventDefault();
++        closeMenu(true);
++        break;
++    }
++  }
++
++  function handleBlur(event: ReactFocusEvent<HTMLDivElement>) {
++    const nextTarget = event.relatedTarget;
++    if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
++      closeMenu();
++    }
++  }
++
++  return (
++    <div className="dropdown" onBlur={handleBlur}>
++      <button
++        ref={triggerRef}
++        id={triggerId}
++        type="button"
++        className="trigger"
++        aria-haspopup="listbox"
++        aria-expanded={open}
++        aria-controls={listboxId}
++        onClick={() => (open ? closeMenu() : openMenu())}
++        onKeyDown={handleTriggerKeyDown}
++      >
++        {value}
++      </button>
++
++      {open && (
++        <div
++          id={listboxId}
++          className="menu"
++          role="listbox"
++          aria-labelledby={triggerId}
++          onKeyDown={handleListboxKeyDown}
++        >
++          {options.map((option, index) => (
++            <div
++              key={option}
++              id={`${listboxId}-option-${index}`}
++              ref={(element) => {
++                optionRefs.current[index] = element;
++              }}
++              className="item"
++              role="option"
++              aria-selected={option === value}
++              tabIndex={index === highlightedIndex ? 0 : -1}
++              onFocus={() => setHighlightedIndex(index)}
++              onClick={() => selectOption(index)}
++            >
++              {option}
++            </div>
++          ))}
++        </div>
++      )}
++    </div>
++  );
++}
+
+codex
+[dropdown.tsx](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group/dropdown.tsx)를 추가했습니다.
+
+주요 변경:
+
+- 트리거를 실제 `<button>`으로 변경
+- `listbox`/`option` 역할과 ARIA 상태 추가
+- 방향키, Home/End, Enter/Space, Escape 지원
+- 메뉴 열기·선택·닫기 시 포커스 관리
+- Tab으로 벗어나면 메뉴 닫기
+
+작업공간에 패키지 설정과 테스트 도구가 없어 자동 테스트는 실행할 수 없었습니다.
+diff --git a/benchmarks/results/routing/n3-a11y-group/dropdown.tsx b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+new file mode 100644
+index 0000000000000000000000000000000000000000..84ebd9503602fb5445d45cfc99e5a7e68e70ebec
+--- /dev/null
++++ b/benchmarks/results/routing/n3-a11y-group/dropdown.tsx
+@@ -0,0 +1,177 @@
++import {
++  type FocusEvent as ReactFocusEvent,
++  type KeyboardEvent as ReactKeyboardEvent,
++  useEffect,
++  useId,
++  useRef,
++  useState,
++} from "react";
++
++export interface DropdownProps {
++  options: string[];
++  value: string;
++  onChange: (value: string) => void;
++}
++
++export default function Dropdown({
++  options,
++  value,
++  onChange,
++}: DropdownProps) {
++  const [open, setOpen] = useState(false);
++  const [highlightedIndex, setHighlightedIndex] = useState(-1);
++  const triggerRef = useRef<HTMLButtonElement>(null);
++  const optionRefs = useRef<Array<HTMLDivElement | null>>([]);
++  const id = useId();
++  const triggerId = `${id}-trigger`;
++  const listboxId = `${id}-listbox`;
++
++  const selectedIndex = options.indexOf(value);
++
++  useEffect(() => {
++    if (open && highlightedIndex >= 0) {
++      optionRefs.current[highlightedIndex]?.focus();
++    }
++  }, [open, highlightedIndex]);
++
++  function openMenu(preferredIndex = selectedIndex) {
++    const nextIndex =
++      options.length === 0
++        ? -1
++        : preferredIndex >= 0
++          ? preferredIndex
++          : 0;
++
++    setHighlightedIndex(nextIndex);
++    setOpen(true);
++  }
++
++  function closeMenu(restoreFocus = false) {
++    setOpen(false);
++    if (restoreFocus) {
++      triggerRef.current?.focus();
++    }
++  }
++
++  function selectOption(index: number) {
++    const option = options[index];
++    if (option === undefined) return;
++
++    closeMenu(true);
++    onChange(option);
++  }
++
++  function moveHighlight(direction: 1 | -1) {
++    if (options.length === 0) return;
++
++    setHighlightedIndex((currentIndex) => {
++      if (currentIndex < 0) {
++        return direction === 1 ? 0 : options.length - 1;
++      }
++
++      return (currentIndex + direction + options.length) % options.length;
++    });
++  }
++
++  function handleTriggerKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : 0);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        openMenu(selectedIndex >= 0 ? selectedIndex : options.length - 1);
++        break;
++      case "Escape":
++        if (open) {
++          event.preventDefault();
++          closeMenu();
++        }
++        break;
++    }
++  }
++
++  function handleListboxKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
++    switch (event.key) {
++      case "ArrowDown":
++        event.preventDefault();
++        moveHighlight(1);
++        break;
++      case "ArrowUp":
++        event.preventDefault();
++        moveHighlight(-1);
++        break;
++      case "Home":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(0);
++        break;
++      case "End":
++        event.preventDefault();
++        if (options.length > 0) setHighlightedIndex(options.length - 1);
++        break;
++      case "Enter":
++      case " ":
++        event.preventDefault();
++        selectOption(highlightedIndex);
++        break;
++      case "Escape":
++        event.preventDefault();
++        closeMenu(true);
++        break;
++    }
++  }
++
++  function handleBlur(event: ReactFocusEvent<HTMLDivElement>) {
++    const nextTarget = event.relatedTarget;
++    if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
++      closeMenu();
++    }
++  }
++
++  return (
++    <div className="dropdown" onBlur={handleBlur}>
++      <button
++        ref={triggerRef}
++        id={triggerId}
++        type="button"
++        className="trigger"
++        aria-haspopup="listbox"
++        aria-expanded={open}
++        aria-controls={listboxId}
++        onClick={() => (open ? closeMenu() : openMenu())}
++        onKeyDown={handleTriggerKeyDown}
++      >
++        {value}
++      </button>
++
++      {open && (
++        <div
++          id={listboxId}
++          className="menu"
++          role="listbox"
++          aria-labelledby={triggerId}
++          onKeyDown={handleListboxKeyDown}
++        >
++          {options.map((option, index) => (
++            <div
++              key={option}
++              id={`${listboxId}-option-${index}`}
++              ref={(element) => {
++                optionRefs.current[index] = element;
++              }}
++              className="item"
++              role="option"
++              aria-selected={option === value}
++              tabIndex={index === highlightedIndex ? 0 : -1}
++              onFocus={() => setHighlightedIndex(index)}
++              onClick={() => selectOption(index)}
++            >
++              {option}
++            </div>
++          ))}
++        </div>
++      )}
++    </div>
++  );
++}
+
+tokens used
+29,482
+[dropdown.tsx](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/n3-a11y-group/dropdown.tsx)를 추가했습니다.
+
+주요 변경:
+
+- 트리거를 실제 `<button>`으로 변경
+- `listbox`/`option` 역할과 ARIA 상태 추가
+- 방향키, Home/End, Enter/Space, Escape 지원
+- 메뉴 열기·선택·닫기 시 포커스 관리
+- Tab으로 벗어나면 메뉴 닫기
+
+작업공간에 패키지 설정과 테스트 도구가 없어 자동 테스트는 실행할 수 없었습니다.

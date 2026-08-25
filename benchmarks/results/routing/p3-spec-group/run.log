@@ -1,0 +1,515 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037a2-3638-72d1-8d8c-83ec3f974e72
+--------
+user
+사용자가 프로필 사진을 올릴 수 있는 기능을 추가한다. 구현 전에 스펙 문서를 써줘. 파일명은 `spec-avatar.md`.
+
+codex
+`sol-simplify` 스킬을 적용해, 구현에 바로 필요한 범위만 담은 간결한 스펙으로 작성하겠습니다. 먼저 저장소 구조와 기존 프로필 관련 흐름을 확인한 뒤 `spec-avatar.md`를 만들겠습니다.
+exec
+/bin/zsh -lc "sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.jOpwT0Enxr/skills/sol-simplify/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group
+ succeeded in 0ms:
+---
+name: sol-simplify
+description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "add validation", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering.
+---
+
+# sol-simplify
+
+You over-engineer the *process of doing the work*, not the code: governance before product,
+checks stacked on checks, machinery that decides whether work may begin. It reads as rigor. It
+ends as overhead that outgrows what it guards and then refuses to let work through.
+
+Measured on one agent-built repository: verification machinery reached **20,280 lines against
+17,964 lines of product**; **33% of commits** existed only to keep that machinery in sync with
+itself; on day 17 a rule the agent had written for itself blocked four implementation lanes
+until a human deleted it.
+
+Ponytail cuts code. sol-simplify cuts the process you build around code.
+
+## What you manufacture
+
+| tag | what it is | the tell |
+|---|---|---|
+| `ceremony` | a document or record that exists so process looks observed | nobody reads it twice |
+| `machinery` | tooling that authorizes, validates, or tracks work instead of doing it | it needs its own tests |
+| `pin` | a frozen count, inventory, or tally | unrelated work invalidates it |
+| `metatest` | a check on process compliance rather than behavior | it fails while the software is fine |
+| `circular` | a rule gated on what only its own machinery can produce | it can refuse everything |
+
+Name what you skipped with these words.
+
+## Before you produce an artifact
+
+- **One request, one artifact.** No companion ADR, ticket board, traceability matrix, gate registry, status ledger, decision record, OWNERS file, or index. If a second one is load-bearing, name it in a line and let the user ask.
+- **Numbers you were not given are fiction.** No SLOs, latency targets, KPIs, success metrics, or "collect a baseline for two weeks".
+- **Process you were not given is theater.** No phased rollout, definition-of-done checklist, approval gate, sign-off matrix, or rollback policy.
+- **External-authority work is never yours to start.** No legal clearance, trademark search, license audit, compliance review, or study protocol with participants and hypotheses.
+- **Process is earned, not chosen.** Ceremony scales with how many people must coordinate and what being wrong costs — not with how serious you want the project to look. One maintainer and no users earns none. Adopt a gate the day something gets past you without one.
+- **Size follows the ask.** Past roughly 5x the length of the request, you inflated it. Cut; do not justify. A section that exists to look complete is padding.
+- **Ambiguity shrinks scope.** State one assumption, build the smallest thing that satisfies it, continue. Your instinct is backwards here: unclear means less, not more.
+- **Thinking longer buys a better answer, not a bigger one.** If extra reasoning is turning into extra sections and extra gates, it is being spent in the wrong place.
+
+❌ Five-line request for a bookmark button → 440-line PRD with p95 targets, four analytics
+events, a five-phase rollout, and an eight-item definition of done.
+
+✅ 116 lines: flows, requirements, data model, acceptance criteria.
+`skipped: ceremony — rollout, KPIs, DoD. Say the word.`
+
+## Before you add a check
+
+- **You maintain every check forever.** A validator wants a contract test; the test wants fixed expectations; the expectations want updating whenever anything moves. Price that before the first one.
+- **Verify the product, never the process.** Ask: *does this catch a bug a user would hit?* If not, do not write it. That is a `metatest`, and it will fail on days when the software is perfect.
+- **Never pin a number unrelated work moves.** File counts, ticket totals, requirement censuses, section inventories — any figure two parallel changes can both invalidate becomes a permanent tax paid in commits that ship nothing. Compute it or drop it.
+- **Never build machinery that authorizes work.** No readiness resolver, execution-state validator, gate administrator, or state machine over your own process. It outgrows the product and eventually blocks it. Do the work instead.
+
+❌ "Add a validator asserting every ticket links to an ADR, plus a contract test pinning the
+link count."
+
+✅ "No — that count breaks on every merge and catches no bug. If a ticket needs an ADR, review
+catches it."
+
+## What you will tell yourself
+
+| the thought | what is true |
+|---|---|
+| "This domain is high-stakes, it needs more process." | Stakes buy better tests, not more paperwork. Name the failure the process prevents; if you cannot, it prevents nothing. |
+| "Doing it properly means doing it thoroughly." | Thoroughness belongs to the product. A gate is not thoroughness, it is a tax on every change after it. |
+| "We will need this once the team grows." | Add it when the team grows. You are designing process for people who do not exist. |
+| "Better to fix the rules before writing code." | Rules written before the work encode untested assumptions — and you will obey them anyway, for months. |
+| "A validator makes this reproducible." | Reproducibility comes from deterministic code and tests that run it. A check on documents reproduces nothing. |
+| "It is cheap to add now." | Nothing is ever removed. Price it at its lifetime, not its first commit. |
+
+## Notice the loop
+
+You are inside it when any of these is true:
+
+- Recent edits are mostly to checking machinery rather than to the product.
+- You are re-syncing a verification artifact with the repository instead of changing behavior.
+- You are fixing a validator that was itself written to fix a validator.
+- A check fails for a reason unrelated to whether the software works.
+
+Then **stop and say so.** Name the machinery, state its cost, propose deleting it. Do not add an
+exception, a reconciliation step, or another layer. Deleting a check is a legitimate fix and
+usually the right one.
+
+**Never make the rules heavier because of what just happened.** Do not add workflow steps, hard
+stops, or authority hierarchies to AGENTS.md, CLAUDE.md, or a README in reaction to one
+incident. Files that grow after every mistake are how a project talks itself into paralysis —
+and you will obey every line you add there, next session and every session after.
+
+## When your own process blocks you
+
+- **First ask whether the block is correct.** A gate that fails because the software is genuinely unsafe, insecure, or non-compliant is doing its job — fix the code, never the gate. This section is about the other case only.
+- **A rule you authored that blocks work for reasons unrelated to product behavior is a bug in the rule.** Say which it is, then delete or repair it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
+- **Never stall silently behind ceremony you created.** Name the rule in one sentence, then proceed under a stated assumption or ask. A gate with no human behind it is not a gate.
+
+## If you do add process
+
+Mark it with its own removal trigger, so it can be audited later instead of becoming permanent:
+
+```
+sol-simplify: <why this exists>, remove when <condition>
+```
+
+Process with no removal condition never leaves.
+
+## Never cut these
+
+Correctness. Tests that exercise real behavior. Input validation at trust boundaries. Error
+handling that prevents data loss. Security. Accessibility. Data migrations. Anything the user
+explicitly asked for. Cutting these is damage, not restraint — restraint applies only to
+process you invented.
+
+## Output
+
+If you left out something a reader might reasonably have expected, close with one line naming
+it, tagged, so they can ask for it:
+
+`skipped: ceremony — rollout plan, KPIs, ADR. Say the word.`
+
+If you skipped nothing, write nothing. A line that reports an empty list every time is itself
+the ceremony this skill exists to remove.
+
+exec
+/bin/zsh -lc "rg --files -g 'AGENTS.md' -g '"'!node_modules'"' -g '"'!vendor'"'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group
+exec
+/bin/zsh -lc "rg --files -g '"'!node_modules'"' -g '"'!vendor'"' | sed -n '1,240p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group
+ exited 1 in 0ms:
+ succeeded in 0ms:
+req.md
+run.log
+
+exec
+/bin/zsh -lc 'git status --short' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group
+ succeeded in 0ms:
+ M ../../../README.md
+ M ../../SCORES.md
+?? ../
+?? ../../../routing.sh
+?? ../../../routing/
+
+exec
+/bin/zsh -lc "sed -n '1,240p' req.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group
+ succeeded in 0ms:
+사용자가 프로필 사진을 올릴 수 있는 기능을 추가한다. 구현 전에 스펙 문서를 써줘. 파일명은 `spec-avatar.md`.
+
+codex
+현재 작업 폴더에는 애플리케이션 코드가 없어, “로그인과 프로필 편집 화면이 이미 있다”는 한 가지 가정 아래 기술 스택에 종속되지 않는 계약으로 정리하겠습니다. 업로드·교체·오류 처리·보안·접근성까지는 포함하고, 이미지 편집 같은 확장 기능은 범위에서 제외합니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group/spec-avatar.md
+diff --git a/benchmarks/results/routing/p3-spec-group/spec-avatar.md b/benchmarks/results/routing/p3-spec-group/spec-avatar.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ec47712f1afc9777f869e31feb160d07a4b9e85a
+--- /dev/null
++++ b/benchmarks/results/routing/p3-spec-group/spec-avatar.md
+@@ -0,0 +1,60 @@
++# 프로필 사진 업로드 스펙
++
++## 목표
++
++로그인한 사용자가 자신의 프로필 사진을 업로드하거나 교체하고, 저장 직후와 이후 방문에서 새 사진을 볼 수 있게 한다.
++
++가정: 로그인, 사용자 프로필, 프로필 편집 화면은 이미 존재한다.
++
++## 사용자 흐름
++
++1. 프로필 편집 화면에서 이미지 파일을 선택한다.
++2. 선택한 이미지를 원형 아바타 형태로 미리 본다.
++3. 저장하면 업로드 진행 상태를 표시하고 중복 저장을 막는다.
++4. 성공 시 화면의 모든 사용자 아바타를 새 이미지로 갱신한다.
++5. 실패 시 기존 사진을 유지하고, 원인과 재시도 방법을 안내한다.
++
++## 요구사항
++
++- JPEG, PNG, WebP 이미지를 지원한다.
++- 파일 크기는 서비스의 업로드 제한을 따르며, 초과 파일은 업로드 전에 가능하면 차단한다.
++- 서버는 확장자가 아니라 실제 파일 내용으로 이미지 형식을 검증한다.
++- 서버가 이미지를 디코딩한 뒤 안전한 형식으로 다시 저장하고 위치 정보 등 메타데이터를 제거한다.
++- 사진은 인증된 사용자 본인의 프로필에만 연결할 수 있다.
++- 새 사진의 저장과 프로필 연결이 모두 성공한 뒤 기존 사진을 제거한다. 실패하면 기존 사진을 보존한다.
++- 사진이 없을 때는 기존 기본 아바타를 표시한다.
++- 브라우저 캐시 때문에 이전 사진이 남지 않도록 새 URL 또는 버전 값을 사용한다.
++
++## 서버 계약
++
++`PUT /api/me/avatar`
++
++- 인증 필수
++- 요청: `multipart/form-data`, 필드명 `file`
++- 성공: `200 { "avatarUrl": "..." }`
++- 잘못된 파일: `400` 또는 `415`
++- 업로드 제한 초과: `413`
++- 인증 실패: `401`
++
++저장소에는 생성된 객체 키를 사용하고, 사용자 레코드에는 공개 URL 대신 해당 키를 연결한다. 응답 URL은 현재 저장소의 공개 또는 서명 URL 정책으로 만든다.
++
++## 화면 및 접근성
++
++- 파일 선택 버튼은 키보드로 조작할 수 있고 명확한 레이블을 가진다.
++- 미리보기에는 사용자 이름 기반의 대체 텍스트를 제공한다.
++- 진행 상태와 오류 메시지는 보조 기술에도 전달한다.
++- 클라이언트 미리보기와 실제 저장 이미지는 같은 비율로 표시한다. 자르기 UI는 제공하지 않고 중앙 맞춤으로 보여준다.
++
++## 완료 조건
++
++- 유효한 이미지를 저장하면 즉시 새 아바타가 보이고 새로고침 후에도 유지된다.
++- 기존 사진이 있는 사용자는 같은 흐름으로 교체할 수 있다.
++- 지원하지 않거나 손상되거나 제한을 초과한 파일은 저장되지 않으며 기존 사진이 유지된다.
++- 다른 사용자의 프로필 사진을 변경하는 요청은 허용되지 않는다.
++- 업로드 도중 네트워크 오류가 발생해도 다시 시도할 수 있다.
++
++## 제외 범위
++
++사진 삭제, 자르기·회전·필터, 카메라 촬영, 콘텐츠 검수는 이번 구현에 포함하지 않는다.
++
++skipped: ceremony — 출시 계획, KPI, ADR. 요청하면 추가한다.
+
+diff --git a/benchmarks/results/routing/p3-spec-group/spec-avatar.md b/benchmarks/results/routing/p3-spec-group/spec-avatar.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ec47712f1afc9777f869e31feb160d07a4b9e85a
+--- /dev/null
++++ b/benchmarks/results/routing/p3-spec-group/spec-avatar.md
+@@ -0,0 +1,60 @@
++# 프로필 사진 업로드 스펙
++
++## 목표
++
++로그인한 사용자가 자신의 프로필 사진을 업로드하거나 교체하고, 저장 직후와 이후 방문에서 새 사진을 볼 수 있게 한다.
++
++가정: 로그인, 사용자 프로필, 프로필 편집 화면은 이미 존재한다.
++
++## 사용자 흐름
++
++1. 프로필 편집 화면에서 이미지 파일을 선택한다.
++2. 선택한 이미지를 원형 아바타 형태로 미리 본다.
++3. 저장하면 업로드 진행 상태를 표시하고 중복 저장을 막는다.
++4. 성공 시 화면의 모든 사용자 아바타를 새 이미지로 갱신한다.
++5. 실패 시 기존 사진을 유지하고, 원인과 재시도 방법을 안내한다.
++
++## 요구사항
++
++- JPEG, PNG, WebP 이미지를 지원한다.
++- 파일 크기는 서비스의 업로드 제한을 따르며, 초과 파일은 업로드 전에 가능하면 차단한다.
++- 서버는 확장자가 아니라 실제 파일 내용으로 이미지 형식을 검증한다.
++- 서버가 이미지를 디코딩한 뒤 안전한 형식으로 다시 저장하고 위치 정보 등 메타데이터를 제거한다.
++- 사진은 인증된 사용자 본인의 프로필에만 연결할 수 있다.
++- 새 사진의 저장과 프로필 연결이 모두 성공한 뒤 기존 사진을 제거한다. 실패하면 기존 사진을 보존한다.
++- 사진이 없을 때는 기존 기본 아바타를 표시한다.
++- 브라우저 캐시 때문에 이전 사진이 남지 않도록 새 URL 또는 버전 값을 사용한다.
++
++## 서버 계약
++
++`PUT /api/me/avatar`
++
++- 인증 필수
++- 요청: `multipart/form-data`, 필드명 `file`
++- 성공: `200 { "avatarUrl": "..." }`
++- 잘못된 파일: `400` 또는 `415`
++- 업로드 제한 초과: `413`
++- 인증 실패: `401`
++
++저장소에는 생성된 객체 키를 사용하고, 사용자 레코드에는 공개 URL 대신 해당 키를 연결한다. 응답 URL은 현재 저장소의 공개 또는 서명 URL 정책으로 만든다.
++
++## 화면 및 접근성
++
++- 파일 선택 버튼은 키보드로 조작할 수 있고 명확한 레이블을 가진다.
++- 미리보기에는 사용자 이름 기반의 대체 텍스트를 제공한다.
++- 진행 상태와 오류 메시지는 보조 기술에도 전달한다.
++- 클라이언트 미리보기와 실제 저장 이미지는 같은 비율로 표시한다. 자르기 UI는 제공하지 않고 중앙 맞춤으로 보여준다.
++
++## 완료 조건
++
++- 유효한 이미지를 저장하면 즉시 새 아바타가 보이고 새로고침 후에도 유지된다.
++- 기존 사진이 있는 사용자는 같은 흐름으로 교체할 수 있다.
++- 지원하지 않거나 손상되거나 제한을 초과한 파일은 저장되지 않으며 기존 사진이 유지된다.
++- 다른 사용자의 프로필 사진을 변경하는 요청은 허용되지 않는다.
++- 업로드 도중 네트워크 오류가 발생해도 다시 시도할 수 있다.
++
++## 제외 범위
++
++사진 삭제, 자르기·회전·필터, 카메라 촬영, 콘텐츠 검수는 이번 구현에 포함하지 않는다.
++
++skipped: ceremony — 출시 계획, KPI, ADR. 요청하면 추가한다.
+
+exec
+/bin/zsh -lc "sed -n '1,240p' spec-avatar.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group
+ succeeded in 0ms:
+# 프로필 사진 업로드 스펙
+
+## 목표
+
+로그인한 사용자가 자신의 프로필 사진을 업로드하거나 교체하고, 저장 직후와 이후 방문에서 새 사진을 볼 수 있게 한다.
+
+가정: 로그인, 사용자 프로필, 프로필 편집 화면은 이미 존재한다.
+
+## 사용자 흐름
+
+1. 프로필 편집 화면에서 이미지 파일을 선택한다.
+2. 선택한 이미지를 원형 아바타 형태로 미리 본다.
+3. 저장하면 업로드 진행 상태를 표시하고 중복 저장을 막는다.
+4. 성공 시 화면의 모든 사용자 아바타를 새 이미지로 갱신한다.
+5. 실패 시 기존 사진을 유지하고, 원인과 재시도 방법을 안내한다.
+
+## 요구사항
+
+- JPEG, PNG, WebP 이미지를 지원한다.
+- 파일 크기는 서비스의 업로드 제한을 따르며, 초과 파일은 업로드 전에 가능하면 차단한다.
+- 서버는 확장자가 아니라 실제 파일 내용으로 이미지 형식을 검증한다.
+- 서버가 이미지를 디코딩한 뒤 안전한 형식으로 다시 저장하고 위치 정보 등 메타데이터를 제거한다.
+- 사진은 인증된 사용자 본인의 프로필에만 연결할 수 있다.
+- 새 사진의 저장과 프로필 연결이 모두 성공한 뒤 기존 사진을 제거한다. 실패하면 기존 사진을 보존한다.
+- 사진이 없을 때는 기존 기본 아바타를 표시한다.
+- 브라우저 캐시 때문에 이전 사진이 남지 않도록 새 URL 또는 버전 값을 사용한다.
+
+## 서버 계약
+
+`PUT /api/me/avatar`
+
+- 인증 필수
+- 요청: `multipart/form-data`, 필드명 `file`
+- 성공: `200 { "avatarUrl": "..." }`
+- 잘못된 파일: `400` 또는 `415`
+- 업로드 제한 초과: `413`
+- 인증 실패: `401`
+
+저장소에는 생성된 객체 키를 사용하고, 사용자 레코드에는 공개 URL 대신 해당 키를 연결한다. 응답 URL은 현재 저장소의 공개 또는 서명 URL 정책으로 만든다.
+
+## 화면 및 접근성
+
+- 파일 선택 버튼은 키보드로 조작할 수 있고 명확한 레이블을 가진다.
+- 미리보기에는 사용자 이름 기반의 대체 텍스트를 제공한다.
+- 진행 상태와 오류 메시지는 보조 기술에도 전달한다.
+- 클라이언트 미리보기와 실제 저장 이미지는 같은 비율로 표시한다. 자르기 UI는 제공하지 않고 중앙 맞춤으로 보여준다.
+
+## 완료 조건
+
+- 유효한 이미지를 저장하면 즉시 새 아바타가 보이고 새로고침 후에도 유지된다.
+- 기존 사진이 있는 사용자는 같은 흐름으로 교체할 수 있다.
+- 지원하지 않거나 손상되거나 제한을 초과한 파일은 저장되지 않으며 기존 사진이 유지된다.
+- 다른 사용자의 프로필 사진을 변경하는 요청은 허용되지 않는다.
+- 업로드 도중 네트워크 오류가 발생해도 다시 시도할 수 있다.
+
+## 제외 범위
+
+사진 삭제, 자르기·회전·필터, 카메라 촬영, 콘텐츠 검수는 이번 구현에 포함하지 않는다.
+
+skipped: ceremony — 출시 계획, KPI, ADR. 요청하면 추가한다.
+
+exec
+/bin/zsh -lc 'git status --short -- spec-avatar.md' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group
+ succeeded in 0ms:
+?? spec-avatar.md
+
+diff --git a/benchmarks/results/routing/p3-spec-group/spec-avatar.md b/benchmarks/results/routing/p3-spec-group/spec-avatar.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ec47712f1afc9777f869e31feb160d07a4b9e85a
+--- /dev/null
++++ b/benchmarks/results/routing/p3-spec-group/spec-avatar.md
+@@ -0,0 +1,60 @@
++# 프로필 사진 업로드 스펙
++
++## 목표
++
++로그인한 사용자가 자신의 프로필 사진을 업로드하거나 교체하고, 저장 직후와 이후 방문에서 새 사진을 볼 수 있게 한다.
++
++가정: 로그인, 사용자 프로필, 프로필 편집 화면은 이미 존재한다.
++
++## 사용자 흐름
++
++1. 프로필 편집 화면에서 이미지 파일을 선택한다.
++2. 선택한 이미지를 원형 아바타 형태로 미리 본다.
++3. 저장하면 업로드 진행 상태를 표시하고 중복 저장을 막는다.
++4. 성공 시 화면의 모든 사용자 아바타를 새 이미지로 갱신한다.
++5. 실패 시 기존 사진을 유지하고, 원인과 재시도 방법을 안내한다.
++
++## 요구사항
++
++- JPEG, PNG, WebP 이미지를 지원한다.
++- 파일 크기는 서비스의 업로드 제한을 따르며, 초과 파일은 업로드 전에 가능하면 차단한다.
++- 서버는 확장자가 아니라 실제 파일 내용으로 이미지 형식을 검증한다.
++- 서버가 이미지를 디코딩한 뒤 안전한 형식으로 다시 저장하고 위치 정보 등 메타데이터를 제거한다.
++- 사진은 인증된 사용자 본인의 프로필에만 연결할 수 있다.
++- 새 사진의 저장과 프로필 연결이 모두 성공한 뒤 기존 사진을 제거한다. 실패하면 기존 사진을 보존한다.
++- 사진이 없을 때는 기존 기본 아바타를 표시한다.
++- 브라우저 캐시 때문에 이전 사진이 남지 않도록 새 URL 또는 버전 값을 사용한다.
++
++## 서버 계약
++
++`PUT /api/me/avatar`
++
++- 인증 필수
++- 요청: `multipart/form-data`, 필드명 `file`
++- 성공: `200 { "avatarUrl": "..." }`
++- 잘못된 파일: `400` 또는 `415`
++- 업로드 제한 초과: `413`
++- 인증 실패: `401`
++
++저장소에는 생성된 객체 키를 사용하고, 사용자 레코드에는 공개 URL 대신 해당 키를 연결한다. 응답 URL은 현재 저장소의 공개 또는 서명 URL 정책으로 만든다.
++
++## 화면 및 접근성
++
++- 파일 선택 버튼은 키보드로 조작할 수 있고 명확한 레이블을 가진다.
++- 미리보기에는 사용자 이름 기반의 대체 텍스트를 제공한다.
++- 진행 상태와 오류 메시지는 보조 기술에도 전달한다.
++- 클라이언트 미리보기와 실제 저장 이미지는 같은 비율로 표시한다. 자르기 UI는 제공하지 않고 중앙 맞춤으로 보여준다.
++
++## 완료 조건
++
++- 유효한 이미지를 저장하면 즉시 새 아바타가 보이고 새로고침 후에도 유지된다.
++- 기존 사진이 있는 사용자는 같은 흐름으로 교체할 수 있다.
++- 지원하지 않거나 손상되거나 제한을 초과한 파일은 저장되지 않으며 기존 사진이 유지된다.
++- 다른 사용자의 프로필 사진을 변경하는 요청은 허용되지 않는다.
++- 업로드 도중 네트워크 오류가 발생해도 다시 시도할 수 있다.
++
++## 제외 범위
++
++사진 삭제, 자르기·회전·필터, 카메라 촬영, 콘텐츠 검수는 이번 구현에 포함하지 않는다.
++
++skipped: ceremony — 출시 계획, KPI, ADR. 요청하면 추가한다.
+
+codex
+[spec-avatar.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group/spec-avatar.md)를 작성했습니다.
+
+업로드·교체 흐름, 서버 계약, 보안 검증, 접근성, 완료 조건을 포함하고 불필요한 출시 절차나 지표 문서는 제외했습니다.
+diff --git a/benchmarks/results/routing/p3-spec-group/spec-avatar.md b/benchmarks/results/routing/p3-spec-group/spec-avatar.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ec47712f1afc9777f869e31feb160d07a4b9e85a
+--- /dev/null
++++ b/benchmarks/results/routing/p3-spec-group/spec-avatar.md
+@@ -0,0 +1,60 @@
++# 프로필 사진 업로드 스펙
++
++## 목표
++
++로그인한 사용자가 자신의 프로필 사진을 업로드하거나 교체하고, 저장 직후와 이후 방문에서 새 사진을 볼 수 있게 한다.
++
++가정: 로그인, 사용자 프로필, 프로필 편집 화면은 이미 존재한다.
++
++## 사용자 흐름
++
++1. 프로필 편집 화면에서 이미지 파일을 선택한다.
++2. 선택한 이미지를 원형 아바타 형태로 미리 본다.
++3. 저장하면 업로드 진행 상태를 표시하고 중복 저장을 막는다.
++4. 성공 시 화면의 모든 사용자 아바타를 새 이미지로 갱신한다.
++5. 실패 시 기존 사진을 유지하고, 원인과 재시도 방법을 안내한다.
++
++## 요구사항
++
++- JPEG, PNG, WebP 이미지를 지원한다.
++- 파일 크기는 서비스의 업로드 제한을 따르며, 초과 파일은 업로드 전에 가능하면 차단한다.
++- 서버는 확장자가 아니라 실제 파일 내용으로 이미지 형식을 검증한다.
++- 서버가 이미지를 디코딩한 뒤 안전한 형식으로 다시 저장하고 위치 정보 등 메타데이터를 제거한다.
++- 사진은 인증된 사용자 본인의 프로필에만 연결할 수 있다.
++- 새 사진의 저장과 프로필 연결이 모두 성공한 뒤 기존 사진을 제거한다. 실패하면 기존 사진을 보존한다.
++- 사진이 없을 때는 기존 기본 아바타를 표시한다.
++- 브라우저 캐시 때문에 이전 사진이 남지 않도록 새 URL 또는 버전 값을 사용한다.
++
++## 서버 계약
++
++`PUT /api/me/avatar`
++
++- 인증 필수
++- 요청: `multipart/form-data`, 필드명 `file`
++- 성공: `200 { "avatarUrl": "..." }`
++- 잘못된 파일: `400` 또는 `415`
++- 업로드 제한 초과: `413`
++- 인증 실패: `401`
++
++저장소에는 생성된 객체 키를 사용하고, 사용자 레코드에는 공개 URL 대신 해당 키를 연결한다. 응답 URL은 현재 저장소의 공개 또는 서명 URL 정책으로 만든다.
++
++## 화면 및 접근성
++
++- 파일 선택 버튼은 키보드로 조작할 수 있고 명확한 레이블을 가진다.
++- 미리보기에는 사용자 이름 기반의 대체 텍스트를 제공한다.
++- 진행 상태와 오류 메시지는 보조 기술에도 전달한다.
++- 클라이언트 미리보기와 실제 저장 이미지는 같은 비율로 표시한다. 자르기 UI는 제공하지 않고 중앙 맞춤으로 보여준다.
++
++## 완료 조건
++
++- 유효한 이미지를 저장하면 즉시 새 아바타가 보이고 새로고침 후에도 유지된다.
++- 기존 사진이 있는 사용자는 같은 흐름으로 교체할 수 있다.
++- 지원하지 않거나 손상되거나 제한을 초과한 파일은 저장되지 않으며 기존 사진이 유지된다.
++- 다른 사용자의 프로필 사진을 변경하는 요청은 허용되지 않는다.
++- 업로드 도중 네트워크 오류가 발생해도 다시 시도할 수 있다.
++
++## 제외 범위
++
++사진 삭제, 자르기·회전·필터, 카메라 촬영, 콘텐츠 검수는 이번 구현에 포함하지 않는다.
++
++skipped: ceremony — 출시 계획, KPI, ADR. 요청하면 추가한다.
+
+tokens used
+31,380
+[spec-avatar.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p3-spec-group/spec-avatar.md)를 작성했습니다.
+
+업로드·교체 흐름, 서버 계약, 보안 검증, 접근성, 완료 조건을 포함하고 불필요한 출시 절차나 지표 문서는 제외했습니다.

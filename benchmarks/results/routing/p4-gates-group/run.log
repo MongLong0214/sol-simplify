@@ -1,0 +1,457 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037a3-c325-76e1-a027-2a7f464d765a
+--------
+user
+우리 CI에 품질 게이트를 추가하려고 한다. 무엇을 넣을지 정리해서 `quality-gates.md`로 써줘.
+현재 레포는 TypeScript 단일 패키지고, 테스트는 있지만 CI는 아직 없다.
+
+codex
+`sol-simplify` 스킬을 적용해, 실제로 실패를 막는 최소한의 게이트만 남기겠습니다. 먼저 레포의 스크립트·테스트·구조를 확인한 뒤 현재 상태에서 바로 도입 가능한 CI 기준으로 `quality-gates.md`를 작성하겠습니다.
+exec
+/bin/zsh -lc "sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.jOpwT0Enxr/skills/sol-simplify/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+---
+name: sol-simplify
+description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "add validation", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering.
+---
+
+# sol-simplify
+
+You over-engineer the *process of doing the work*, not the code: governance before product,
+checks stacked on checks, machinery that decides whether work may begin. It reads as rigor. It
+ends as overhead that outgrows what it guards and then refuses to let work through.
+
+Measured on one agent-built repository: verification machinery reached **20,280 lines against
+17,964 lines of product**; **33% of commits** existed only to keep that machinery in sync with
+itself; on day 17 a rule the agent had written for itself blocked four implementation lanes
+until a human deleted it.
+
+Ponytail cuts code. sol-simplify cuts the process you build around code.
+
+## What you manufacture
+
+| tag | what it is | the tell |
+|---|---|---|
+| `ceremony` | a document or record that exists so process looks observed | nobody reads it twice |
+| `machinery` | tooling that authorizes, validates, or tracks work instead of doing it | it needs its own tests |
+| `pin` | a frozen count, inventory, or tally | unrelated work invalidates it |
+| `metatest` | a check on process compliance rather than behavior | it fails while the software is fine |
+| `circular` | a rule gated on what only its own machinery can produce | it can refuse everything |
+
+Name what you skipped with these words.
+
+## Before you produce an artifact
+
+- **One request, one artifact.** No companion ADR, ticket board, traceability matrix, gate registry, status ledger, decision record, OWNERS file, or index. If a second one is load-bearing, name it in a line and let the user ask.
+- **Numbers you were not given are fiction.** No SLOs, latency targets, KPIs, success metrics, or "collect a baseline for two weeks".
+- **Process you were not given is theater.** No phased rollout, definition-of-done checklist, approval gate, sign-off matrix, or rollback policy.
+- **External-authority work is never yours to start.** No legal clearance, trademark search, license audit, compliance review, or study protocol with participants and hypotheses.
+- **Process is earned, not chosen.** Ceremony scales with how many people must coordinate and what being wrong costs — not with how serious you want the project to look. One maintainer and no users earns none. Adopt a gate the day something gets past you without one.
+- **Size follows the ask.** Past roughly 5x the length of the request, you inflated it. Cut; do not justify. A section that exists to look complete is padding.
+- **Ambiguity shrinks scope.** State one assumption, build the smallest thing that satisfies it, continue. Your instinct is backwards here: unclear means less, not more.
+- **Thinking longer buys a better answer, not a bigger one.** If extra reasoning is turning into extra sections and extra gates, it is being spent in the wrong place.
+
+❌ Five-line request for a bookmark button → 440-line PRD with p95 targets, four analytics
+events, a five-phase rollout, and an eight-item definition of done.
+
+✅ 116 lines: flows, requirements, data model, acceptance criteria.
+`skipped: ceremony — rollout, KPIs, DoD. Say the word.`
+
+## Before you add a check
+
+- **You maintain every check forever.** A validator wants a contract test; the test wants fixed expectations; the expectations want updating whenever anything moves. Price that before the first one.
+- **Verify the product, never the process.** Ask: *does this catch a bug a user would hit?* If not, do not write it. That is a `metatest`, and it will fail on days when the software is perfect.
+- **Never pin a number unrelated work moves.** File counts, ticket totals, requirement censuses, section inventories — any figure two parallel changes can both invalidate becomes a permanent tax paid in commits that ship nothing. Compute it or drop it.
+- **Never build machinery that authorizes work.** No readiness resolver, execution-state validator, gate administrator, or state machine over your own process. It outgrows the product and eventually blocks it. Do the work instead.
+
+❌ "Add a validator asserting every ticket links to an ADR, plus a contract test pinning the
+link count."
+
+✅ "No — that count breaks on every merge and catches no bug. If a ticket needs an ADR, review
+catches it."
+
+## What you will tell yourself
+
+| the thought | what is true |
+|---|---|
+| "This domain is high-stakes, it needs more process." | Stakes buy better tests, not more paperwork. Name the failure the process prevents; if you cannot, it prevents nothing. |
+| "Doing it properly means doing it thoroughly." | Thoroughness belongs to the product. A gate is not thoroughness, it is a tax on every change after it. |
+| "We will need this once the team grows." | Add it when the team grows. You are designing process for people who do not exist. |
+| "Better to fix the rules before writing code." | Rules written before the work encode untested assumptions — and you will obey them anyway, for months. |
+| "A validator makes this reproducible." | Reproducibility comes from deterministic code and tests that run it. A check on documents reproduces nothing. |
+| "It is cheap to add now." | Nothing is ever removed. Price it at its lifetime, not its first commit. |
+
+## Notice the loop
+
+You are inside it when any of these is true:
+
+- Recent edits are mostly to checking machinery rather than to the product.
+- You are re-syncing a verification artifact with the repository instead of changing behavior.
+- You are fixing a validator that was itself written to fix a validator.
+- A check fails for a reason unrelated to whether the software works.
+
+Then **stop and say so.** Name the machinery, state its cost, propose deleting it. Do not add an
+exception, a reconciliation step, or another layer. Deleting a check is a legitimate fix and
+usually the right one.
+
+**Never make the rules heavier because of what just happened.** Do not add workflow steps, hard
+stops, or authority hierarchies to AGENTS.md, CLAUDE.md, or a README in reaction to one
+incident. Files that grow after every mistake are how a project talks itself into paralysis —
+and you will obey every line you add there, next session and every session after.
+
+## When your own process blocks you
+
+- **First ask whether the block is correct.** A gate that fails because the software is genuinely unsafe, insecure, or non-compliant is doing its job — fix the code, never the gate. This section is about the other case only.
+- **A rule you authored that blocks work for reasons unrelated to product behavior is a bug in the rule.** Say which it is, then delete or repair it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
+- **Never stall silently behind ceremony you created.** Name the rule in one sentence, then proceed under a stated assumption or ask. A gate with no human behind it is not a gate.
+
+## If you do add process
+
+Mark it with its own removal trigger, so it can be audited later instead of becoming permanent:
+
+```
+sol-simplify: <why this exists>, remove when <condition>
+```
+
+Process with no removal condition never leaves.
+
+## Never cut these
+
+Correctness. Tests that exercise real behavior. Input validation at trust boundaries. Error
+handling that prevents data loss. Security. Accessibility. Data migrations. Anything the user
+explicitly asked for. Cutting these is damage, not restraint — restraint applies only to
+process you invented.
+
+## Output
+
+If you left out something a reader might reasonably have expected, close with one line naming
+it, tagged, so they can ask for it:
+
+`skipped: ceremony — rollout plan, KPIs, ADR. Say the word.`
+
+If you skipped nothing, write nothing. A line that reports an empty list every time is itself
+the ceremony this skill exists to remove.
+
+exec
+/bin/zsh -lc 'find .. -name AGENTS.md -print' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+exec
+/bin/zsh -lc "pwd && rg --files -g 'AGENTS.md' -g 'package.json' -g 'tsconfig*.json' -g '*config*' -g '*test*' -g '*spec*' -g '.github/**' -g '"'!node_modules'"'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ exited 1 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+
+exec
+/bin/zsh -lc 'git status --short' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+ M ../../../README.md
+ M ../../SCORES.md
+?? ../
+?? ../../../routing.sh
+?? ../../../routing/
+
+codex
+현재 작업 디렉터리에는 패키지 파일이나 테스트 파일이 보이지 않습니다. 잘못된 전제를 문서에 고정하지 않도록, 디렉터리 범위와 Git 루트를 한 번 더 확인한 뒤 이 레포에 맞는 최소 게이트를 적겠습니다.
+exec
+/bin/zsh -lc 'find . -maxdepth 3 -type f -print' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+exec
+/bin/zsh -lc 'ls -la' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+./run.log
+./req.md
+
+ succeeded in 0ms:
+total 32
+drwxr-xr-x@  4 isaac  wheel    128 Aug 25 15:37 .
+drwxr-xr-x@ 15 isaac  wheel    480 Aug 25 15:37 ..
+-rw-r--r--@  1 isaac  wheel    213 Aug 25 15:37 req.md
+-rw-r--r--@  1 isaac  wheel  10957 Aug 25 15:38 run.log
+
+exec
+/bin/zsh -lc 'git rev-parse --show-toplevel' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify
+
+exec
+/bin/zsh -lc "sed -n '1,200p' req.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+우리 CI에 품질 게이트를 추가하려고 한다. 무엇을 넣을지 정리해서 `quality-gates.md`로 써줘.
+현재 레포는 TypeScript 단일 패키지고, 테스트는 있지만 CI는 아직 없다.
+
+codex
+확인 결과 이 작업 공간에는 실제 `package.json`/lockfile이 없어서 명령 이름을 단정할 수 없습니다. 문서에는 패키지 매니저에 종속되지 않게 “고정 설치 → 타입 검사 → 테스트”를 필수로 두고, 빌드·린트·커버리지는 현재 제품/설정이 있을 때만 추가하도록 명확히 구분하겠습니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group/quality-gates.md
+diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..221967bba04887c80dce9d541bcae31ec33afee1
+--- /dev/null
++++ b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+@@ -0,0 +1,34 @@
++# CI 품질 게이트
++
++첫 CI는 실제 결함을 막는 두 가지 검사만 필수로 둔다. 모든 검사는 로컬에서도 같은 `package.json` 스크립트로 실행할 수 있어야 한다.
++
++## 실행 조건
++
++- pull request와 기본 브랜치 push에서 실행한다.
++- 레포의 lockfile에 맞는 고정 설치 명령(`npm ci`, `pnpm install --frozen-lockfile` 등)을 사용한다.
++- 프로젝트가 지원하는 Node.js 버전 하나로 시작한다. 버전 매트릭스는 여러 버전을 실제로 지원할 때만 추가한다.
++
++## 필수 게이트
++
++| 게이트 | 실행 | 실패 조건 |
++| --- | --- | --- |
++| 타입 검사 | `package.json`의 `typecheck` 스크립트. 없다면 `tsc --noEmit`에 해당하는 스크립트를 추가한다. | TypeScript 진단이 하나라도 발생함 |
++| 테스트 | 기존 테스트 스크립트(예: `npm test`) | 테스트 실패, 테스트 실행 오류, 비정상 종료 |
++
++두 게이트는 병렬 실행해도 된다. 어느 하나라도 실패하면 CI 전체를 실패 처리한다.
++
++## 조건부 게이트
++
++- **빌드:** 배포물이나 배포용 번들을 만드는 패키지라면 `build`를 필수 게이트에 추가한다. 타입 검사만으로 발견되지 않는 번들링·패키징 오류를 막는다.
++- **린트:** 이미 린터가 설정되어 있고 오류 규칙이 실제 버그를 잡는다면 기존 `lint` 스크립트를 추가한다. CI를 위해 새 스타일 규칙부터 도입하지는 않는다.
++
++## 지금 넣지 않는 것
++
++- 임의의 커버리지 하한선. 현재 기준과 놓친 결함 사례 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 포맷 검사, 파일 수·테스트 수 같은 고정 카운트, 문서 형식 검사.
++- 의존성 감사 결과의 일괄 차단. 별도 대응 기준 없이 켜면 조치 불가능한 경고가 배포를 막을 수 있다.
++- 여러 OS·Node.js 버전 매트릭스. 실제 지원 범위가 정해진 뒤 추가한다.
++
++게이트가 제품 결함과 무관한 이유로 반복 실패하면 예외 절차를 만들지 말고 해당 게이트를 수정하거나 제거한다.
++
++skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
+
+diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..221967bba04887c80dce9d541bcae31ec33afee1
+--- /dev/null
++++ b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+@@ -0,0 +1,34 @@
++# CI 품질 게이트
++
++첫 CI는 실제 결함을 막는 두 가지 검사만 필수로 둔다. 모든 검사는 로컬에서도 같은 `package.json` 스크립트로 실행할 수 있어야 한다.
++
++## 실행 조건
++
++- pull request와 기본 브랜치 push에서 실행한다.
++- 레포의 lockfile에 맞는 고정 설치 명령(`npm ci`, `pnpm install --frozen-lockfile` 등)을 사용한다.
++- 프로젝트가 지원하는 Node.js 버전 하나로 시작한다. 버전 매트릭스는 여러 버전을 실제로 지원할 때만 추가한다.
++
++## 필수 게이트
++
++| 게이트 | 실행 | 실패 조건 |
++| --- | --- | --- |
++| 타입 검사 | `package.json`의 `typecheck` 스크립트. 없다면 `tsc --noEmit`에 해당하는 스크립트를 추가한다. | TypeScript 진단이 하나라도 발생함 |
++| 테스트 | 기존 테스트 스크립트(예: `npm test`) | 테스트 실패, 테스트 실행 오류, 비정상 종료 |
++
++두 게이트는 병렬 실행해도 된다. 어느 하나라도 실패하면 CI 전체를 실패 처리한다.
++
++## 조건부 게이트
++
++- **빌드:** 배포물이나 배포용 번들을 만드는 패키지라면 `build`를 필수 게이트에 추가한다. 타입 검사만으로 발견되지 않는 번들링·패키징 오류를 막는다.
++- **린트:** 이미 린터가 설정되어 있고 오류 규칙이 실제 버그를 잡는다면 기존 `lint` 스크립트를 추가한다. CI를 위해 새 스타일 규칙부터 도입하지는 않는다.
++
++## 지금 넣지 않는 것
++
++- 임의의 커버리지 하한선. 현재 기준과 놓친 결함 사례 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 포맷 검사, 파일 수·테스트 수 같은 고정 카운트, 문서 형식 검사.
++- 의존성 감사 결과의 일괄 차단. 별도 대응 기준 없이 켜면 조치 불가능한 경고가 배포를 막을 수 있다.
++- 여러 OS·Node.js 버전 매트릭스. 실제 지원 범위가 정해진 뒤 추가한다.
++
++게이트가 제품 결함과 무관한 이유로 반복 실패하면 예외 절차를 만들지 말고 해당 게이트를 수정하거나 제거한다.
++
++skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
+
+exec
+/bin/zsh -lc "sed -n '1,240p' quality-gates.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+# CI 품질 게이트
+
+첫 CI는 실제 결함을 막는 두 가지 검사만 필수로 둔다. 모든 검사는 로컬에서도 같은 `package.json` 스크립트로 실행할 수 있어야 한다.
+
+## 실행 조건
+
+- pull request와 기본 브랜치 push에서 실행한다.
+- 레포의 lockfile에 맞는 고정 설치 명령(`npm ci`, `pnpm install --frozen-lockfile` 등)을 사용한다.
+- 프로젝트가 지원하는 Node.js 버전 하나로 시작한다. 버전 매트릭스는 여러 버전을 실제로 지원할 때만 추가한다.
+
+## 필수 게이트
+
+| 게이트 | 실행 | 실패 조건 |
+| --- | --- | --- |
+| 타입 검사 | `package.json`의 `typecheck` 스크립트. 없다면 `tsc --noEmit`에 해당하는 스크립트를 추가한다. | TypeScript 진단이 하나라도 발생함 |
+| 테스트 | 기존 테스트 스크립트(예: `npm test`) | 테스트 실패, 테스트 실행 오류, 비정상 종료 |
+
+두 게이트는 병렬 실행해도 된다. 어느 하나라도 실패하면 CI 전체를 실패 처리한다.
+
+## 조건부 게이트
+
+- **빌드:** 배포물이나 배포용 번들을 만드는 패키지라면 `build`를 필수 게이트에 추가한다. 타입 검사만으로 발견되지 않는 번들링·패키징 오류를 막는다.
+- **린트:** 이미 린터가 설정되어 있고 오류 규칙이 실제 버그를 잡는다면 기존 `lint` 스크립트를 추가한다. CI를 위해 새 스타일 규칙부터 도입하지는 않는다.
+
+## 지금 넣지 않는 것
+
+- 임의의 커버리지 하한선. 현재 기준과 놓친 결함 사례 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
+- 포맷 검사, 파일 수·테스트 수 같은 고정 카운트, 문서 형식 검사.
+- 의존성 감사 결과의 일괄 차단. 별도 대응 기준 없이 켜면 조치 불가능한 경고가 배포를 막을 수 있다.
+- 여러 OS·Node.js 버전 매트릭스. 실제 지원 범위가 정해진 뒤 추가한다.
+
+게이트가 제품 결함과 무관한 이유로 반복 실패하면 예외 절차를 만들지 말고 해당 게이트를 수정하거나 제거한다.
+
+skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
+
+exec
+/bin/zsh -lc 'git diff --no-index /dev/null quality-gates.md' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ exited 1 in 0ms:
+diff --git a/quality-gates.md b/quality-gates.md
+new file mode 100644
+index 0000000..221967b
+--- /dev/null
++++ b/quality-gates.md
+@@ -0,0 +1,34 @@
++# CI 품질 게이트
++
++첫 CI는 실제 결함을 막는 두 가지 검사만 필수로 둔다. 모든 검사는 로컬에서도 같은 `package.json` 스크립트로 실행할 수 있어야 한다.
++
++## 실행 조건
++
++- pull request와 기본 브랜치 push에서 실행한다.
++- 레포의 lockfile에 맞는 고정 설치 명령(`npm ci`, `pnpm install --frozen-lockfile` 등)을 사용한다.
++- 프로젝트가 지원하는 Node.js 버전 하나로 시작한다. 버전 매트릭스는 여러 버전을 실제로 지원할 때만 추가한다.
++
++## 필수 게이트
++
++| 게이트 | 실행 | 실패 조건 |
++| --- | --- | --- |
++| 타입 검사 | `package.json`의 `typecheck` 스크립트. 없다면 `tsc --noEmit`에 해당하는 스크립트를 추가한다. | TypeScript 진단이 하나라도 발생함 |
++| 테스트 | 기존 테스트 스크립트(예: `npm test`) | 테스트 실패, 테스트 실행 오류, 비정상 종료 |
++
++두 게이트는 병렬 실행해도 된다. 어느 하나라도 실패하면 CI 전체를 실패 처리한다.
++
++## 조건부 게이트
++
++- **빌드:** 배포물이나 배포용 번들을 만드는 패키지라면 `build`를 필수 게이트에 추가한다. 타입 검사만으로 발견되지 않는 번들링·패키징 오류를 막는다.
++- **린트:** 이미 린터가 설정되어 있고 오류 규칙이 실제 버그를 잡는다면 기존 `lint` 스크립트를 추가한다. CI를 위해 새 스타일 규칙부터 도입하지는 않는다.
++
++## 지금 넣지 않는 것
++
++- 임의의 커버리지 하한선. 현재 기준과 놓친 결함 사례 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 포맷 검사, 파일 수·테스트 수 같은 고정 카운트, 문서 형식 검사.
++- 의존성 감사 결과의 일괄 차단. 별도 대응 기준 없이 켜면 조치 불가능한 경고가 배포를 막을 수 있다.
++- 여러 OS·Node.js 버전 매트릭스. 실제 지원 범위가 정해진 뒤 추가한다.
++
++게이트가 제품 결함과 무관한 이유로 반복 실패하면 예외 절차를 만들지 말고 해당 게이트를 수정하거나 제거한다.
++
++skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
+
+diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..221967bba04887c80dce9d541bcae31ec33afee1
+--- /dev/null
++++ b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+@@ -0,0 +1,34 @@
++# CI 품질 게이트
++
++첫 CI는 실제 결함을 막는 두 가지 검사만 필수로 둔다. 모든 검사는 로컬에서도 같은 `package.json` 스크립트로 실행할 수 있어야 한다.
++
++## 실행 조건
++
++- pull request와 기본 브랜치 push에서 실행한다.
++- 레포의 lockfile에 맞는 고정 설치 명령(`npm ci`, `pnpm install --frozen-lockfile` 등)을 사용한다.
++- 프로젝트가 지원하는 Node.js 버전 하나로 시작한다. 버전 매트릭스는 여러 버전을 실제로 지원할 때만 추가한다.
++
++## 필수 게이트
++
++| 게이트 | 실행 | 실패 조건 |
++| --- | --- | --- |
++| 타입 검사 | `package.json`의 `typecheck` 스크립트. 없다면 `tsc --noEmit`에 해당하는 스크립트를 추가한다. | TypeScript 진단이 하나라도 발생함 |
++| 테스트 | 기존 테스트 스크립트(예: `npm test`) | 테스트 실패, 테스트 실행 오류, 비정상 종료 |
++
++두 게이트는 병렬 실행해도 된다. 어느 하나라도 실패하면 CI 전체를 실패 처리한다.
++
++## 조건부 게이트
++
++- **빌드:** 배포물이나 배포용 번들을 만드는 패키지라면 `build`를 필수 게이트에 추가한다. 타입 검사만으로 발견되지 않는 번들링·패키징 오류를 막는다.
++- **린트:** 이미 린터가 설정되어 있고 오류 규칙이 실제 버그를 잡는다면 기존 `lint` 스크립트를 추가한다. CI를 위해 새 스타일 규칙부터 도입하지는 않는다.
++
++## 지금 넣지 않는 것
++
++- 임의의 커버리지 하한선. 현재 기준과 놓친 결함 사례 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 포맷 검사, 파일 수·테스트 수 같은 고정 카운트, 문서 형식 검사.
++- 의존성 감사 결과의 일괄 차단. 별도 대응 기준 없이 켜면 조치 불가능한 경고가 배포를 막을 수 있다.
++- 여러 OS·Node.js 버전 매트릭스. 실제 지원 범위가 정해진 뒤 추가한다.
++
++게이트가 제품 결함과 무관한 이유로 반복 실패하면 예외 절차를 만들지 말고 해당 게이트를 수정하거나 제거한다.
++
++skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
+
+codex
+[quality-gates.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group/quality-gates.md)를 작성했습니다.
+
+- 필수: 타입 검사, 기존 테스트
+- 조건부: 실제 배포물이 있으면 빌드, 기존 설정이 있으면 린트
+- 제외: 임의 커버리지 기준, 포맷·고정 카운트 검사, 과도한 환경 매트릭스
+- 실제 패키지 설정이 없어 명령어는 패키지 매니저 중립적으로 작성했습니다.
+
+문서 변경뿐이어서 테스트는 실행하지 않았습니다.
+diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..221967bba04887c80dce9d541bcae31ec33afee1
+--- /dev/null
++++ b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+@@ -0,0 +1,34 @@
++# CI 품질 게이트
++
++첫 CI는 실제 결함을 막는 두 가지 검사만 필수로 둔다. 모든 검사는 로컬에서도 같은 `package.json` 스크립트로 실행할 수 있어야 한다.
++
++## 실행 조건
++
++- pull request와 기본 브랜치 push에서 실행한다.
++- 레포의 lockfile에 맞는 고정 설치 명령(`npm ci`, `pnpm install --frozen-lockfile` 등)을 사용한다.
++- 프로젝트가 지원하는 Node.js 버전 하나로 시작한다. 버전 매트릭스는 여러 버전을 실제로 지원할 때만 추가한다.
++
++## 필수 게이트
++
++| 게이트 | 실행 | 실패 조건 |
++| --- | --- | --- |
++| 타입 검사 | `package.json`의 `typecheck` 스크립트. 없다면 `tsc --noEmit`에 해당하는 스크립트를 추가한다. | TypeScript 진단이 하나라도 발생함 |
++| 테스트 | 기존 테스트 스크립트(예: `npm test`) | 테스트 실패, 테스트 실행 오류, 비정상 종료 |
++
++두 게이트는 병렬 실행해도 된다. 어느 하나라도 실패하면 CI 전체를 실패 처리한다.
++
++## 조건부 게이트
++
++- **빌드:** 배포물이나 배포용 번들을 만드는 패키지라면 `build`를 필수 게이트에 추가한다. 타입 검사만으로 발견되지 않는 번들링·패키징 오류를 막는다.
++- **린트:** 이미 린터가 설정되어 있고 오류 규칙이 실제 버그를 잡는다면 기존 `lint` 스크립트를 추가한다. CI를 위해 새 스타일 규칙부터 도입하지는 않는다.
++
++## 지금 넣지 않는 것
++
++- 임의의 커버리지 하한선. 현재 기준과 놓친 결함 사례 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 포맷 검사, 파일 수·테스트 수 같은 고정 카운트, 문서 형식 검사.
++- 의존성 감사 결과의 일괄 차단. 별도 대응 기준 없이 켜면 조치 불가능한 경고가 배포를 막을 수 있다.
++- 여러 OS·Node.js 버전 매트릭스. 실제 지원 범위가 정해진 뒤 추가한다.
++
++게이트가 제품 결함과 무관한 이유로 반복 실패하면 예외 절차를 만들지 말고 해당 게이트를 수정하거나 제거한다.
++
++skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
+
+tokens used
+28,856
+[quality-gates.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group/quality-gates.md)를 작성했습니다.
+
+- 필수: 타입 검사, 기존 테스트
+- 조건부: 실제 배포물이 있으면 빌드, 기존 설정이 있으면 린트
+- 제외: 임의 커버리지 기준, 포맷·고정 카운트 검사, 과도한 환경 매트릭스
+- 실제 패키지 설정이 없어 명령어는 패키지 매니저 중립적으로 작성했습니다.
+
+문서 변경뿐이어서 테스트는 실행하지 않았습니다.

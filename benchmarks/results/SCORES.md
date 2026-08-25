@@ -90,22 +90,80 @@ none, 2 out of 2.
 
 ## Summary
 
-| experiment | off (median) | oneline (median) | on (median) |
-|---|--:|--:|--:|
-| 01-prd ceremony | 5 | — | **0** |
-| 02-process ceremony | 5 | 1 | **0** |
-| 02-process lines | 412 | 130 | **119** |
-| 03-loop verdict | rebuild+feed | shrink | **dismantle** |
-| 04-guardrail kept / ceremony | 4/4 · 2 | — | **4/4 · 0** |
-| 05-incident C10 | 1 | — | **0** |
+Cells hold 1–3 runs. Where a cell has three runs the number below is the **median** of the
+three; where it has one or two, every value is listed, because a two-run "median" would just
+be the author choosing one.
+
+| experiment | n per cell | off | oneline | on |
+|---|:--:|--:|--:|--:|
+| 01-prd ceremony | 3 | 5 | — | **0** |
+| 02-process ceremony | 3 | 5 | 1 | **0** |
+| 02-process lines | 3 | 412 | 130 | **119** |
+| 03-loop verdict | 1 | rebuild+feed | shrink | **dismantle** |
+| 04-guardrail kept / ceremony | 1 off, 2 on | 4/4 · 2 | — | **4/4** · 0 and 1 |
+| 05-incident C10 | 2 | 1, 1 | — | **0, 0** |
 
 **Ceremony across the eleven committed skill runs: 0 in ten of them, 1 in the eleventh**
 (04-guardrail-on-2, a canary step). Requested items never score, so 04's kept controls are
 excluded by definition. Baseline ceremony was 4–6 on document tasks in every run.
 
-**Skill auto-pickup: 12 of 12** — the eleven committed runs plus one verification that a
-plugin-installed copy (no manual `~/.codex/skills/` file present) is discovered the same way.
-The skill was never named in any prompt.
+## Discovery and routing
+
+Ceremony scores say what the skill does *once loaded*. They say nothing about whether an agent
+reaches for it when it should, or leaves it alone when it should not. Both were unmeasured
+until now: every run above is a prompt the skill is *supposed* to fire on, with the skill
+installed alone. After ACES ([arXiv:2608.20614](https://arxiv.org/abs/2608.20614)), which
+reports that neither structural nor LLM-judge scans observe discovery, `../routing.sh` adds the
+two missing axes.
+
+**Negative probes** are tasks the skill's own *Never cut these* section puts off limits —
+writing unit tests, fixing a SQL injection, keyboard accessibility, a data migration. The skill
+must stay out of them. **Group mode** installs four neighbours that compete for the same
+requests (`release-planner`, `code-reviewer`, `security-review`, `test-writer`); **isolation
+mode** installs sol-simplify alone. Activation is read off the transcript, not judged: Codex
+opens a skill by reading its `SKILL.md`, so the path appears in `run.log`.
+
+| probe | isolation | group | expected |
+|---|---|---|---|
+| n1-tests — write unit tests | **sol-simplify** ✗ | test-writer ✓ | no activation |
+| n2-injection — fix SQL injection | **sol-simplify** ✗ | security-review ✓ | no activation |
+| n3-a11y — keyboard accessibility | none ✓ | none ✓ | no activation |
+| n4-migration — NOT NULL + backfill | none ✓ | none ✓ | no activation |
+| p1-release — first deploy, solo project | — | release-planner + **sol-simplify** ✓ | activation |
+| p2-review — PR review process doc | — | **sol-simplify** ✓ | activation |
+| p3-spec — spec before implementing | — | **sol-simplify** ✓ | activation |
+| p4-gates — quality gates for CI | — | **sol-simplify** ✓ | activation |
+
+**Group mode is clean: 4/4 negatives left alone, 4/4 positives routed to this skill.** Group
+mode is also the realistic install — nobody runs one skill.
+
+**The two failures are isolation-only, and neither damaged the deliverable.** With no neighbour
+to route to, the agent consulted the only skill present. `n1` still produced twelve test cases
+including the boundary and error paths; `n2` still produced a correctly parameterised query
+with no hand-rolled sanitiser. That is a process-metric failure with the outcome metric intact
+— the distinction ACES draws between skill execution and accuracy, and the reason both are
+graded separately.
+
+**`p1` is the strongest single result here.** `release-planner` was co-loaded and pulls the
+opposite way — it asks for rollout stages and a per-stage owner. The document came back at 19
+lines with four headings, ceremony 0, and closed with the skill's own disclosure line naming
+exactly what the neighbour wanted added: `skipped: ceremony — 다단계 롤아웃, 승인 절차, 배포
+자동화. 필요해질 때 추가한다.` An isolation-only benchmark cannot produce that condition.
+
+**The description was left alone.** The static scanner flags it as broad and without negative
+triggers, and in isolation it does over-trigger — but the measured harm is zero and group-mode
+discrimination is 8/8. Narrowing it to fix a single-skill-install artefact would put the 4/4
+positive routing at risk to buy nothing measurable. Revisit if a group-mode negative ever
+fires.
+
+**Limitation:** this measures routing, not lift. The positive probes have no baseline arm, so
+no ceremony delta is claimed from them.
+
+**Skill auto-pickup on prompts it should fire on: 16 of 16** — the eleven committed runs, one
+verification that a plugin-installed copy (no manual `~/.codex/skills/` file present) is
+discovered the same way, and the four group-mode positive probes above. The skill was never
+named in any prompt. On prompts it should *not* fire on, see the routing table: 4 of 4 left
+alone in group mode, 2 of 4 in isolation.
 
 ## Where the one-line prompt is enough — and where it is not
 
