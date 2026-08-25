@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "sol-simplify",
-      "description": "Anti-bureaucracy skill for coding agents. Scored 0 invented process items in 13 of 14 measured runs across five scenarios on gpt-5.6-sol.",
+      "description": "Anti-bureaucracy skill for coding agents. In a five-scenario benchmark on gpt-5.6-sol every baseline run invented process nobody asked for; the skill's runs almost never did.",
       "source": "./",
       "category": "productivity"
     }

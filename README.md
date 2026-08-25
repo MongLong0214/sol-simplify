@@ -19,7 +19,7 @@
 <p align="center">
   <strong>Your agent stops inventing process nobody asked for.</strong><br>
   <sub>One markdown file. Nothing to configure, nothing to run.<br>
-  <b>Every single run without it invented something.</b> With it, across 14 runs: one thing, once.<br>
+  <b>Every single run without it invented process nobody asked for.</b> With it, almost none did.<br>
   <a href="benchmarks/">see how that was measured</a></sub>
 </p>
 
@@ -148,10 +148,10 @@ tiers, none of which had been asked for.
 Row three is the one to check if you worry this makes an agent cut corners: when the process is
 genuinely required, it keeps all of it.
 
-Across all 14 measured runs the skill added exactly one thing nobody asked for — a canary
-deployment step, on the audit scenario, in one run of three. Every run without the skill added
-between one and six. Every number traces to a line in the committed output; full detail and
-limits are in [`benchmarks/`](benchmarks/).
+Every run without the skill invented between one and six of these. With the skill, one run
+added a canary deployment step on the audit scenario; the rest added nothing at all. Every
+number traces to a line in the committed output; full detail and limits are in
+[`benchmarks/`](benchmarks/).
 
 ## FAQ
 
