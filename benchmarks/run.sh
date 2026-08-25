@@ -14,16 +14,25 @@ EFFORT="${SOLSIMPLIFY_EFFORT:-xhigh}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 REAL_HOME="${CODEX_HOME:-$HOME/.codex}"
 
-# Arms that must not see the skill run against a throwaway CODEX_HOME holding only
-# credentials. Moving ~/.codex/skills/sol-simplify aside is NOT enough: Codex's shared
-# app-server daemon caches discovered skills, and a parked skill can still reach the
-# model. That contamination is silent — the run looks clean and is not.
+# Every arm runs against a throwaway CODEX_HOME built from your credentials alone, so the
+# control base and the skill base differ by exactly one file: the skill. Using your real
+# ~/.codex for the skill arm would let your other skills, plugins, and AGENTS.md into the
+# result and make the effect unattributable. Moving ~/.codex/skills/sol-simplify aside is
+# also NOT enough for control arms: Codex's shared app-server daemon caches discovered
+# skills, and a parked skill can still reach the model — silently.
 CLEAN="$(mktemp -d)"
-trap 'rm -rf "$CLEAN"' EXIT
-cp "$REAL_HOME/auth.json" "$CLEAN/" 2>/dev/null || {
+ON_HOME="$(mktemp -d)"
+trap 'rm -rf "$CLEAN" "$ON_HOME"' EXIT
+[ -f "$REAL_HOME/auth.json" ] || {
   echo "no auth.json in $REAL_HOME — run 'codex login' first" >&2; exit 1; }
-printf 'model = "%s"\napproval_policy = "never"\nsandbox_mode = "workspace-write"\nmodel_reasoning_effort = "%s"\n' \
-  "$MODEL" "$EFFORT" > "$CLEAN/config.toml"
+for H in "$CLEAN" "$ON_HOME"; do
+  cp "$REAL_HOME/auth.json" "$H/"
+  printf 'model = "%s"\napproval_policy = "never"\nsandbox_mode = "workspace-write"\nmodel_reasoning_effort = "%s"\n' \
+    "$MODEL" "$EFFORT" > "$H/config.toml"
+done
+# The only difference between the control base and the skill base is the skill.
+mkdir -p "$ON_HOME/skills"
+cp -R "$HERE/../skills/sol-simplify" "$ON_HOME/skills/"
 
 run() { # $1 = arm, $2 = codex home, $3 = extra instruction (optional)
   local out="$HERE/results/$P-$1"
@@ -48,4 +57,4 @@ ONELINE_EN='Make the smallest change that fully solves the task. Do not add abst
 run off        "$CLEAN"
 run oneline    "$CLEAN" "$ONELINE_KO"
 run oneline-en "$CLEAN" "$ONELINE_EN"
-run on         "$REAL_HOME"
+run on         "$ON_HOME"

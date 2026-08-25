@@ -51,6 +51,25 @@ ceremony column, then read the outputs.
 one. Outputs are committed in `results/` so the reduction can be judged rather than taken on
 faith.
 
+## Known limitations of the committed results
+
+Read these before quoting any number.
+
+- **The committed runs were not environmentally symmetric.** Control arms ran in a throwaway
+  `CODEX_HOME`; the skill arms ran in the author's real `~/.codex`, which also held other
+  skills and settings. `run.sh` now builds *both* bases from credentials alone and adds only
+  the skill to the treatment base, so a fresh reproduction is symmetric — but the numbers in
+  `results/` predate that fix and cannot fully attribute their effect to this skill alone.
+  A symmetric spot check of `02-process` is recorded in `results/`.
+- **Single scorer, no blinding.** One person scored every run against the rubric, knowing
+  which arm produced it. Re-scoring by someone else is the obvious next step; every score
+  cites a line so disagreement can be specific.
+- **Loop-commit counts are a subject-line heuristic.** `measure.sh` labels them *candidate*
+  loop commits for that reason. Confirm with diffs before saying a commit shipped nothing.
+- **05-incident preserves the full work tree** (source, tests, workflow, log). The other
+  scenarios preserve the produced document and the run log, not a whole tree, because the
+  task was to produce a document.
+
 ## Honesty
 
 - **n=1 per cell.** These are single runs, not medians. Treat them as demonstrations of a

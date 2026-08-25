@@ -31,9 +31,11 @@ LOOP=$(git log --format='%s' \
 REFUSE=$(git log --format='%s' \
   | grep -icE 'refuse|blocked|unblock|deadlock|cannot proceed' || true)
 
+PCT=$(awk -v n="$LOOP" -v t="$TOTAL" 'BEGIN { printf "%.1f", t ? n * 100 / t : 0 }')
+
 echo "== sol-simplify-audit: measured at $(git rev-parse --short HEAD) =="
 echo "ceremony ratio : ${M_LOC} machinery LOC : ${P_LOC} product LOC"
-echo "loop commits   : ${LOOP} of ${TOTAL} ($(awk "BEGIN{printf \"%.1f\", ${LOOP}*100/${TOTAL}}")%) — re-synced checks, shipped nothing"
+echo "candidate loop commits : ${LOOP} of ${TOTAL} (${PCT}%) — subject-line heuristic; confirm with diffs before claiming they shipped nothing"
 echo "self-refusal   : ${REFUSE} commit subjects mention refusing/blocking"
 echo
 echo "== churn top 20 (what the project spends its life editing) =="

@@ -1,0 +1,1193 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a03731-0a7f-7cb2-82a7-f865280ba64e
+--------
+user
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+
+hook: SessionStart
+hook: SessionStart
+hook: SessionStart Completed
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+hook: UserPromptSubmit Completed
+codex
+재발 방지는 실제 결함 경로의 회귀 테스트와 기존 머지 전 검사 흐름에 최소한으로 연결하는 방향으로 진행하겠습니다. 과도한 절차 문서를 늘리지 않기 위해 `sol-simplify` 스킬을 적용하고, 먼저 현재 코드·테스트·CI 상태와 작업 트리 변경을 확인하겠습니다.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "sed -n '1,240p' /Users/isaac/.codex/skills/sol-simplify/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+ succeeded in 0ms:
+---
+name: sol-simplify
+description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "add validation", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering.
+---
+
+# sol-simplify
+
+You over-engineer the *process of doing the work*, not the code: governance before product,
+checks stacked on checks, machinery that decides whether work may begin. It reads as rigor. It
+ends as overhead that outgrows what it guards and then refuses to let work through.
+
+Measured on one agent-built repository: verification machinery reached **20,280 lines against
+17,964 lines of product**; **33% of commits** existed only to keep that machinery in sync with
+itself; on day 17 a rule the agent had written for itself blocked four implementation lanes
+until a human deleted it.
+
+Ponytail cuts code. sol-simplify cuts the process you build around code.
+
+## What you manufacture
+
+| tag | what it is | the tell |
+|---|---|---|
+| `ceremony` | a document or record that exists so process looks observed | nobody reads it twice |
+| `machinery` | tooling that authorizes, validates, or tracks work instead of doing it | it needs its own tests |
+| `pin` | a frozen count, inventory, or tally | unrelated work invalidates it |
+| `metatest` | a check on process compliance rather than behavior | it fails while the software is fine |
+| `circular` | a rule gated on what only its own machinery can produce | it can refuse everything |
+
+Name what you skipped with these words.
+
+## Before you produce an artifact
+
+- **One request, one artifact.** No companion ADR, ticket board, traceability matrix, gate registry, status ledger, decision record, OWNERS file, or index. If a second one is load-bearing, name it in a line and let the user ask.
+- **Numbers you were not given are fiction.** No SLOs, latency targets, KPIs, success metrics, or "collect a baseline for two weeks".
+- **Process you were not given is theater.** No phased rollout, definition-of-done checklist, approval gate, sign-off matrix, or rollback policy.
+- **External-authority work is never yours to start.** No legal clearance, trademark search, license audit, compliance review, or study protocol with participants and hypotheses.
+- **Process is earned, not chosen.** Ceremony scales with how many people must coordinate and what being wrong costs — not with how serious you want the project to look. One maintainer and no users earns none. Adopt a gate the day something gets past you without one.
+- **Size follows the ask.** Past roughly 5x the length of the request, you inflated it. Cut; do not justify. A section that exists to look complete is padding.
+- **Ambiguity shrinks scope.** State one assumption, build the smallest thing that satisfies it, continue. Your instinct is backwards here: unclear means less, not more.
+- **Thinking longer buys a better answer, not a bigger one.** If extra reasoning is turning into extra sections and extra gates, it is being spent in the wrong place.
+
+❌ Five-line request for a bookmark button → 440-line PRD with p95 targets, four analytics
+events, a five-phase rollout, and an eight-item definition of done.
+
+✅ 116 lines: flows, requirements, data model, acceptance criteria.
+`skipped: ceremony — rollout, KPIs, DoD. Say the word.`
+
+## Before you add a check
+
+- **You maintain every check forever.** A validator wants a contract test; the test wants fixed expectations; the expectations want updating whenever anything moves. Price that before the first one.
+- **Verify the product, never the process.** Ask: *does this catch a bug a user would hit?* If not, do not write it. That is a `metatest`, and it will fail on days when the software is perfect.
+- **Never pin a number unrelated work moves.** File counts, ticket totals, requirement censuses, section inventories — any figure two parallel changes can both invalidate becomes a permanent tax paid in commits that ship nothing. Compute it or drop it.
+- **Never build machinery that authorizes work.** No readiness resolver, execution-state validator, gate administrator, or state machine over your own process. It outgrows the product and eventually blocks it. Do the work instead.
+
+❌ "Add a validator asserting every ticket links to an ADR, plus a contract test pinning the
+link count."
+
+✅ "No — that count breaks on every merge and catches no bug. If a ticket needs an ADR, review
+catches it."
+
+## What you will tell yourself
+
+| the thought | what is true |
+|---|---|
+| "This domain is high-stakes, it needs more process." | Stakes buy better tests, not more paperwork. Name the failure the process prevents; if you cannot, it prevents nothing. |
+| "Doing it properly means doing it thoroughly." | Thoroughness belongs to the product. A gate is not thoroughness, it is a tax on every change after it. |
+| "We will need this once the team grows." | Add it when the team grows. You are designing process for people who do not exist. |
+| "Better to fix the rules before writing code." | Rules written before the work encode untested assumptions — and you will obey them anyway, for months. |
+| "A validator makes this reproducible." | Reproducibility comes from deterministic code and tests that run it. A check on documents reproduces nothing. |
+| "It is cheap to add now." | Nothing is ever removed. Price it at its lifetime, not its first commit. |
+
+## Notice the loop
+
+You are inside it when any of these is true:
+
+- Recent edits are mostly to checking machinery rather than to the product.
+- You are re-syncing a verification artifact with the repository instead of changing behavior.
+- You are fixing a validator that was itself written to fix a validator.
+- A check fails for a reason unrelated to whether the software works.
+
+Then **stop and say so.** Name the machinery, state its cost, propose deleting it. Do not add an
+exception, a reconciliation step, or another layer. Deleting a check is a legitimate fix and
+usually the right one.
+
+**Never make the rules heavier because of what just happened.** Do not add workflow steps, hard
+stops, or authority hierarchies to AGENTS.md, CLAUDE.md, or a README in reaction to one
+incident. Files that grow after every mistake are how a project talks itself into paralysis —
+and you will obey every line you add there, next session and every session after.
+
+## When your own process blocks you
+
+- **A rule you authored that blocks the work is a bug in the rule.** Delete it or fix it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
+- **Never stall silently behind ceremony you created.** Name the rule in one sentence, then proceed under a stated assumption or ask. A gate with no human behind it is not a gate.
+
+## If you do add process
+
+Mark it with its own removal trigger, so it can be audited later instead of becoming permanent:
+
+```
+sol-simplify: <why this exists>, remove when <condition>
+```
+
+Process with no removal condition never leaves.
+
+## Never cut these
+
+Correctness. Tests that exercise real behavior. Input validation at trust boundaries. Error
+handling that prevents data loss. Security. Accessibility. Data migrations. Anything the user
+explicitly asked for. Cutting these is damage, not restraint — restraint applies only to
+process you invented.
+
+## Output
+
+Close with one line naming what you left out, tagged, so the user can ask for it:
+
+`skipped: ceremony — rollout plan, KPIs, ADR. Say the word.`
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "pwd && git status --short --branch && rg --files -g '"'!node_modules'"' -g '"'!dist'"' | sed -n '1,240p' && printf '\\n--- package.json ---\\n' && sed -n '1,240p' package.json && printf '\\n--- workflows ---\\n' && (find .github/workflows -maxdepth 2 -type f -print 2>/dev/null || true)" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+ exited 128 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+fatal: not a git repository (or any of the parent directories): .git
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+codex
+지정된 작업 경로에서 Git 메타데이터가 인식되지 않았습니다. 경로 자체가 비어 있거나 저장소가 한 단계 아래에 있을 수 있어, 범위를 바꾸지 않고 디렉터리 구조부터 확인하겠습니다.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "ls -la && find . -maxdepth 3 -type f -print | sed -n '1,260p' && find . -maxdepth 3 -type d -print | sed -n '1,180p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+ succeeded in 0ms:
+total 48
+drwxr-xr-x@  7 isaac  wheel    224 Aug 25 13:32 .
+drwxr-xr-x@ 17 isaac  wheel    544 Aug 25 13:32 ..
+-rw-r--r--@  1 isaac  wheel     95 Aug 25 13:32 AGENTS.md
+-rw-r--r--@  1 isaac  wheel     85 Aug 25 13:32 package.json
+-rw-r--r--@  1 isaac  wheel    484 Aug 25 13:32 req.md
+-rw-r--r--@  1 isaac  wheel  10954 Aug 25 13:32 run.log
+drwxr-xr-x@  3 isaac  wheel     96 Aug 25 13:32 src
+./run.log
+./req.md
+./package.json
+./AGENTS.md
+./src/orders.js
+.
+./src
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "printf '%s\\n' '--- AGENTS.md ---' && sed -n '1,200p' AGENTS.md && printf '%s\\n' '--- package.json ---' && sed -n '1,200p' package.json && printf '%s\\n' '--- src/orders.js ---' && sed -n '1,240p' src/orders.js && printf '%s\\n' '--- req.md ---' && sed -n '1,240p' req.md && printf '%s\\n' '--- run.log tail ---' && tail -n 120 run.log" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+ succeeded in 0ms:
+--- AGENTS.md ---
+# AGENTS.md
+- Default branch: main. Feature branches: feat/*.
+- Run `npm test` before merging.
+--- package.json ---
+{ "name": "orders-service", "type": "module", "scripts": { "test": "node --test" } }
+--- src/orders.js ---
+export function getUserOrders(db, userId) {
+  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+  if (!rows.length) return null; // reverted hotfix restored the old behavior
+  return rows;
+}
+--- req.md ---
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+--- run.log tail ---
+
+- **You maintain every check forever.** A validator wants a contract test; the test wants fixed expectations; the expectations want updating whenever anything moves. Price that before the first one.
+- **Verify the product, never the process.** Ask: *does this catch a bug a user would hit?* If not, do not write it. That is a `metatest`, and it will fail on days when the software is perfect.
+- **Never pin a number unrelated work moves.** File counts, ticket totals, requirement censuses, section inventories — any figure two parallel changes can both invalidate becomes a permanent tax paid in commits that ship nothing. Compute it or drop it.
+- **Never build machinery that authorizes work.** No readiness resolver, execution-state validator, gate administrator, or state machine over your own process. It outgrows the product and eventually blocks it. Do the work instead.
+
+❌ "Add a validator asserting every ticket links to an ADR, plus a contract test pinning the
+link count."
+
+✅ "No — that count breaks on every merge and catches no bug. If a ticket needs an ADR, review
+catches it."
+
+## What you will tell yourself
+
+| the thought | what is true |
+|---|---|
+| "This domain is high-stakes, it needs more process." | Stakes buy better tests, not more paperwork. Name the failure the process prevents; if you cannot, it prevents nothing. |
+| "Doing it properly means doing it thoroughly." | Thoroughness belongs to the product. A gate is not thoroughness, it is a tax on every change after it. |
+| "We will need this once the team grows." | Add it when the team grows. You are designing process for people who do not exist. |
+| "Better to fix the rules before writing code." | Rules written before the work encode untested assumptions — and you will obey them anyway, for months. |
+| "A validator makes this reproducible." | Reproducibility comes from deterministic code and tests that run it. A check on documents reproduces nothing. |
+| "It is cheap to add now." | Nothing is ever removed. Price it at its lifetime, not its first commit. |
+
+## Notice the loop
+
+You are inside it when any of these is true:
+
+- Recent edits are mostly to checking machinery rather than to the product.
+- You are re-syncing a verification artifact with the repository instead of changing behavior.
+- You are fixing a validator that was itself written to fix a validator.
+- A check fails for a reason unrelated to whether the software works.
+
+Then **stop and say so.** Name the machinery, state its cost, propose deleting it. Do not add an
+exception, a reconciliation step, or another layer. Deleting a check is a legitimate fix and
+usually the right one.
+
+**Never make the rules heavier because of what just happened.** Do not add workflow steps, hard
+stops, or authority hierarchies to AGENTS.md, CLAUDE.md, or a README in reaction to one
+incident. Files that grow after every mistake are how a project talks itself into paralysis —
+and you will obey every line you add there, next session and every session after.
+
+## When your own process blocks you
+
+- **A rule you authored that blocks the work is a bug in the rule.** Delete it or fix it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
+- **Never stall silently behind ceremony you created.** Name the rule in one sentence, then proceed under a stated assumption or ask. A gate with no human behind it is not a gate.
+
+## If you do add process
+
+Mark it with its own removal trigger, so it can be audited later instead of becoming permanent:
+
+```
+sol-simplify: <why this exists>, remove when <condition>
+```
+
+Process with no removal condition never leaves.
+
+## Never cut these
+
+Correctness. Tests that exercise real behavior. Input validation at trust boundaries. Error
+handling that prevents data loss. Security. Accessibility. Data migrations. Anything the user
+explicitly asked for. Cutting these is damage, not restraint — restraint applies only to
+process you invented.
+
+## Output
+
+Close with one line naming what you left out, tagged, so the user can ask for it:
+
+`skipped: ceremony — rollout plan, KPIs, ADR. Say the word.`
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "pwd && git status --short --branch && rg --files -g '"'!node_modules'"' -g '"'!dist'"' | sed -n '1,240p' && printf '\\n--- package.json ---\\n' && sed -n '1,240p' package.json && printf '\\n--- workflows ---\\n' && (find .github/workflows -maxdepth 2 -type f -print 2>/dev/null || true)" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+ exited 128 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+fatal: not a git repository (or any of the parent directories): .git
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+codex
+지정된 작업 경로에서 Git 메타데이터가 인식되지 않았습니다. 경로 자체가 비어 있거나 저장소가 한 단계 아래에 있을 수 있어, 범위를 바꾸지 않고 디렉터리 구조부터 확인하겠습니다.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "ls -la && find . -maxdepth 3 -type f -print | sed -n '1,260p' && find . -maxdepth 3 -type d -print | sed -n '1,180p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+ succeeded in 0ms:
+total 48
+drwxr-xr-x@  7 isaac  wheel    224 Aug 25 13:32 .
+drwxr-xr-x@ 17 isaac  wheel    544 Aug 25 13:32 ..
+-rw-r--r--@  1 isaac  wheel     95 Aug 25 13:32 AGENTS.md
+-rw-r--r--@  1 isaac  wheel     85 Aug 25 13:32 package.json
+-rw-r--r--@  1 isaac  wheel    484 Aug 25 13:32 req.md
+-rw-r--r--@  1 isaac  wheel  10954 Aug 25 13:32 run.log
+drwxr-xr-x@  3 isaac  wheel     96 Aug 25 13:32 src
+./run.log
+./req.md
+./package.json
+./AGENTS.md
+./src/orders.js
+.
+./src
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+codex
+현재 구현은 여전히 빈 주문 결과를 `null`로 반환하고 있으며 테스트 파일과 CI가 없습니다. 먼저 이 실패를 실제 실행으로 재현한 뒤, 반환 계약을 빈 배열로 고정하는 회귀 테스트와 PR 테스트 워크플로만 추가하겠습니다. `AGENTS.md`에 사고 대응 규칙이나 승인 절차를 덧붙이는 일은 하지 않습니다.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "npm test && node --input-type=module -e \"import { getUserOrders } from './src/orders.js'; const result = getUserOrders({ query: () => [] }, 'customer-3'); console.log({ result, isArray: Array.isArray(result) });\"" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+ succeeded in 93ms:
+
+> test
+> node --test
+
+ℹ tests 0
+ℹ suites 0
+ℹ pass 0
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6.625208
+{ result: null, isArray: false }
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+web search: 
+web search: site:github.com/actions/checkout releases latest major action ...
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/.github/workflows/test.yml
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/src/orders.js
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/test/orders.test.js
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f25519d3480ae185012517e85c28071f9e27631
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v6
++      - name: Set up Node.js
++        uses: actions/setup-node@v6
++        with:
++          node-version: 24
++          package-manager-cache: false
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..5efeb42c8060778537c4f1944723e580b3da4011
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,26 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.ok(Array.isArray(orders));
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [{ id: 'order-1', user_id: 'user-with-orders' }];
++  const db = { query: () => expectedOrders };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f25519d3480ae185012517e85c28071f9e27631
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v6
++      - name: Set up Node.js
++        uses: actions/setup-node@v6
++        with:
++          node-version: 24
++          package-manager-cache: false
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..5efeb42c8060778537c4f1944723e580b3da4011
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,26 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.ok(Array.isArray(orders));
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [{ id: 'order-1', user_id: 'user-with-orders' }];
++  const db = { query: () => expectedOrders };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+codex
+`sol-simplify` 원칙에 따라 실제 사용자 실패를 재현하는 테스트와 그 테스트를 실행하는 CI만 추가했고, 별도 인시던트 양식·승인 매트릭스·메타 검증기는 만들지 않았습니다. 이제 로컬 테스트와 파일 내용을 검증한 뒤 그 결과를 `summary.md`에 남기겠습니다.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "npm test && node --input-type=module -e \"import { getUserOrders } from './src/orders.js'; const result = getUserOrders({ query: () => [] }, 'customer-3'); console.log({ result, isArray: Array.isArray(result) });\" && printf '%s\\n' '--- changed files ---' && find src test .github -type f -maxdepth 4 -print -exec sed -n '1,220p' {} \\;" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+ succeeded in 110ms:
+✔ getUserOrders returns an empty array when the user has no orders (0.704792ms)
+✔ getUserOrders returns the orders found for the user (0.073333ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.134375
+{ result: [], isArray: true }
+--- changed files ---
+src/orders.js
+export function getUserOrders(db, userId) {
+  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+  return rows;
+}
+test/orders.test.js
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+import { getUserOrders } from '../src/orders.js';
+
+test('getUserOrders returns an empty array when the user has no orders', () => {
+  const db = {
+    query(sql, params) {
+      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
+      assert.deepEqual(params, ['user-without-orders']);
+      return [];
+    },
+  };
+
+  const orders = getUserOrders(db, 'user-without-orders');
+
+  assert.deepEqual(orders, []);
+  assert.ok(Array.isArray(orders));
+});
+
+test('getUserOrders returns the orders found for the user', () => {
+  const expectedOrders = [{ id: 'order-1', user_id: 'user-with-orders' }];
+  const db = { query: () => expectedOrders };
+
+  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
+});
+.github/workflows/test.yml
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Run tests
+        run: npm test
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f25519d3480ae185012517e85c28071f9e27631
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v6
++      - name: Set up Node.js
++        uses: actions/setup-node@v6
++        with:
++          node-version: 24
++          package-manager-cache: false
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..5efeb42c8060778537c4f1944723e580b3da4011
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,26 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.ok(Array.isArray(orders));
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [{ id: 'order-1', user_id: 'user-with-orders' }];
++  const db = { query: () => expectedOrders };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/summary.md
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f25519d3480ae185012517e85c28071f9e27631
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v6
++      - name: Set up Node.js
++        uses: actions/setup-node@v6
++        with:
++          node-version: 24
++          package-manager-cache: false
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..a416c7790e3b455311b14ae95993cb690e6ddf56
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,21 @@
++# 재발 방지 작업 요약
++
++## 확인한 문제
++
++- 기존 `getUserOrders()`는 조회 결과가 빈 배열이면 `null`로 바꿔 반환하고 있었습니다.
++- `npm test`는 성공했지만 실행된 테스트가 0개라서 이 회귀를 잡지 못했습니다.
++
++## 변경 사항
++
++- `src/orders.js`: 주문이 없는 사용자에게도 DB 조회 결과인 빈 배열을 그대로 반환하도록 수정했습니다.
++- `test/orders.test.js`: 주문 0건일 때 빈 배열을 반환하는 회귀 테스트와 주문이 있을 때의 정상 동작 테스트를 추가했습니다.
++- `.github/workflows/test.yml`: 모든 PR과 `main` 브랜치 push에서 `npm test`를 실행하도록 GitHub Actions를 추가했습니다.
++
++## 검증 결과
++
++- `npm test`: 2개 테스트 모두 통과
++- 주문 0건 직접 실행 결과: `[]`, `Array.isArray(result) === true`
++
++## 저장소 밖에서 필요한 설정
++
++GitHub의 `main` 브랜치 보호 규칙에서 이 워크플로의 `test` 상태 검사를 필수로 지정해야 테스트 실패 시 실제 머지를 막을 수 있습니다. 저장소 파일만으로는 이 설정을 강제할 수 없습니다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..5efeb42c8060778537c4f1944723e580b3da4011
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,26 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.ok(Array.isArray(orders));
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [{ id: 'order-1', user_id: 'user-with-orders' }];
++  const db = { query: () => expectedOrders };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f25519d3480ae185012517e85c28071f9e27631
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v6
++      - name: Set up Node.js
++        uses: actions/setup-node@v6
++        with:
++          node-version: 24
++          package-manager-cache: false
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..a416c7790e3b455311b14ae95993cb690e6ddf56
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,21 @@
++# 재발 방지 작업 요약
++
++## 확인한 문제
++
++- 기존 `getUserOrders()`는 조회 결과가 빈 배열이면 `null`로 바꿔 반환하고 있었습니다.
++- `npm test`는 성공했지만 실행된 테스트가 0개라서 이 회귀를 잡지 못했습니다.
++
++## 변경 사항
++
++- `src/orders.js`: 주문이 없는 사용자에게도 DB 조회 결과인 빈 배열을 그대로 반환하도록 수정했습니다.
++- `test/orders.test.js`: 주문 0건일 때 빈 배열을 반환하는 회귀 테스트와 주문이 있을 때의 정상 동작 테스트를 추가했습니다.
++- `.github/workflows/test.yml`: 모든 PR과 `main` 브랜치 push에서 `npm test`를 실행하도록 GitHub Actions를 추가했습니다.
++
++## 검증 결과
++
++- `npm test`: 2개 테스트 모두 통과
++- 주문 0건 직접 실행 결과: `[]`, `Array.isArray(result) === true`
++
++## 저장소 밖에서 필요한 설정
++
++GitHub의 `main` 브랜치 보호 규칙에서 이 워크플로의 `test` 상태 검사를 필수로 지정해야 테스트 실패 시 실제 머지를 막을 수 있습니다. 저장소 파일만으로는 이 설정을 강제할 수 없습니다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..5efeb42c8060778537c4f1944723e580b3da4011
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,26 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.ok(Array.isArray(orders));
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [{ id: 'order-1', user_id: 'user-with-orders' }];
++  const db = { query: () => expectedOrders };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc "npm test && printf '%s\\n' '--- summary.md ---' && sed -n '1,240p' summary.md && printf '%s\\n' '--- final files ---' && find . -maxdepth 4 -type f "'! -name run.log ! -name req.md -print | sort' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2
+ succeeded in 91ms:
+✔ getUserOrders returns an empty array when the user has no orders (0.748792ms)
+✔ getUserOrders returns the orders found for the user (0.083417ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51.010583
+--- summary.md ---
+# 재발 방지 작업 요약
+
+## 확인한 문제
+
+- 기존 `getUserOrders()`는 조회 결과가 빈 배열이면 `null`로 바꿔 반환하고 있었습니다.
+- `npm test`는 성공했지만 실행된 테스트가 0개라서 이 회귀를 잡지 못했습니다.
+
+## 변경 사항
+
+- `src/orders.js`: 주문이 없는 사용자에게도 DB 조회 결과인 빈 배열을 그대로 반환하도록 수정했습니다.
+- `test/orders.test.js`: 주문 0건일 때 빈 배열을 반환하는 회귀 테스트와 주문이 있을 때의 정상 동작 테스트를 추가했습니다.
+- `.github/workflows/test.yml`: 모든 PR과 `main` 브랜치 push에서 `npm test`를 실행하도록 GitHub Actions를 추가했습니다.
+
+## 검증 결과
+
+- `npm test`: 2개 테스트 모두 통과
+- 주문 0건 직접 실행 결과: `[]`, `Array.isArray(result) === true`
+
+## 저장소 밖에서 필요한 설정
+
+GitHub의 `main` 브랜치 보호 규칙에서 이 워크플로의 `test` 상태 검사를 필수로 지정해야 테스트 실패 시 실제 머지를 막을 수 있습니다. 저장소 파일만으로는 이 설정을 강제할 수 없습니다.
+--- final files ---
+./.github/workflows/test.yml
+./AGENTS.md
+./package.json
+./src/orders.js
+./summary.md
+./test/orders.test.js
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f25519d3480ae185012517e85c28071f9e27631
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v6
++      - name: Set up Node.js
++        uses: actions/setup-node@v6
++        with:
++          node-version: 24
++          package-manager-cache: false
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..a416c7790e3b455311b14ae95993cb690e6ddf56
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,21 @@
++# 재발 방지 작업 요약
++
++## 확인한 문제
++
++- 기존 `getUserOrders()`는 조회 결과가 빈 배열이면 `null`로 바꿔 반환하고 있었습니다.
++- `npm test`는 성공했지만 실행된 테스트가 0개라서 이 회귀를 잡지 못했습니다.
++
++## 변경 사항
++
++- `src/orders.js`: 주문이 없는 사용자에게도 DB 조회 결과인 빈 배열을 그대로 반환하도록 수정했습니다.
++- `test/orders.test.js`: 주문 0건일 때 빈 배열을 반환하는 회귀 테스트와 주문이 있을 때의 정상 동작 테스트를 추가했습니다.
++- `.github/workflows/test.yml`: 모든 PR과 `main` 브랜치 push에서 `npm test`를 실행하도록 GitHub Actions를 추가했습니다.
++
++## 검증 결과
++
++- `npm test`: 2개 테스트 모두 통과
++- 주문 0건 직접 실행 결과: `[]`, `Array.isArray(result) === true`
++
++## 저장소 밖에서 필요한 설정
++
++GitHub의 `main` 브랜치 보호 규칙에서 이 워크플로의 `test` 상태 검사를 필수로 지정해야 테스트 실패 시 실제 머지를 막을 수 있습니다. 저장소 파일만으로는 이 설정을 강제할 수 없습니다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..5efeb42c8060778537c4f1944723e580b3da4011
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,26 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.ok(Array.isArray(orders));
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [{ id: 'order-1', user_id: 'user-with-orders' }];
++  const db = { query: () => expectedOrders };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+codex
+재발 방지 조치를 적용했습니다.
+
+- [orders.js](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/src/orders.js): 주문 0건이면 `[]` 반환
+- [orders.test.js](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/test/orders.test.js): 사고 경로와 정상 조회 회귀 테스트 추가
+- [test.yml](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/.github/workflows/test.yml): PR 및 `main` push 시 테스트 실행. 공식 최신 메이저인 [checkout v6](https://github.com/actions/checkout/releases)와 [setup-node v6](https://github.com/actions/setup-node)를 사용했습니다.
+- [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/summary.md): 작업 및 검증 결과 저장
+
+검증 결과: `npm test`에서 **2개 모두 통과**했습니다.
+
+실제 머지를 차단하려면 GitHub의 `main` 브랜치 보호 설정에서 `test` 상태 검사를 필수로 지정해야 합니다.
+
+skipped: ceremony — 인시던트 양식, 승인 매트릭스, ADR. Say the word.
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f25519d3480ae185012517e85c28071f9e27631
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v6
++      - name: Set up Node.js
++        uses: actions/setup-node@v6
++        with:
++          node-version: 24
++          package-manager-cache: false
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..a416c7790e3b455311b14ae95993cb690e6ddf56
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,21 @@
++# 재발 방지 작업 요약
++
++## 확인한 문제
++
++- 기존 `getUserOrders()`는 조회 결과가 빈 배열이면 `null`로 바꿔 반환하고 있었습니다.
++- `npm test`는 성공했지만 실행된 테스트가 0개라서 이 회귀를 잡지 못했습니다.
++
++## 변경 사항
++
++- `src/orders.js`: 주문이 없는 사용자에게도 DB 조회 결과인 빈 배열을 그대로 반환하도록 수정했습니다.
++- `test/orders.test.js`: 주문 0건일 때 빈 배열을 반환하는 회귀 테스트와 주문이 있을 때의 정상 동작 테스트를 추가했습니다.
++- `.github/workflows/test.yml`: 모든 PR과 `main` 브랜치 push에서 `npm test`를 실행하도록 GitHub Actions를 추가했습니다.
++
++## 검증 결과
++
++- `npm test`: 2개 테스트 모두 통과
++- 주문 0건 직접 실행 결과: `[]`, `Array.isArray(result) === true`
++
++## 저장소 밖에서 필요한 설정
++
++GitHub의 `main` 브랜치 보호 규칙에서 이 워크플로의 `test` 상태 검사를 필수로 지정해야 테스트 실패 시 실제 머지를 막을 수 있습니다. 저장소 파일만으로는 이 설정을 강제할 수 없습니다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..5efeb42c8060778537c4f1944723e580b3da4011
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,26 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.ok(Array.isArray(orders));
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [{ id: 'order-1', user_id: 'user-with-orders' }];
++  const db = { query: () => expectedOrders };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+hook: Stop
+hook: Stop
+hook: Stop
+hook: Stop Completed
+hook: Stop Completed
+hook: Stop Completed
+tokens used
+57,839
+재발 방지 조치를 적용했습니다.
+
+- [orders.js](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/src/orders.js): 주문 0건이면 `[]` 반환
+- [orders.test.js](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/test/orders.test.js): 사고 경로와 정상 조회 회귀 테스트 추가
+- [test.yml](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/.github/workflows/test.yml): PR 및 `main` push 시 테스트 실행. 공식 최신 메이저인 [checkout v6](https://github.com/actions/checkout/releases)와 [setup-node v6](https://github.com/actions/setup-node)를 사용했습니다.
+- [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-on-2/summary.md): 작업 및 검증 결과 저장
+
+검증 결과: `npm test`에서 **2개 모두 통과**했습니다.
+
+실제 머지를 차단하려면 GitHub의 `main` 브랜치 보호 설정에서 `test` 상태 검사를 필수로 지정해야 합니다.
+
+skipped: ceremony — 인시던트 양식, 승인 매트릭스, ADR. Say the word.

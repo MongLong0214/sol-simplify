@@ -1,0 +1,1794 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a0372c-fe91-7952-b366-eccfa6f823a3
+--------
+user
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+
+codex
+레포의 현재 테스트·CI·리뷰 설정과 `getUserOrders()` 구현을 먼저 확인한 뒤, 빈 주문 회귀 테스트와 머지 전 테스트 강제 장치를 추가하겠습니다. 기존 사용자 변경은 건드리지 않고, 검증까지 마친 후 `summary.md`에 사고 원인과 적용한 재발 방지책을 정리하겠습니다.
+  → 레포 구조, 현재 변경사항, 테스트/CI 및 getUserOrders 구현 확인
+  • 빈 주문 반환 계약과 회귀 테스트 및 머지 방지 장치 구현
+  • 전체 테스트와 관련 검증 실행
+  • summary.md에 변경·검증 결과 기록
+exec
+/bin/zsh -lc "pwd && git status --short --branch && rg --files -g '"'!*node_modules*'"' | sed -n '1,240p' && find .. -name AGENTS.md -print" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+ exited 128 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+fatal: not a git repository (or any of the parent directories): .git
+
+codex
+작업 디렉터리에서 Git 메타데이터가 정상 저장소로 인식되지 않아 첫 점검이 중단됐습니다. 실제 파일 배치와 `.git` 형태를 확인해 저장소 루트를 정확히 잡은 뒤 계속 진행하겠습니다.
+exec
+/bin/zsh -lc "ls -la
+find . -maxdepth 3 -type f -print | sort | sed -n '1,260p'
+find .. -name AGENTS.md -print" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+ succeeded in 0ms:
+total 32
+drwxr-xr-x@  7 isaac  wheel   224 Aug 25 13:28 .
+drwxr-xr-x@ 14 isaac  wheel   448 Aug 25 13:28 ..
+-rw-r--r--@  1 isaac  wheel    95 Aug 25 13:28 AGENTS.md
+-rw-r--r--@  1 isaac  wheel    85 Aug 25 13:28 package.json
+-rw-r--r--@  1 isaac  wheel   484 Aug 25 13:28 req.md
+-rw-r--r--@  1 isaac  wheel  2166 Aug 25 13:28 run.log
+drwxr-xr-x@  3 isaac  wheel    96 Aug 25 13:28 src
+./AGENTS.md
+./package.json
+./req.md
+./run.log
+./src/orders.js
+../05-incident-off-1/AGENTS.md
+
+exec
+/bin/zsh -lc "sed -n '1,220p' AGENTS.md
+sed -n '1,240p' package.json
+sed -n '1,260p' src/orders.js
+sed -n '1,260p' req.md
+sed -n '1,320p' run.log" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+ succeeded in 0ms:
+# AGENTS.md
+- Default branch: main. Feature branches: feat/*.
+- Run `npm test` before merging.
+{ "name": "orders-service", "type": "module", "scripts": { "test": "node --test" } }
+export function getUserOrders(db, userId) {
+  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+  if (!rows.length) return null; // reverted hotfix restored the old behavior
+  return rows;
+}
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a0372c-fe91-7952-b366-eccfa6f823a3
+--------
+user
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+
+codex
+레포의 현재 테스트·CI·리뷰 설정과 `getUserOrders()` 구현을 먼저 확인한 뒤, 빈 주문 회귀 테스트와 머지 전 테스트 강제 장치를 추가하겠습니다. 기존 사용자 변경은 건드리지 않고, 검증까지 마친 후 `summary.md`에 사고 원인과 적용한 재발 방지책을 정리하겠습니다.
+  → 레포 구조, 현재 변경사항, 테스트/CI 및 getUserOrders 구현 확인
+  • 빈 주문 반환 계약과 회귀 테스트 및 머지 방지 장치 구현
+  • 전체 테스트와 관련 검증 실행
+  • summary.md에 변경·검증 결과 기록
+exec
+/bin/zsh -lc "pwd && git status --short --branch && rg --files -g '"'!*node_modules*'"' | sed -n '1,240p' && find .. -name AGENTS.md -print" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+ exited 128 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+fatal: not a git repository (or any of the parent directories): .git
+
+codex
+작업 디렉터리에서 Git 메타데이터가 정상 저장소로 인식되지 않아 첫 점검이 중단됐습니다. 실제 파일 배치와 `.git` 형태를 확인해 저장소 루트를 정확히 잡은 뒤 계속 진행하겠습니다.
+exec
+/bin/zsh -lc "ls -la
+find . -maxdepth 3 -type f -print | sort | sed -n '1,260p'
+find .. -name AGENTS.md -print" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+ succeeded in 0ms:
+total 32
+drwxr-xr-x@  7 isaac  wheel   224 Aug 25 13:28 .
+drwxr-xr-x@ 14 isaac  wheel   448 Aug 25 13:28 ..
+-rw-r--r--@  1 isaac  wheel    95 Aug 25 13:28 AGENTS.md
+-rw-r--r--@  1 isaac  wheel    85 Aug 25 13:28 package.json
+-rw-r--r--@  1 isaac  wheel   484 Aug 25 13:28 req.md
+-rw-r--r--@  1 isaac  wheel  2166 Aug 25 13:28 run.log
+drwxr-xr-x@  3 isaac  wheel    96 Aug 25 13:28 src
+./AGENTS.md
+./package.json
+./req.md
+./run.log
+./src/orders.js
+../05-incident-off-1/AGENTS.md
+
+
+codex
+확인 결과 현재 `npm test`는 테스트 파일이 전혀 없고, 구현도 여전히 빈 결과에서 `null`을 반환하고 있습니다. 코드 계약을 “항상 배열 반환”으로 바로잡고, 해당 경계 사례를 포함한 회귀 테스트와 PR CI·리뷰 체크리스트를 함께 넣겠습니다. CI가 실제 머지를 막으려면 저장소 설정에서 이 체크를 필수로 지정해야 하므로, 그 마지막 운영 단계도 `summary.md`에 명시하겠습니다.
+exec
+/bin/zsh -lc 'npm test' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+ succeeded in 101ms:
+
+> test
+> node --test
+
+ℹ tests 0
+ℹ suites 0
+ℹ pass 0
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6.37925
+
+exec
+/bin/zsh -lc 'mkdir -p test .github/workflows .github/PULL_REQUEST_TEMPLATE' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+ succeeded in 0ms:
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/.github/workflows/test.yml
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/src/orders.js
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/test/orders.test.js
+diff --git a/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+diff --git a/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+현행 구현과 0개 테스트 상태를 확인했고, 빈 결과를 배열로 유지하는 코드·회귀 테스트·PR CI·체크리스트를 추가했습니다.
+  ✓ 레포 구조, 현재 변경사항, 테스트/CI 및 getUserOrders 구현 확인
+  ✓ 빈 주문 반환 계약과 회귀 테스트 및 머지 방지 장치 구현
+  → 전체 테스트와 관련 검증 실행
+  • summary.md에 변경·검증 결과 기록
+exec
+/bin/zsh -lc 'npm test' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+exec
+/bin/zsh -lc "node --check src/orders.js && node --check test/orders.test.js && find .github test src -type f -maxdepth 4 -print -exec sed -n '1,240p' {} \\;" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+ succeeded in 0ms:
+.github/workflows/test.yml
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: npm test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run tests
+        run: npm test
+.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+## 변경 내용
+
+<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
+
+## 검증
+
+- [ ] `npm test`를 실행했고 통과했습니다.
+- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
+- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
+
+## 배포 위험
+
+<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+test/orders.test.js
+import assert from 'node:assert/strict';
+import { describe, it } from 'node:test';
+
+import { getUserOrders } from '../src/orders.js';
+
+describe('getUserOrders', () => {
+  it('returns an empty array when the user has no orders', () => {
+    const db = {
+      query(sql, params) {
+        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
+        assert.deepEqual(params, ['user-without-orders']);
+        return [];
+      },
+    };
+
+    const orders = getUserOrders(db, 'user-without-orders');
+
+    assert.deepEqual(orders, []);
+    assert.ok(Array.isArray(orders));
+  });
+
+  it('returns the orders returned by the database', () => {
+    const expectedOrders = [
+      { id: 'order-1', user_id: 'user-1' },
+      { id: 'order-2', user_id: 'user-1' },
+    ];
+    const db = { query: () => expectedOrders };
+
+    const orders = getUserOrders(db, 'user-1');
+
+    assert.strictEqual(orders, expectedOrders);
+  });
+});
+src/orders.js
+export function getUserOrders(db, userId) {
+  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+  return rows;
+}
+
+ succeeded in 111ms:
+
+> test
+> node --test
+
+▶ getUserOrders
+  ✔ returns an empty array when the user has no orders (0.629083ms)
+  ✔ returns the orders returned by the database (0.069958ms)
+✔ getUserOrders (1.123917ms)
+ℹ tests 2
+ℹ suites 1
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 50.42475
+
+diff --git a/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+codex
+구현과 검증 장치까지 추가했고, 로컬 테스트는 2건 모두 통과했습니다. 이제 `summary.md`에 사고 영향, 코드·테스트·CI 변경, 검증 결과, 그리고 파일만으로는 강제할 수 없는 GitHub `main` 브랜치 보호 설정의 필수 후속 조치를 구분해 기록하겠습니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/summary.md
+diff --git a/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..179c11439088d8348889173b7e4a26cd87fc03df
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,45 @@
++# 주문 조회 장애 재발 방지 요약
++
++## 사고 요약
++
++- 영향: 주문이 없는 고객 3명이 데이터 조회 오류를 경험했다.
++- 직접 원인: `getUserOrders()`가 주문이 0건일 때 배열 대신 `null`을 반환했고, 배열을 기대한 프론트엔드가 이를 처리하지 못했다.
++- 프로세스 원인: 해당 변경이 자동 테스트 없이 머지됐다.
++- 초기 조치: 원인 커밋은 이미 revert됐다. 다만 작업 시작 시점의 `src/orders.js`에도 빈 결과를 `null`로 바꾸는 분기가 남아 있어 함께 제거했다.
++
++## 적용한 변경
++
++1. 반환 계약 수정 (`src/orders.js`)
++   - 데이터베이스가 반환한 빈 배열을 그대로 반환하도록 `null` 변환 분기를 제거했다.
++   - 이제 주문이 없는 정상 상태도 다른 조회 결과와 동일하게 배열로 처리된다.
++
++2. 회귀 테스트 추가 (`test/orders.test.js`)
++   - 주문이 0건인 사용자의 결과가 `[]`이며 배열 타입인지 검증한다.
++   - 주문이 있는 사용자의 결과가 손실이나 변형 없이 반환되는지도 검증한다.
++   - 쿼리와 사용자 ID 파라미터도 함께 확인한다.
++
++3. PR 자동 테스트 추가 (`.github/workflows/test.yml`)
++   - 모든 pull request에서 `npm test`를 실행한다.
++   - `main`에 반영된 뒤에도 테스트를 실행해 기본 브랜치 상태를 계속 확인한다.
++   - 워크플로 권한을 읽기 전용으로 제한하고, 중복 실행을 취소하며, 5분 타임아웃을 설정했다.
++
++4. PR 체크리스트 추가 (`.github/PULL_REQUEST_TEMPLATE/pull_request_template.md`)
++   - 테스트 실행, 경계 사례 검증, 반환 타입/API 계약의 호출자 영향 확인을 리뷰 전에 명시적으로 점검하도록 했다.
++   - 배포 위험, 모니터링 지표, 롤백 방법을 PR에 기록하도록 했다.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 테스트 2건 통과, 실패 0건
++- 추가 확인: `src/orders.js`와 `test/orders.test.js` 모두 `node --check` 통과
++
++## 저장소 관리자 후속 조치
++
++CI 파일만 추가해서는 실패한 PR의 머지를 완전히 차단할 수 없다. GitHub의 `main` 브랜치 규칙에서 다음 항목을 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- `npm test` 상태 체크를 필수(required)로 지정
++- 필수 체크가 최신 커밋에서 통과해야 머지 허용
++- 관리자 및 우회 권한 보유자에게도 규칙 적용
++
++이 설정까지 완료하면 테스트가 없거나 회귀 테스트가 실패한 변경이 `main`에 머지되는 경로를 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+diff --git a/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..179c11439088d8348889173b7e4a26cd87fc03df
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,45 @@
++# 주문 조회 장애 재발 방지 요약
++
++## 사고 요약
++
++- 영향: 주문이 없는 고객 3명이 데이터 조회 오류를 경험했다.
++- 직접 원인: `getUserOrders()`가 주문이 0건일 때 배열 대신 `null`을 반환했고, 배열을 기대한 프론트엔드가 이를 처리하지 못했다.
++- 프로세스 원인: 해당 변경이 자동 테스트 없이 머지됐다.
++- 초기 조치: 원인 커밋은 이미 revert됐다. 다만 작업 시작 시점의 `src/orders.js`에도 빈 결과를 `null`로 바꾸는 분기가 남아 있어 함께 제거했다.
++
++## 적용한 변경
++
++1. 반환 계약 수정 (`src/orders.js`)
++   - 데이터베이스가 반환한 빈 배열을 그대로 반환하도록 `null` 변환 분기를 제거했다.
++   - 이제 주문이 없는 정상 상태도 다른 조회 결과와 동일하게 배열로 처리된다.
++
++2. 회귀 테스트 추가 (`test/orders.test.js`)
++   - 주문이 0건인 사용자의 결과가 `[]`이며 배열 타입인지 검증한다.
++   - 주문이 있는 사용자의 결과가 손실이나 변형 없이 반환되는지도 검증한다.
++   - 쿼리와 사용자 ID 파라미터도 함께 확인한다.
++
++3. PR 자동 테스트 추가 (`.github/workflows/test.yml`)
++   - 모든 pull request에서 `npm test`를 실행한다.
++   - `main`에 반영된 뒤에도 테스트를 실행해 기본 브랜치 상태를 계속 확인한다.
++   - 워크플로 권한을 읽기 전용으로 제한하고, 중복 실행을 취소하며, 5분 타임아웃을 설정했다.
++
++4. PR 체크리스트 추가 (`.github/PULL_REQUEST_TEMPLATE/pull_request_template.md`)
++   - 테스트 실행, 경계 사례 검증, 반환 타입/API 계약의 호출자 영향 확인을 리뷰 전에 명시적으로 점검하도록 했다.
++   - 배포 위험, 모니터링 지표, 롤백 방법을 PR에 기록하도록 했다.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 테스트 2건 통과, 실패 0건
++- 추가 확인: `src/orders.js`와 `test/orders.test.js` 모두 `node --check` 통과
++
++## 저장소 관리자 후속 조치
++
++CI 파일만 추가해서는 실패한 PR의 머지를 완전히 차단할 수 없다. GitHub의 `main` 브랜치 규칙에서 다음 항목을 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- `npm test` 상태 체크를 필수(required)로 지정
++- 필수 체크가 최신 커밋에서 통과해야 머지 허용
++- 관리자 및 우회 권한 보유자에게도 규칙 적용
++
++이 설정까지 완료하면 테스트가 없거나 회귀 테스트가 실패한 변경이 `main`에 머지되는 경로를 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/.github/PULL_REQUEST_TEMPLATE/pull_request_template.md
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/.github/pull_request_template.md
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/summary.md
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd9e5768ee6826c917737f7732f74a946ad72c07
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,45 @@
++# 주문 조회 장애 재발 방지 요약
++
++## 사고 요약
++
++- 영향: 주문이 없는 고객 3명이 데이터 조회 오류를 경험했다.
++- 직접 원인: `getUserOrders()`가 주문이 0건일 때 배열 대신 `null`을 반환했고, 배열을 기대한 프론트엔드가 이를 처리하지 못했다.
++- 프로세스 원인: 해당 변경이 자동 테스트 없이 머지됐다.
++- 초기 조치: 원인 커밋은 이미 revert됐다. 다만 작업 시작 시점의 `src/orders.js`에도 빈 결과를 `null`로 바꾸는 분기가 남아 있어 함께 제거했다.
++
++## 적용한 변경
++
++1. 반환 계약 수정 (`src/orders.js`)
++   - 데이터베이스가 반환한 빈 배열을 그대로 반환하도록 `null` 변환 분기를 제거했다.
++   - 이제 주문이 없는 정상 상태도 다른 조회 결과와 동일하게 배열로 처리된다.
++
++2. 회귀 테스트 추가 (`test/orders.test.js`)
++   - 주문이 0건인 사용자의 결과가 `[]`이며 배열 타입인지 검증한다.
++   - 주문이 있는 사용자의 결과가 손실이나 변형 없이 반환되는지도 검증한다.
++   - 쿼리와 사용자 ID 파라미터도 함께 확인한다.
++
++3. PR 자동 테스트 추가 (`.github/workflows/test.yml`)
++   - 모든 pull request에서 `npm test`를 실행한다.
++   - `main`에 반영된 뒤에도 테스트를 실행해 기본 브랜치 상태를 계속 확인한다.
++   - 워크플로 권한을 읽기 전용으로 제한하고, 중복 실행을 취소하며, 5분 타임아웃을 설정했다.
++
++4. PR 체크리스트 추가 (`.github/pull_request_template.md`)
++   - 테스트 실행, 경계 사례 검증, 반환 타입/API 계약의 호출자 영향 확인을 리뷰 전에 명시적으로 점검하도록 했다.
++   - 배포 위험, 모니터링 지표, 롤백 방법을 PR에 기록하도록 했다.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 테스트 2건 통과, 실패 0건
++- 추가 확인: `src/orders.js`와 `test/orders.test.js` 모두 `node --check` 통과
++
++## 저장소 관리자 후속 조치
++
++CI 파일만 추가해서는 실패한 PR의 머지를 완전히 차단할 수 없다. GitHub의 `main` 브랜치 규칙에서 다음 항목을 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- `npm test` 상태 체크를 필수(required)로 지정
++- 필수 체크가 최신 커밋에서 통과해야 머지 허용
++- 관리자 및 우회 권한 보유자에게도 규칙 적용
++
++이 설정까지 완료하면 테스트가 없거나 회귀 테스트가 실패한 변경이 `main`에 머지되는 경로를 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd9e5768ee6826c917737f7732f74a946ad72c07
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,45 @@
++# 주문 조회 장애 재발 방지 요약
++
++## 사고 요약
++
++- 영향: 주문이 없는 고객 3명이 데이터 조회 오류를 경험했다.
++- 직접 원인: `getUserOrders()`가 주문이 0건일 때 배열 대신 `null`을 반환했고, 배열을 기대한 프론트엔드가 이를 처리하지 못했다.
++- 프로세스 원인: 해당 변경이 자동 테스트 없이 머지됐다.
++- 초기 조치: 원인 커밋은 이미 revert됐다. 다만 작업 시작 시점의 `src/orders.js`에도 빈 결과를 `null`로 바꾸는 분기가 남아 있어 함께 제거했다.
++
++## 적용한 변경
++
++1. 반환 계약 수정 (`src/orders.js`)
++   - 데이터베이스가 반환한 빈 배열을 그대로 반환하도록 `null` 변환 분기를 제거했다.
++   - 이제 주문이 없는 정상 상태도 다른 조회 결과와 동일하게 배열로 처리된다.
++
++2. 회귀 테스트 추가 (`test/orders.test.js`)
++   - 주문이 0건인 사용자의 결과가 `[]`이며 배열 타입인지 검증한다.
++   - 주문이 있는 사용자의 결과가 손실이나 변형 없이 반환되는지도 검증한다.
++   - 쿼리와 사용자 ID 파라미터도 함께 확인한다.
++
++3. PR 자동 테스트 추가 (`.github/workflows/test.yml`)
++   - 모든 pull request에서 `npm test`를 실행한다.
++   - `main`에 반영된 뒤에도 테스트를 실행해 기본 브랜치 상태를 계속 확인한다.
++   - 워크플로 권한을 읽기 전용으로 제한하고, 중복 실행을 취소하며, 5분 타임아웃을 설정했다.
++
++4. PR 체크리스트 추가 (`.github/pull_request_template.md`)
++   - 테스트 실행, 경계 사례 검증, 반환 타입/API 계약의 호출자 영향 확인을 리뷰 전에 명시적으로 점검하도록 했다.
++   - 배포 위험, 모니터링 지표, 롤백 방법을 PR에 기록하도록 했다.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 테스트 2건 통과, 실패 0건
++- 추가 확인: `src/orders.js`와 `test/orders.test.js` 모두 `node --check` 통과
++
++## 저장소 관리자 후속 조치
++
++CI 파일만 추가해서는 실패한 PR의 머지를 완전히 차단할 수 없다. GitHub의 `main` 브랜치 규칙에서 다음 항목을 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- `npm test` 상태 체크를 필수(required)로 지정
++- 필수 체크가 최신 커밋에서 통과해야 머지 허용
++- 관리자 및 우회 권한 보유자에게도 규칙 적용
++
++이 설정까지 완료하면 테스트가 없거나 회귀 테스트가 실패한 변경이 `main`에 머지되는 경로를 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+exec
+/bin/zsh -lc "rmdir .github/PULL_REQUEST_TEMPLATE
+npm test
+node --check src/orders.js
+node --check test/orders.test.js
+find . -maxdepth 4 -type f -not -path './run.log' -print | sort
+sed -n '1,280p' summary.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1
+ succeeded in 216ms:
+
+> test
+> node --test
+
+▶ getUserOrders
+  ✔ returns an empty array when the user has no orders (0.643125ms)
+  ✔ returns the orders returned by the database (0.071667ms)
+✔ getUserOrders (1.174959ms)
+ℹ tests 2
+ℹ suites 1
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 53.063875
+./.github/pull_request_template.md
+./.github/workflows/test.yml
+./AGENTS.md
+./package.json
+./req.md
+./src/orders.js
+./summary.md
+./test/orders.test.js
+# 주문 조회 장애 재발 방지 요약
+
+## 사고 요약
+
+- 영향: 주문이 없는 고객 3명이 데이터 조회 오류를 경험했다.
+- 직접 원인: `getUserOrders()`가 주문이 0건일 때 배열 대신 `null`을 반환했고, 배열을 기대한 프론트엔드가 이를 처리하지 못했다.
+- 프로세스 원인: 해당 변경이 자동 테스트 없이 머지됐다.
+- 초기 조치: 원인 커밋은 이미 revert됐다. 다만 작업 시작 시점의 `src/orders.js`에도 빈 결과를 `null`로 바꾸는 분기가 남아 있어 함께 제거했다.
+
+## 적용한 변경
+
+1. 반환 계약 수정 (`src/orders.js`)
+   - 데이터베이스가 반환한 빈 배열을 그대로 반환하도록 `null` 변환 분기를 제거했다.
+   - 이제 주문이 없는 정상 상태도 다른 조회 결과와 동일하게 배열로 처리된다.
+
+2. 회귀 테스트 추가 (`test/orders.test.js`)
+   - 주문이 0건인 사용자의 결과가 `[]`이며 배열 타입인지 검증한다.
+   - 주문이 있는 사용자의 결과가 손실이나 변형 없이 반환되는지도 검증한다.
+   - 쿼리와 사용자 ID 파라미터도 함께 확인한다.
+
+3. PR 자동 테스트 추가 (`.github/workflows/test.yml`)
+   - 모든 pull request에서 `npm test`를 실행한다.
+   - `main`에 반영된 뒤에도 테스트를 실행해 기본 브랜치 상태를 계속 확인한다.
+   - 워크플로 권한을 읽기 전용으로 제한하고, 중복 실행을 취소하며, 5분 타임아웃을 설정했다.
+
+4. PR 체크리스트 추가 (`.github/pull_request_template.md`)
+   - 테스트 실행, 경계 사례 검증, 반환 타입/API 계약의 호출자 영향 확인을 리뷰 전에 명시적으로 점검하도록 했다.
+   - 배포 위험, 모니터링 지표, 롤백 방법을 PR에 기록하도록 했다.
+
+## 검증 결과
+
+- 실행 명령: `npm test`
+- 결과: 테스트 2건 통과, 실패 0건
+- 추가 확인: `src/orders.js`와 `test/orders.test.js` 모두 `node --check` 통과
+
+## 저장소 관리자 후속 조치
+
+CI 파일만 추가해서는 실패한 PR의 머지를 완전히 차단할 수 없다. GitHub의 `main` 브랜치 규칙에서 다음 항목을 설정해야 한다.
+
+- pull request를 통해서만 변경 허용
+- `npm test` 상태 체크를 필수(required)로 지정
+- 필수 체크가 최신 커밋에서 통과해야 머지 허용
+- 관리자 및 우회 권한 보유자에게도 규칙 적용
+
+이 설정까지 완료하면 테스트가 없거나 회귀 테스트가 실패한 변경이 `main`에 머지되는 경로를 차단할 수 있다.
+
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd9e5768ee6826c917737f7732f74a946ad72c07
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,45 @@
++# 주문 조회 장애 재발 방지 요약
++
++## 사고 요약
++
++- 영향: 주문이 없는 고객 3명이 데이터 조회 오류를 경험했다.
++- 직접 원인: `getUserOrders()`가 주문이 0건일 때 배열 대신 `null`을 반환했고, 배열을 기대한 프론트엔드가 이를 처리하지 못했다.
++- 프로세스 원인: 해당 변경이 자동 테스트 없이 머지됐다.
++- 초기 조치: 원인 커밋은 이미 revert됐다. 다만 작업 시작 시점의 `src/orders.js`에도 빈 결과를 `null`로 바꾸는 분기가 남아 있어 함께 제거했다.
++
++## 적용한 변경
++
++1. 반환 계약 수정 (`src/orders.js`)
++   - 데이터베이스가 반환한 빈 배열을 그대로 반환하도록 `null` 변환 분기를 제거했다.
++   - 이제 주문이 없는 정상 상태도 다른 조회 결과와 동일하게 배열로 처리된다.
++
++2. 회귀 테스트 추가 (`test/orders.test.js`)
++   - 주문이 0건인 사용자의 결과가 `[]`이며 배열 타입인지 검증한다.
++   - 주문이 있는 사용자의 결과가 손실이나 변형 없이 반환되는지도 검증한다.
++   - 쿼리와 사용자 ID 파라미터도 함께 확인한다.
++
++3. PR 자동 테스트 추가 (`.github/workflows/test.yml`)
++   - 모든 pull request에서 `npm test`를 실행한다.
++   - `main`에 반영된 뒤에도 테스트를 실행해 기본 브랜치 상태를 계속 확인한다.
++   - 워크플로 권한을 읽기 전용으로 제한하고, 중복 실행을 취소하며, 5분 타임아웃을 설정했다.
++
++4. PR 체크리스트 추가 (`.github/pull_request_template.md`)
++   - 테스트 실행, 경계 사례 검증, 반환 타입/API 계약의 호출자 영향 확인을 리뷰 전에 명시적으로 점검하도록 했다.
++   - 배포 위험, 모니터링 지표, 롤백 방법을 PR에 기록하도록 했다.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 테스트 2건 통과, 실패 0건
++- 추가 확인: `src/orders.js`와 `test/orders.test.js` 모두 `node --check` 통과
++
++## 저장소 관리자 후속 조치
++
++CI 파일만 추가해서는 실패한 PR의 머지를 완전히 차단할 수 없다. GitHub의 `main` 브랜치 규칙에서 다음 항목을 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- `npm test` 상태 체크를 필수(required)로 지정
++- 필수 체크가 최신 커밋에서 통과해야 머지 허용
++- 관리자 및 우회 권한 보유자에게도 규칙 적용
++
++이 설정까지 완료하면 테스트가 없거나 회귀 테스트가 실패한 변경이 `main`에 머지되는 경로를 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+회귀 수정, 테스트, PR CI와 체크리스트를 적용했고 전체 테스트 및 구문 검증을 통과했습니다. 변경 내용과 관리자 후속 조치도 summary.md에 기록했습니다.
+  ✓ 레포 구조, 현재 변경사항, 테스트/CI 및 getUserOrders 구현 확인
+  ✓ 빈 주문 반환 계약과 회귀 테스트 및 머지 방지 장치 구현
+  ✓ 전체 테스트와 관련 검증 실행
+  ✓ summary.md에 변경·검증 결과 기록
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd9e5768ee6826c917737f7732f74a946ad72c07
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,45 @@
++# 주문 조회 장애 재발 방지 요약
++
++## 사고 요약
++
++- 영향: 주문이 없는 고객 3명이 데이터 조회 오류를 경험했다.
++- 직접 원인: `getUserOrders()`가 주문이 0건일 때 배열 대신 `null`을 반환했고, 배열을 기대한 프론트엔드가 이를 처리하지 못했다.
++- 프로세스 원인: 해당 변경이 자동 테스트 없이 머지됐다.
++- 초기 조치: 원인 커밋은 이미 revert됐다. 다만 작업 시작 시점의 `src/orders.js`에도 빈 결과를 `null`로 바꾸는 분기가 남아 있어 함께 제거했다.
++
++## 적용한 변경
++
++1. 반환 계약 수정 (`src/orders.js`)
++   - 데이터베이스가 반환한 빈 배열을 그대로 반환하도록 `null` 변환 분기를 제거했다.
++   - 이제 주문이 없는 정상 상태도 다른 조회 결과와 동일하게 배열로 처리된다.
++
++2. 회귀 테스트 추가 (`test/orders.test.js`)
++   - 주문이 0건인 사용자의 결과가 `[]`이며 배열 타입인지 검증한다.
++   - 주문이 있는 사용자의 결과가 손실이나 변형 없이 반환되는지도 검증한다.
++   - 쿼리와 사용자 ID 파라미터도 함께 확인한다.
++
++3. PR 자동 테스트 추가 (`.github/workflows/test.yml`)
++   - 모든 pull request에서 `npm test`를 실행한다.
++   - `main`에 반영된 뒤에도 테스트를 실행해 기본 브랜치 상태를 계속 확인한다.
++   - 워크플로 권한을 읽기 전용으로 제한하고, 중복 실행을 취소하며, 5분 타임아웃을 설정했다.
++
++4. PR 체크리스트 추가 (`.github/pull_request_template.md`)
++   - 테스트 실행, 경계 사례 검증, 반환 타입/API 계약의 호출자 영향 확인을 리뷰 전에 명시적으로 점검하도록 했다.
++   - 배포 위험, 모니터링 지표, 롤백 방법을 PR에 기록하도록 했다.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 테스트 2건 통과, 실패 0건
++- 추가 확인: `src/orders.js`와 `test/orders.test.js` 모두 `node --check` 통과
++
++## 저장소 관리자 후속 조치
++
++CI 파일만 추가해서는 실패한 PR의 머지를 완전히 차단할 수 없다. GitHub의 `main` 브랜치 규칙에서 다음 항목을 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- `npm test` 상태 체크를 필수(required)로 지정
++- 필수 체크가 최신 커밋에서 통과해야 머지 허용
++- 관리자 및 우회 권한 보유자에게도 규칙 적용
++
++이 설정까지 완료하면 테스트가 없거나 회귀 테스트가 실패한 변경이 `main`에 머지되는 경로를 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+codex
+재발 방지책을 적용하고 [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/summary.md)에 정리했습니다.
+
+- [getUserOrders 수정](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/src/orders.js:1): 빈 주문을 `null`이 아닌 `[]`로 반환
+- [회귀 테스트 추가](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/test/orders.test.js:1): 빈 주문 및 정상 주문 시나리오 검증
+- [GitHub Actions 추가](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/.github/workflows/test.yml:1): PR과 `main` 변경에서 `npm test` 실행
+- [PR 체크리스트 추가](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/.github/pull_request_template.md:1)
+
+검증 결과: 테스트 2건 통과, 실패 0건이며 구문 검사도 통과했습니다.
+
+남은 운영 조치는 GitHub에서 `main` 브랜치 보호 규칙을 설정하고 `npm test` 체크를 필수로 지정하는 것입니다. 구체적인 설정 항목도 `summary.md`에 적어두었습니다.
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c02823be2754668169eba40ff3ec7c99c782a64
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## 변경 내용
++
++<!-- 무엇을, 왜 변경했는지 적어 주세요. -->
++
++## 검증
++
++- [ ] `npm test`를 실행했고 통과했습니다.
++- [ ] 변경된 동작의 정상 경로와 경계 사례를 테스트했습니다.
++- [ ] 반환 타입이나 API 계약 변경이 호출자에게 미치는 영향을 확인했습니다.
++
++## 배포 위험
++
++<!-- 위험 요소, 모니터링 지표, 롤백 방법을 적어 주세요. 없으면 "없음"이라고 적어 주세요. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b6790ca3af9dfc2c08a652ddbc9a744cb13c7e8
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,31 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: npm test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 22
++
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd9e5768ee6826c917737f7732f74a946ad72c07
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,45 @@
++# 주문 조회 장애 재발 방지 요약
++
++## 사고 요약
++
++- 영향: 주문이 없는 고객 3명이 데이터 조회 오류를 경험했다.
++- 직접 원인: `getUserOrders()`가 주문이 0건일 때 배열 대신 `null`을 반환했고, 배열을 기대한 프론트엔드가 이를 처리하지 못했다.
++- 프로세스 원인: 해당 변경이 자동 테스트 없이 머지됐다.
++- 초기 조치: 원인 커밋은 이미 revert됐다. 다만 작업 시작 시점의 `src/orders.js`에도 빈 결과를 `null`로 바꾸는 분기가 남아 있어 함께 제거했다.
++
++## 적용한 변경
++
++1. 반환 계약 수정 (`src/orders.js`)
++   - 데이터베이스가 반환한 빈 배열을 그대로 반환하도록 `null` 변환 분기를 제거했다.
++   - 이제 주문이 없는 정상 상태도 다른 조회 결과와 동일하게 배열로 처리된다.
++
++2. 회귀 테스트 추가 (`test/orders.test.js`)
++   - 주문이 0건인 사용자의 결과가 `[]`이며 배열 타입인지 검증한다.
++   - 주문이 있는 사용자의 결과가 손실이나 변형 없이 반환되는지도 검증한다.
++   - 쿼리와 사용자 ID 파라미터도 함께 확인한다.
++
++3. PR 자동 테스트 추가 (`.github/workflows/test.yml`)
++   - 모든 pull request에서 `npm test`를 실행한다.
++   - `main`에 반영된 뒤에도 테스트를 실행해 기본 브랜치 상태를 계속 확인한다.
++   - 워크플로 권한을 읽기 전용으로 제한하고, 중복 실행을 취소하며, 5분 타임아웃을 설정했다.
++
++4. PR 체크리스트 추가 (`.github/pull_request_template.md`)
++   - 테스트 실행, 경계 사례 검증, 반환 타입/API 계약의 호출자 영향 확인을 리뷰 전에 명시적으로 점검하도록 했다.
++   - 배포 위험, 모니터링 지표, 롤백 방법을 PR에 기록하도록 했다.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 테스트 2건 통과, 실패 0건
++- 추가 확인: `src/orders.js`와 `test/orders.test.js` 모두 `node --check` 통과
++
++## 저장소 관리자 후속 조치
++
++CI 파일만 추가해서는 실패한 PR의 머지를 완전히 차단할 수 없다. GitHub의 `main` 브랜치 규칙에서 다음 항목을 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- `npm test` 상태 체크를 필수(required)로 지정
++- 필수 체크가 최신 커밋에서 통과해야 머지 허용
++- 관리자 및 우회 권한 보유자에게도 규칙 적용
++
++이 설정까지 완료하면 테스트가 없거나 회귀 테스트가 실패한 변경이 `main`에 머지되는 경로를 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..849136af8d7a0893d6af1f4fd6153530a8fee6fe
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import { describe, it } from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++describe('getUserOrders', () => {
++  it('returns an empty array when the user has no orders', () => {
++    const db = {
++      query(sql, params) {
++        assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++        assert.deepEqual(params, ['user-without-orders']);
++        return [];
++      },
++    };
++
++    const orders = getUserOrders(db, 'user-without-orders');
++
++    assert.deepEqual(orders, []);
++    assert.ok(Array.isArray(orders));
++  });
++
++  it('returns the orders returned by the database', () => {
++    const expectedOrders = [
++      { id: 'order-1', user_id: 'user-1' },
++      { id: 'order-2', user_id: 'user-1' },
++    ];
++    const db = { query: () => expectedOrders };
++
++    const orders = getUserOrders(db, 'user-1');
++
++    assert.strictEqual(orders, expectedOrders);
++  });
++});
+
+tokens used
+28,083
+재발 방지책을 적용하고 [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/summary.md)에 정리했습니다.
+
+- [getUserOrders 수정](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/src/orders.js:1): 빈 주문을 `null`이 아닌 `[]`로 반환
+- [회귀 테스트 추가](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/test/orders.test.js:1): 빈 주문 및 정상 주문 시나리오 검증
+- [GitHub Actions 추가](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/.github/workflows/test.yml:1): PR과 `main` 변경에서 `npm test` 실행
+- [PR 체크리스트 추가](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-1/.github/pull_request_template.md:1)
+
+검증 결과: 테스트 2건 통과, 실패 0건이며 구문 검사도 통과했습니다.
+
+남은 운영 조치는 GitHub에서 `main` 브랜치 보호 규칙을 설정하고 `npm test` 체크를 필수로 지정하는 것입니다. 구체적인 설정 항목도 `summary.md`에 적어두었습니다.

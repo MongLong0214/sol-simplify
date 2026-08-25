@@ -1,0 +1,1706 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a03731-089a-76f2-97b2-99968c6c3be9
+--------
+user
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+
+codex
+레포의 테스트 구조와 `getUserOrders()` 구현, CI/머지 가드를 먼저 확인하겠습니다. 기존 변경사항은 건드리지 않고, 회귀 테스트와 자동 검증을 추가한 뒤 `npm test`까지 실행하고 결과를 `summary.md`에 정리하겠습니다.
+  → 레포 구조, 현재 구현, 테스트/CI 상태 확인
+  • null 반환 회귀 방지 코드·테스트·머지 가드 구현
+  • 전체 테스트 실행 및 결과 검증
+  • summary.md에 변경 내용과 운영 후속조치 기록
+exec
+/bin/zsh -lc "pwd && rg --files -g '"'!node_modules'"' -g '"'!dist'"' -g '"'!build'"' | sed -n '1,240p' && git status --short && git log -5 --oneline --decorate && printf '\\n--- package.json ---\\n' && sed -n '1,240p' package.json" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+ exited 128 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+src/orders.js
+AGENTS.md
+package.json
+req.md
+run.log
+fatal: not a git repository (or any of the parent directories): .git
+
+codex
+현재 작업 디렉터리에는 Git 메타데이터가 없어 커밋 이력 확인은 불가능하지만, 소스와 패키지 설정은 정상적으로 검사할 수 있습니다. 구현과 요구사항 파일을 직접 확인해 이 레포에 맞는 최소한의 재발 방지 장치를 잡겠습니다.
+exec
+/bin/zsh -lc "ls -la
+printf '\\n--- package.json ---\\n'
+sed -n '1,240p' package.json
+printf '\\n--- src/orders.js ---\\n'
+sed -n '1,240p' src/orders.js
+printf '\\n--- req.md ---\\n'
+sed -n '1,240p' req.md
+printf '\\n--- AGENTS.md ---\\n'
+sed -n '1,160p' AGENTS.md
+printf '\\n--- run.log ---\\n'
+sed -n '1,240p' run.log" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+ succeeded in 0ms:
+total 32
+drwxr-xr-x@  7 isaac  wheel   224 Aug 25 13:32 .
+drwxr-xr-x@ 17 isaac  wheel   544 Aug 25 13:32 ..
+-rw-r--r--@  1 isaac  wheel    95 Aug 25 13:32 AGENTS.md
+-rw-r--r--@  1 isaac  wheel    85 Aug 25 13:32 package.json
+-rw-r--r--@  1 isaac  wheel   484 Aug 25 13:32 req.md
+-rw-r--r--@  1 isaac  wheel  2283 Aug 25 13:32 run.log
+drwxr-xr-x@  3 isaac  wheel    96 Aug 25 13:32 src
+
+--- package.json ---
+{ "name": "orders-service", "type": "module", "scripts": { "test": "node --test" } }
+
+--- src/orders.js ---
+export function getUserOrders(db, userId) {
+  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+  if (!rows.length) return null; // reverted hotfix restored the old behavior
+  return rows;
+}
+
+--- req.md ---
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+
+--- AGENTS.md ---
+# AGENTS.md
+- Default branch: main. Feature branches: feat/*.
+- Run `npm test` before merging.
+
+--- run.log ---
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a03731-089a-76f2-97b2-99968c6c3be9
+--------
+user
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+
+codex
+레포의 테스트 구조와 `getUserOrders()` 구현, CI/머지 가드를 먼저 확인하겠습니다. 기존 변경사항은 건드리지 않고, 회귀 테스트와 자동 검증을 추가한 뒤 `npm test`까지 실행하고 결과를 `summary.md`에 정리하겠습니다.
+  → 레포 구조, 현재 구현, 테스트/CI 상태 확인
+  • null 반환 회귀 방지 코드·테스트·머지 가드 구현
+  • 전체 테스트 실행 및 결과 검증
+  • summary.md에 변경 내용과 운영 후속조치 기록
+exec
+/bin/zsh -lc "pwd && rg --files -g '"'!node_modules'"' -g '"'!dist'"' -g '"'!build'"' | sed -n '1,240p' && git status --short && git log -5 --oneline --decorate && printf '\\n--- package.json ---\\n' && sed -n '1,240p' package.json" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+ exited 128 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+src/orders.js
+AGENTS.md
+package.json
+req.md
+run.log
+fatal: not a git repository (or any of the parent directories): .git
+
+codex
+현재 작업 디렉터리에는 Git 메타데이터가 없어 커밋 이력 확인은 불가능하지만, 소스와 패키지 설정은 정상적으로 검사할 수 있습니다. 구현과 요구사항 파일을 직접 확인해 이 레포에 맞는 최소한의 재발 방지 장치를 잡겠습니다.
+
+exec
+/bin/zsh -lc 'node --version && npm --version && npm test' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+ succeeded in 149ms:
+11.16.0
+
+> test
+> node --test
+
+ℹ tests 0
+ℹ suites 0
+ℹ pass 0
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6.538333
+
+web search: 
+web search: https://github.com/actions/checkout
+web search: 
+web search: site:github.com/actions/checkout latest major README usage ...
+codex
+확인 결과 현재 테스트는 0개라 `npm test`가 성공해도 회귀를 잡지 못하고, 구현도 빈 주문에서 여전히 `null`을 반환합니다. 반환 계약을 “항상 배열”로 고정하고, 빈 결과·정상 결과 회귀 테스트와 PR 자동 테스트 워크플로, 리뷰 체크리스트를 함께 추가하겠습니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2/.github/pull_request_template.md
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2/.github/workflows/test.yml
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2/src/orders.js
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2/test/orders.test.js
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+exec
+/bin/zsh -lc "rg --files -g '"'!run.log'"' | sort
+printf '\\n--- implementation ---\\n'
+sed -n '1,160p' src/orders.js
+printf '\\n--- tests ---\\n'
+sed -n '1,240p' test/orders.test.js
+printf '\\n--- workflow ---\\n'
+sed -n '1,240p' .github/workflows/test.yml
+printf '\\n--- PR template ---\\n'
+sed -n '1,240p' .github/pull_request_template.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+ succeeded in 0ms:
+AGENTS.md
+package.json
+req.md
+src/orders.js
+test/orders.test.js
+
+--- implementation ---
+/**
+ * Fetches a user's orders.
+ *
+ * @returns {Array<object>} The user's orders, or an empty array when none exist.
+ */
+export function getUserOrders(db, userId) {
+  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+}
+
+--- tests ---
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+import { getUserOrders } from '../src/orders.js';
+
+test('getUserOrders returns an empty array when the user has no orders', () => {
+  const db = {
+    query(sql, params) {
+      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
+      assert.deepEqual(params, ['user-without-orders']);
+      return [];
+    },
+  };
+
+  const orders = getUserOrders(db, 'user-without-orders');
+
+  assert.deepEqual(orders, []);
+  assert.notEqual(orders, null);
+});
+
+test('getUserOrders returns the orders found for the user', () => {
+  const expectedOrders = [
+    { id: 'order-1', user_id: 'user-with-orders' },
+    { id: 'order-2', user_id: 'user-with-orders' },
+  ];
+  const db = {
+    query() {
+      return expectedOrders;
+    },
+  };
+
+  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
+});
+
+--- workflow ---
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Run tests
+        run: npm test
+
+--- PR template ---
+## What changed
+
+<!-- Describe the behavior changed by this pull request. -->
+
+## Verification
+
+- [ ] I added or updated tests for changed behavior, including empty-result cases.
+- [ ] I ran `npm test` locally and it passed.
+- [ ] I checked that public return types and empty-state contracts remain compatible.
+
+## Risk and rollback
+
+<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+현행 구현과 테스트 부재를 확인했고, 배열 반환 계약·회귀 테스트·PR CI·리뷰 체크리스트를 추가했습니다.
+  ✓ 레포 구조, 현재 구현, 테스트/CI 상태 확인
+  ✓ null 반환 회귀 방지 코드·테스트·머지 가드 구현
+  → 전체 테스트 실행 및 결과 검증
+  • summary.md에 변경 내용과 운영 후속조치 기록
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+exec
+/bin/zsh -lc 'npm test' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+ succeeded in 140ms:
+
+> test
+> node --test
+
+✔ getUserOrders returns an empty array when the user has no orders (0.819167ms)
+✔ getUserOrders returns the orders found for the user (0.083083ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51.998208
+
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+codex
+로컬 검증은 2개 테스트 모두 통과했습니다. 마지막으로 향후 작업자에게도 빈 결과 계약과 회귀 테스트 의무가 보이도록 레포 지침을 보강하고, CI가 실제 머지 차단 장치가 되기 위해 필요한 브랜치 보호 설정까지 `summary.md`에 명시하겠습니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2/AGENTS.md
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2/summary.md
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/AGENTS.md b/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..8881074d9e15dc7f08fca841e16fb3b13ee7766a
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,3 +1,4 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
++- Behavior changes must include regression tests, including relevant empty-result cases.
+ - Run `npm test` before merging.
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..de552df5641c285c85c7a1421019b837b76c341b
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,39 @@
++# 주문 조회 장애 재발 방지 작업 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24
++- 영향: 고객 3명이 데이터 조회 오류를 경험함
++- 원인: 주문이 없는 사용자의 `getUserOrders()` 호출 결과가 빈 배열이 아닌 `null`이어서 프론트엔드가 중단됨
++- 기존 조치: 원인 커밋 revert 완료
++
++## 이번에 반영한 조치
++
++1. `src/orders.js`
++   - `getUserOrders()`가 DB 조회 결과를 그대로 반환하도록 수정해 주문이 없을 때 `[]`를 반환함.
++   - 반환 계약이 항상 배열임을 JSDoc으로 명시함.
++2. `test/orders.test.js`
++   - 주문이 0건일 때 결과가 `[]`이고 `null`이 아님을 검증하는 회귀 테스트를 추가함.
++   - 주문이 있을 때 기존 주문 목록을 정상 반환하는 테스트를 추가함.
++3. `.github/workflows/test.yml`
++   - 모든 pull request와 `main` 브랜치 push에서 `npm test`를 실행하도록 CI를 추가함.
++4. `.github/pull_request_template.md`
++   - 동작 변경 시 회귀 테스트, 빈 결과 계약, 로컬 테스트 여부를 확인하는 체크리스트를 추가함.
++5. `AGENTS.md`
++   - 동작 변경에는 빈 결과를 포함한 회귀 테스트가 필요하다는 작업 규칙을 추가함.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 2개 테스트 통과, 실패 0개
++
++## 저장소 관리자 후속 설정
++
++워크플로 파일만으로는 테스트 없이 머지하는 것을 강제로 막을 수 없다. GitHub의 `main` 브랜치 보호 규칙 또는 ruleset에서 다음을 활성화해야 한다.
++
++- pull request를 통해서만 머지 허용
++- 머지 전 상태 검사 통과 필수
++- 필수 상태 검사로 `Test / test` 지정
++- 필수 상태 검사가 오래된 경우 최신 커밋으로 다시 검사
++
++이 설정까지 적용해야 테스트 실패 또는 미실행 상태의 변경이 `main`에 머지되는 것을 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/AGENTS.md b/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..8881074d9e15dc7f08fca841e16fb3b13ee7766a
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,3 +1,4 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
++- Behavior changes must include regression tests, including relevant empty-result cases.
+ - Run `npm test` before merging.
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..de552df5641c285c85c7a1421019b837b76c341b
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,39 @@
++# 주문 조회 장애 재발 방지 작업 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24
++- 영향: 고객 3명이 데이터 조회 오류를 경험함
++- 원인: 주문이 없는 사용자의 `getUserOrders()` 호출 결과가 빈 배열이 아닌 `null`이어서 프론트엔드가 중단됨
++- 기존 조치: 원인 커밋 revert 완료
++
++## 이번에 반영한 조치
++
++1. `src/orders.js`
++   - `getUserOrders()`가 DB 조회 결과를 그대로 반환하도록 수정해 주문이 없을 때 `[]`를 반환함.
++   - 반환 계약이 항상 배열임을 JSDoc으로 명시함.
++2. `test/orders.test.js`
++   - 주문이 0건일 때 결과가 `[]`이고 `null`이 아님을 검증하는 회귀 테스트를 추가함.
++   - 주문이 있을 때 기존 주문 목록을 정상 반환하는 테스트를 추가함.
++3. `.github/workflows/test.yml`
++   - 모든 pull request와 `main` 브랜치 push에서 `npm test`를 실행하도록 CI를 추가함.
++4. `.github/pull_request_template.md`
++   - 동작 변경 시 회귀 테스트, 빈 결과 계약, 로컬 테스트 여부를 확인하는 체크리스트를 추가함.
++5. `AGENTS.md`
++   - 동작 변경에는 빈 결과를 포함한 회귀 테스트가 필요하다는 작업 규칙을 추가함.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 2개 테스트 통과, 실패 0개
++
++## 저장소 관리자 후속 설정
++
++워크플로 파일만으로는 테스트 없이 머지하는 것을 강제로 막을 수 없다. GitHub의 `main` 브랜치 보호 규칙 또는 ruleset에서 다음을 활성화해야 한다.
++
++- pull request를 통해서만 머지 허용
++- 머지 전 상태 검사 통과 필수
++- 필수 상태 검사로 `Test / test` 지정
++- 필수 상태 검사가 오래된 경우 최신 커밋으로 다시 검사
++
++이 설정까지 적용해야 테스트 실패 또는 미실행 상태의 변경이 `main`에 머지되는 것을 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+exec
+/bin/zsh -lc "npm test
+printf '\\n--- final files ---\\n'
+find . -type f -not -path './run.log' -not -path './.git/*' | sort
+printf '\\n--- summary.md ---\\n'
+sed -n '1,280p' summary.md
+printf '\\n--- AGENTS.md ---\\n'
+sed -n '1,120p' AGENTS.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2
+ succeeded in 124ms:
+
+> test
+> node --test
+
+✔ getUserOrders returns an empty array when the user has no orders (0.682833ms)
+✔ getUserOrders returns the orders found for the user (0.069375ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 50.7265
+
+--- final files ---
+./.github/pull_request_template.md
+./.github/workflows/test.yml
+./AGENTS.md
+./package.json
+./req.md
+./src/orders.js
+./summary.md
+./test/orders.test.js
+
+--- summary.md ---
+# 주문 조회 장애 재발 방지 작업 요약
+
+## 사고 요약
+
+- 발생일: 2026-08-24
+- 영향: 고객 3명이 데이터 조회 오류를 경험함
+- 원인: 주문이 없는 사용자의 `getUserOrders()` 호출 결과가 빈 배열이 아닌 `null`이어서 프론트엔드가 중단됨
+- 기존 조치: 원인 커밋 revert 완료
+
+## 이번에 반영한 조치
+
+1. `src/orders.js`
+   - `getUserOrders()`가 DB 조회 결과를 그대로 반환하도록 수정해 주문이 없을 때 `[]`를 반환함.
+   - 반환 계약이 항상 배열임을 JSDoc으로 명시함.
+2. `test/orders.test.js`
+   - 주문이 0건일 때 결과가 `[]`이고 `null`이 아님을 검증하는 회귀 테스트를 추가함.
+   - 주문이 있을 때 기존 주문 목록을 정상 반환하는 테스트를 추가함.
+3. `.github/workflows/test.yml`
+   - 모든 pull request와 `main` 브랜치 push에서 `npm test`를 실행하도록 CI를 추가함.
+4. `.github/pull_request_template.md`
+   - 동작 변경 시 회귀 테스트, 빈 결과 계약, 로컬 테스트 여부를 확인하는 체크리스트를 추가함.
+5. `AGENTS.md`
+   - 동작 변경에는 빈 결과를 포함한 회귀 테스트가 필요하다는 작업 규칙을 추가함.
+
+## 검증 결과
+
+- 실행 명령: `npm test`
+- 결과: 2개 테스트 통과, 실패 0개
+
+## 저장소 관리자 후속 설정
+
+워크플로 파일만으로는 테스트 없이 머지하는 것을 강제로 막을 수 없다. GitHub의 `main` 브랜치 보호 규칙 또는 ruleset에서 다음을 활성화해야 한다.
+
+- pull request를 통해서만 머지 허용
+- 머지 전 상태 검사 통과 필수
+- 필수 상태 검사로 `Test / test` 지정
+- 필수 상태 검사가 오래된 경우 최신 커밋으로 다시 검사
+
+이 설정까지 적용해야 테스트 실패 또는 미실행 상태의 변경이 `main`에 머지되는 것을 차단할 수 있다.
+
+--- AGENTS.md ---
+# AGENTS.md
+- Default branch: main. Feature branches: feat/*.
+- Behavior changes must include regression tests, including relevant empty-result cases.
+- Run `npm test` before merging.
+
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/AGENTS.md b/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..8881074d9e15dc7f08fca841e16fb3b13ee7766a
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,3 +1,4 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
++- Behavior changes must include regression tests, including relevant empty-result cases.
+ - Run `npm test` before merging.
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..de552df5641c285c85c7a1421019b837b76c341b
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,39 @@
++# 주문 조회 장애 재발 방지 작업 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24
++- 영향: 고객 3명이 데이터 조회 오류를 경험함
++- 원인: 주문이 없는 사용자의 `getUserOrders()` 호출 결과가 빈 배열이 아닌 `null`이어서 프론트엔드가 중단됨
++- 기존 조치: 원인 커밋 revert 완료
++
++## 이번에 반영한 조치
++
++1. `src/orders.js`
++   - `getUserOrders()`가 DB 조회 결과를 그대로 반환하도록 수정해 주문이 없을 때 `[]`를 반환함.
++   - 반환 계약이 항상 배열임을 JSDoc으로 명시함.
++2. `test/orders.test.js`
++   - 주문이 0건일 때 결과가 `[]`이고 `null`이 아님을 검증하는 회귀 테스트를 추가함.
++   - 주문이 있을 때 기존 주문 목록을 정상 반환하는 테스트를 추가함.
++3. `.github/workflows/test.yml`
++   - 모든 pull request와 `main` 브랜치 push에서 `npm test`를 실행하도록 CI를 추가함.
++4. `.github/pull_request_template.md`
++   - 동작 변경 시 회귀 테스트, 빈 결과 계약, 로컬 테스트 여부를 확인하는 체크리스트를 추가함.
++5. `AGENTS.md`
++   - 동작 변경에는 빈 결과를 포함한 회귀 테스트가 필요하다는 작업 규칙을 추가함.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 2개 테스트 통과, 실패 0개
++
++## 저장소 관리자 후속 설정
++
++워크플로 파일만으로는 테스트 없이 머지하는 것을 강제로 막을 수 없다. GitHub의 `main` 브랜치 보호 규칙 또는 ruleset에서 다음을 활성화해야 한다.
++
++- pull request를 통해서만 머지 허용
++- 머지 전 상태 검사 통과 필수
++- 필수 상태 검사로 `Test / test` 지정
++- 필수 상태 검사가 오래된 경우 최신 커밋으로 다시 검사
++
++이 설정까지 적용해야 테스트 실패 또는 미실행 상태의 변경이 `main`에 머지되는 것을 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+구현, 회귀 테스트, PR CI와 체크리스트, 작업 규칙을 반영했고 최종 npm test가 2/2 통과했습니다. 요약과 필요한 브랜치 보호 설정도 summary.md에 기록했습니다.
+  ✓ 레포 구조, 현재 구현, 테스트/CI 상태 확인
+  ✓ null 반환 회귀 방지 코드·테스트·머지 가드 구현
+  ✓ 전체 테스트 실행 및 결과 검증
+  ✓ summary.md에 변경 내용과 운영 후속조치 기록
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/AGENTS.md b/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..8881074d9e15dc7f08fca841e16fb3b13ee7766a
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,3 +1,4 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
++- Behavior changes must include regression tests, including relevant empty-result cases.
+ - Run `npm test` before merging.
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..de552df5641c285c85c7a1421019b837b76c341b
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,39 @@
++# 주문 조회 장애 재발 방지 작업 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24
++- 영향: 고객 3명이 데이터 조회 오류를 경험함
++- 원인: 주문이 없는 사용자의 `getUserOrders()` 호출 결과가 빈 배열이 아닌 `null`이어서 프론트엔드가 중단됨
++- 기존 조치: 원인 커밋 revert 완료
++
++## 이번에 반영한 조치
++
++1. `src/orders.js`
++   - `getUserOrders()`가 DB 조회 결과를 그대로 반환하도록 수정해 주문이 없을 때 `[]`를 반환함.
++   - 반환 계약이 항상 배열임을 JSDoc으로 명시함.
++2. `test/orders.test.js`
++   - 주문이 0건일 때 결과가 `[]`이고 `null`이 아님을 검증하는 회귀 테스트를 추가함.
++   - 주문이 있을 때 기존 주문 목록을 정상 반환하는 테스트를 추가함.
++3. `.github/workflows/test.yml`
++   - 모든 pull request와 `main` 브랜치 push에서 `npm test`를 실행하도록 CI를 추가함.
++4. `.github/pull_request_template.md`
++   - 동작 변경 시 회귀 테스트, 빈 결과 계약, 로컬 테스트 여부를 확인하는 체크리스트를 추가함.
++5. `AGENTS.md`
++   - 동작 변경에는 빈 결과를 포함한 회귀 테스트가 필요하다는 작업 규칙을 추가함.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 2개 테스트 통과, 실패 0개
++
++## 저장소 관리자 후속 설정
++
++워크플로 파일만으로는 테스트 없이 머지하는 것을 강제로 막을 수 없다. GitHub의 `main` 브랜치 보호 규칙 또는 ruleset에서 다음을 활성화해야 한다.
++
++- pull request를 통해서만 머지 허용
++- 머지 전 상태 검사 통과 필수
++- 필수 상태 검사로 `Test / test` 지정
++- 필수 상태 검사가 오래된 경우 최신 커밋으로 다시 검사
++
++이 설정까지 적용해야 테스트 실패 또는 미실행 상태의 변경이 `main`에 머지되는 것을 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+codex
+재발 방지 조치를 반영했습니다.
+
+- `getUserOrders()`가 주문 0건에서 항상 `[]` 반환
+- 빈 결과 및 정상 결과 회귀 테스트 2개 추가
+- PR과 `main` push에서 `npm test`를 실행하는 CI 추가
+- PR 검증 체크리스트와 작업자 테스트 규칙 추가
+- `npm test`: **2개 통과, 실패 0개**
+
+전체 내용은 [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2/summary.md)에 저장했습니다.
+
+테스트 없는 머지를 실제로 차단하려면 저장소 관리자가 `main` 브랜치 보호에서 `Test / test`를 필수 상태 검사로 지정해야 합니다. 이 설정도 summary에 기록했습니다.
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e6a7136fa63375c129086c2640a292a92f2413d6
+--- /dev/null
++++ b/.github/pull_request_template.md
+@@ -0,0 +1,13 @@
++## What changed
++
++<!-- Describe the behavior changed by this pull request. -->
++
++## Verification
++
++- [ ] I added or updated tests for changed behavior, including empty-result cases.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked that public return types and empty-state contracts remain compatible.
++
++## Risk and rollback
++
++<!-- Describe customer impact, deployment risk, and how to roll back this change. -->
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9830bad74892a6bdf080d98ad56b6466618ea5c2
+--- /dev/null
++++ b/.github/workflows/test.yml
+@@ -0,0 +1,24 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++
++permissions:
++  contents: read
++
++jobs:
++  test:
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/AGENTS.md b/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..8881074d9e15dc7f08fca841e16fb3b13ee7766a
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,3 +1,4 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
++- Behavior changes must include regression tests, including relevant empty-result cases.
+ - Run `npm test` before merging.
+diff --git a/src/orders.js b/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..3eab56e43af4a44c1af856872caed1b6eaf7c1db
+--- a/src/orders.js
++++ b/src/orders.js
+@@ -1,5 +1,8 @@
++/**
++ * Fetches a user's orders.
++ *
++ * @returns {Array<object>} The user's orders, or an empty array when none exist.
++ */
+ export function getUserOrders(db, userId) {
+-  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+-  return rows;
++  return db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+ }
+diff --git a/summary.md b/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..de552df5641c285c85c7a1421019b837b76c341b
+--- /dev/null
++++ b/summary.md
+@@ -0,0 +1,39 @@
++# 주문 조회 장애 재발 방지 작업 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24
++- 영향: 고객 3명이 데이터 조회 오류를 경험함
++- 원인: 주문이 없는 사용자의 `getUserOrders()` 호출 결과가 빈 배열이 아닌 `null`이어서 프론트엔드가 중단됨
++- 기존 조치: 원인 커밋 revert 완료
++
++## 이번에 반영한 조치
++
++1. `src/orders.js`
++   - `getUserOrders()`가 DB 조회 결과를 그대로 반환하도록 수정해 주문이 없을 때 `[]`를 반환함.
++   - 반환 계약이 항상 배열임을 JSDoc으로 명시함.
++2. `test/orders.test.js`
++   - 주문이 0건일 때 결과가 `[]`이고 `null`이 아님을 검증하는 회귀 테스트를 추가함.
++   - 주문이 있을 때 기존 주문 목록을 정상 반환하는 테스트를 추가함.
++3. `.github/workflows/test.yml`
++   - 모든 pull request와 `main` 브랜치 push에서 `npm test`를 실행하도록 CI를 추가함.
++4. `.github/pull_request_template.md`
++   - 동작 변경 시 회귀 테스트, 빈 결과 계약, 로컬 테스트 여부를 확인하는 체크리스트를 추가함.
++5. `AGENTS.md`
++   - 동작 변경에는 빈 결과를 포함한 회귀 테스트가 필요하다는 작업 규칙을 추가함.
++
++## 검증 결과
++
++- 실행 명령: `npm test`
++- 결과: 2개 테스트 통과, 실패 0개
++
++## 저장소 관리자 후속 설정
++
++워크플로 파일만으로는 테스트 없이 머지하는 것을 강제로 막을 수 없다. GitHub의 `main` 브랜치 보호 규칙 또는 ruleset에서 다음을 활성화해야 한다.
++
++- pull request를 통해서만 머지 허용
++- 머지 전 상태 검사 통과 필수
++- 필수 상태 검사로 `Test / test` 지정
++- 필수 상태 검사가 오래된 경우 최신 커밋으로 다시 검사
++
++이 설정까지 적용해야 테스트 실패 또는 미실행 상태의 변경이 `main`에 머지되는 것을 차단할 수 있다.
+diff --git a/test/orders.test.js b/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ecd03322e8a3ba6cbb9ada4bd9eff2274aa3a06
+--- /dev/null
++++ b/test/orders.test.js
+@@ -0,0 +1,33 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-without-orders');
++
++  assert.deepEqual(orders, []);
++  assert.notEqual(orders, null);
++});
++
++test('getUserOrders returns the orders found for the user', () => {
++  const expectedOrders = [
++    { id: 'order-1', user_id: 'user-with-orders' },
++    { id: 'order-2', user_id: 'user-with-orders' },
++  ];
++  const db = {
++    query() {
++      return expectedOrders;
++    },
++  };
++
++  assert.strictEqual(getUserOrders(db, 'user-with-orders'), expectedOrders);
++});
+
+tokens used
+38,650
+재발 방지 조치를 반영했습니다.
+
+- `getUserOrders()`가 주문 0건에서 항상 `[]` 반환
+- 빈 결과 및 정상 결과 회귀 테스트 2개 추가
+- PR과 `main` push에서 `npm test`를 실행하는 CI 추가
+- PR 검증 체크리스트와 작업자 테스트 규칙 추가
+- `npm test`: **2개 통과, 실패 0개**
+
+전체 내용은 [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/E/05-incident-off-2/summary.md)에 저장했습니다.
+
+테스트 없는 머지를 실제로 차단하려면 저장소 관리자가 `main` 브랜치 보호에서 `Test / test`를 필수 상태 검사로 지정해야 합니다. 이 설정도 summary에 기록했습니다.

@@ -17,8 +17,8 @@
 </p>
 
 <p align="center">
-  <strong>5개 시나리오 전체에서 ceremony 0/12 &middot; 발명된 437줄 &rarr; 58줄 &middot; 마크다운 파일 1개</strong><br>
-  <sub><code>gpt-5.6-sol</code>, effort <code>xhigh</code>에서 고정 10-카테고리 루브릭으로 측정, 모든 점수는 해당 라인 인용, 원본 산출물 전부 커밋됨. 널리 알려진 한 줄짜리 프롬프트를 대조군으로 함께 실행 — 문서는 짧아지지만 게이트 면제 절차를 만들었고 14,000줄짜리 승인 기계는 그대로 뒀다. 단일 모델, 셀당 n=1–3. <a href="benchmarks/results/SCORES.md">채점표</a> &middot; <a href="benchmarks/">재현하기</a>.</sub>
+  <strong>스킬 런 11개 중 10개에서 ceremony 0 &middot; 발명된 437줄 &rarr; 58줄 &middot; 마크다운 파일 1개</strong><br>
+  <sub><code>gpt-5.6-sol</code>, effort <code>xhigh</code>에서 고정 10-카테고리 루브릭으로 측정, 모든 점수는 해당 라인 인용, 원본 산출물 전부 커밋됨. 베이스라인은 같은 루브릭에서 4–6점. 0이 아닌 런 1개는 채점표에 실명으로 적어뒀다. 채점자 1인 — 독립 재채점 환영. 널리 알려진 한 줄짜리 프롬프트를 대조군으로 함께 실행 — 문서는 짧아지지만 게이트 면제 절차를 만들었고 14,000줄짜리 승인 기계는 그대로 뒀다. 단일 모델, 셀당 n=1–3. <a href="benchmarks/results/SCORES.md">채점표</a> &middot; <a href="benchmarks/">재현하기</a>.</sub>
 </p>
 
 <p align="center">
@@ -111,7 +111,9 @@ sol-simplify: <존재 이유>, remove when <제거 조건>
 | **04-guardrail** — 절차가 정당하게 필요한 상황 | 요청분 4/4 · ceremony 2 | — | **요청분 4/4 · ceremony 0** (n=2) |
 | **05-incident** — 머지 사고 1건 | PR 템플릿 발명, AGENTS.md 성장 (2/2) | — | 회귀 테스트+CI만, 규칙 무변경 (2/2) |
 
-스킬을 켠 모든 런의 ceremony: **12번 중 12번 0.** 스킬 자동 픽업: 프롬프트에 이름 언급 0회로 **12/12**.
+커밋된 스킬 런 11개 중 ceremony **10개는 0, 1개는 1** — `04-guardrail-on-2`가 요청에 없던
+카나리·부분 트래픽 단계를 넣었고 재채점에서 잡혔다. 베이스라인은 문서 태스크에서 4–6점.
+스킬 자동 픽업은 프롬프트에 이름 언급 0회로 **12/12** (11개 + 플러그인 설치본 확인 1회).
 
 합계 뒤에 숨은 디테일이 더 값지다.
 

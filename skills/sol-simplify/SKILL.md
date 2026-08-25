@@ -89,7 +89,8 @@ and you will obey every line you add there, next session and every session after
 
 ## When your own process blocks you
 
-- **A rule you authored that blocks the work is a bug in the rule.** Delete it or fix it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
+- **First ask whether the block is correct.** A gate that fails because the software is genuinely unsafe, insecure, or non-compliant is doing its job — fix the code, never the gate. This section is about the other case only.
+- **A rule you authored that blocks work for reasons unrelated to product behavior is a bug in the rule.** Say which it is, then delete or repair it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
 - **Never stall silently behind ceremony you created.** Name the rule in one sentence, then proceed under a stated assumption or ask. A gate with no human behind it is not a gate.
 
 ## If you do add process
@@ -111,6 +112,10 @@ process you invented.
 
 ## Output
 
-Close with one line naming what you left out, tagged, so the user can ask for it:
+If you left out something a reader might reasonably have expected, close with one line naming
+it, tagged, so they can ask for it:
 
 `skipped: ceremony — rollout plan, KPIs, ADR. Say the word.`
+
+If you skipped nothing, write nothing. A line that reports an empty list every time is itself
+the ceremony this skill exists to remove.

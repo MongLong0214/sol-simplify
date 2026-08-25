@@ -17,8 +17,8 @@
 </p>
 
 <p align="center">
-  <strong>ceremony 0-for-12 across five scenarios &middot; 437 invented lines &rarr; 58 &middot; one markdown file</strong><br>
-  <sub>Measured on <code>gpt-5.6-sol</code> at <code>xhigh</code> effort against a fixed 10-category rubric, every score cited to a line, all raw outputs committed. A one-sentence prompt is run as a control arm — it shortens documents but wrote a gate-waiver procedure and left a 14,000-line authorization machine standing. Single model, n=1–3 per cell. <a href="benchmarks/results/SCORES.md">Scores</a> &middot; <a href="benchmarks/">reproduce it</a>.</sub>
+  <strong>ceremony scored 0 in 10 of 11 skill runs &middot; 437 invented lines &rarr; 58 &middot; one markdown file</strong><br>
+  <sub>Measured on <code>gpt-5.6-sol</code> at <code>xhigh</code> effort against a fixed 10-category rubric, every score cited to a line, all raw outputs committed. Baselines scored 4–6 on the same rubric. The one non-zero skill run is named in the scores. Single scorer — independent re-scoring welcome. A one-sentence prompt is run as a control arm — it shortens documents but wrote a gate-waiver procedure and left a 14,000-line authorization machine standing. Single model, n=1–3 per cell. <a href="benchmarks/results/SCORES.md">Scores</a> &middot; <a href="benchmarks/">reproduce it</a>.</sub>
 </p>
 
 <p align="center">
@@ -121,8 +121,11 @@ being asked — and every score cites the line it was found on. Rubric:
 | **04-guardrail** — process legitimately required | kept 4/4 · ceremony 2 | — | **kept 4/4 · ceremony 0** (n=2) |
 | **05-incident** — one bad merge | invents PR templates, grows AGENTS.md (2/2 runs) | — | regression test + CI only, rules untouched (2/2 runs) |
 
-Across every skill-on run in every scenario: **ceremony 0 for 12**, and the skill was picked
-up automatically **12/12** without ever being named in a prompt.
+Across the eleven committed skill runs, ceremony scored **0 in ten of them and 1 in the
+eleventh** — `04-guardrail-on-2` added a canary/partial-traffic step nobody asked for, caught
+on re-scoring. Baselines scored 4–6 on the document tasks. The skill was picked up
+automatically in **12 of 12** runs (the eleven plus one plugin-install check) without ever
+being named in a prompt.
 
 Three details worth more than the totals:
 
@@ -130,7 +133,7 @@ Three details worth more than the totals:
   The habit is systematic, not random.
 - **Two of three process baselines wrote a formal waiver policy for their own gates** — the
   exact mechanism that deadlocked the audited repository. The one-line arm wrote one too.
-- **On the guardrail scenario the skill kept every requested item** — checklist, approval
+- **On the guardrail scenario the skill kept every requested item in both runs** — checklist, approval
   flow, rollback, audit records, mapped to real PCI DSS v4.0.1 controls — and used its own
   marker to *protect* them (translated): `sol-simplify: independent approval and evidence exist for PCI DSS 6.5.1… reduce only if PCI scope or the audit obligation goes away.`
   Cutting requested process is a defect, and the benchmark checks for it.

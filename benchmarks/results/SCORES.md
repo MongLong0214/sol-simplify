@@ -35,6 +35,12 @@ not noise; it is a systematic habit of the model.
 | on #2 | 119 | **0** | L21 explicitly *rejects* solo sign-off; L109 refuses retry-rules; L111 refuses fixed coverage gates |
 | on #3 | 125 | **0** | L121: "한 번의 사고를 이유로 새 승인 단계나 포괄적 규칙을 추가하지 않는다" |
 
+**Symmetric re-run.** `02-process-on-symmetric` repeats this scenario with the fixed `run.sh`
+environment — a throwaway `CODEX_HOME` holding credentials plus this one skill, and nothing
+else from the author's machine: **86 lines, ceremony 0**, skill picked up unprompted. It lands
+inside the range of the three original runs (58 / 119 / 125), so the effect does not depend on
+the author's other installed skills. It is one run, not a full re-measurement.
+
 Two of three baselines wrote a **formal waiver/exception policy** for their own gates — the
 stage-4 antipattern — and the one-line arm wrote one too (run #1). No skill arm did.
 
@@ -57,10 +63,12 @@ procedure, audit record), 0–4. **A skill run below 4 here would be a skill def
 |---|--:|--:|--:|---|
 | off | 303 | 4/4 | **2** | C1 L149/163 (배포 전 15분 기준선, p95 2배/5분 임계 — 발명 수치) · C2 L240 (분기별 롤백·DB 복구 훈련 프로그램) |
 | on #1 | 158 | **4/4** | **0** | kept everything asked, mapped to real PCI DSS v4.0.1 controls (10.2.2, 10.3, 10.5.1, 10.6.1) with SSC links |
-| on #2 | 138 | **4/4** | **0** | used the skill's own marker to *protect* the requested process: "sol-simplify: 독립 승인과 증적은 PCI DSS 6.5.1…을 위해 존재한다. PCI 범위 또는 감사 의무가 사라지고 변경 위험을 재평가한 경우에만 축소한다." |
+| on #2 | 138 | **4/4** | **1** | **C2 L91 — "플랫폼이 지원하면 카나리 또는 부분 트래픽부터 배포한다": a staged-exposure step, and staged exposure was not among the four requested items.** Also used the skill's own marker to *protect* the requested process: "sol-simplify: 독립 승인과 증적은 PCI DSS 6.5.1…을 위해 존재한다." |
 
-The skill did not cut requested process — it kept all of it, dropped only the inventions, and
-annotated why the kept process exists.
+The skill did not cut requested process — it kept all of it in both runs and annotated why the
+kept process exists. It is not perfectly clean here: run #2 added a canary/partial-traffic
+step nobody asked for. That is the one non-zero ceremony score among the eleven committed
+skill runs, and it was caught on re-scoring, not on the first pass.
 
 ## 05-incident — one bad merge; what does the agent reach for?
 
@@ -70,13 +78,15 @@ Seeded repo (see `../seeds/05-incident/`): a null-return bug, already reverted, 
 | run | root fix + regression test | CI enforcing the existing rule | AGENTS.md | PR template invented | C10 |
 |---|---|---|---|---|--:|
 | off #1 | ✓ (tests pass) | ✓ | unchanged | **yes — with 배포 위험·모니터링·롤백 기입 의무** | **1** |
-| off #2 | ✓ | ✓ | **grew — new standing rule added** | **yes** | **2** |
+| off #2 | ✓ | ✓ | **grew — new standing rule added** | **yes** | **1** |
 | on #1 | ✓ (red→green verified: "수정 전 회귀 테스트: 실패, `null !== []`") | ✓ | unchanged | no | **0** |
 | on #2 | ✓ | ✓ | unchanged | no | **0** |
 
 Every arm fixed the bug and added the regression test — that is product work and the skill
-never touches it. The baselines *also* manufactured standing paperwork from one incident,
-2 runs out of 2. The skill arms did not, 2 out of 2.
+never touches it. The baselines *also* manufactured standing paperwork from one incident, 2 runs out of 2 — one
+added a PR template, the other added a PR template *and* a new permanent rule in AGENTS.md.
+Both score C10 = 1: the rubric counts categories, not instances. The skill arms manufactured
+none, 2 out of 2.
 
 ## Summary
 
@@ -87,11 +97,15 @@ never touches it. The baselines *also* manufactured standing paperwork from one 
 | 02-process lines | 412 | 130 | **119** |
 | 03-loop verdict | rebuild+feed | shrink | **dismantle** |
 | 04-guardrail kept / ceremony | 4/4 · 2 | — | **4/4 · 0** |
-| 05-incident C10 | 1.5 | — | **0** |
+| 05-incident C10 | 1 | — | **0** |
 
-Ceremony across every skill-on run in every experiment: **0 for 12** (excluding 04's kept
-items, which are requested and therefore never score). Skill auto-pickup, never being named
-in a prompt: **12/12**.
+**Ceremony across the eleven committed skill runs: 0 in ten of them, 1 in the eleventh**
+(04-guardrail-on-2, a canary step). Requested items never score, so 04's kept controls are
+excluded by definition. Baseline ceremony was 4–6 on document tasks in every run.
+
+**Skill auto-pickup: 12 of 12** — the eleven committed runs plus one verification that a
+plugin-installed copy (no manual `~/.codex/skills/` file present) is discovered the same way.
+The skill was never named in any prompt.
 
 ## Where the one-line prompt is enough — and where it is not
 
