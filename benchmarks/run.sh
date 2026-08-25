@@ -12,7 +12,11 @@ P="${1:?usage: run.sh <prompt-name>}"
 MODEL="${SOLSIMPLIFY_MODEL:-gpt-5.6-sol}"
 EFFORT="${SOLSIMPLIFY_EFFORT:-xhigh}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
+# Re-runs write to results/<prompt>-<arm>-<tag> so they never overwrite a committed result:
+# SCORES.md cites line numbers inside those files, and clobbering them silently breaks
+# every citation.  SOLSIMPLIFY_TAG=symmetric ./run.sh 03-loop
 REAL_HOME="${CODEX_HOME:-$HOME/.codex}"
+TAG="${SOLSIMPLIFY_TAG:-}"
 
 # Every arm runs against a throwaway CODEX_HOME built from your credentials alone, so the
 # control base and the skill base differ by exactly one file: the skill. Using your real
@@ -35,8 +39,8 @@ mkdir -p "$ON_HOME/skills"
 cp -R "$HERE/../skills/sol-simplify" "$ON_HOME/skills/"
 
 run() { # $1 = arm, $2 = codex home, $3 = extra instruction (optional)
-  local out="$HERE/results/$P-$1"
-  mkdir -p "$out"
+  local out="$HERE/results/$P-$1${TAG:+-$TAG}"
+  rm -rf "$out"; mkdir -p "$out"
   if [ -d "$HERE/seeds/$P" ]; then cp -R "$HERE/seeds/$P/." "$out/"; fi
   cp "$HERE/prompts/$P.md" "$out/req.md"
   if [ -n "${3:-}" ]; then printf '\n%s\n' "$3" >> "$out/req.md"; fi
