@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg?v=3">
-    <img src="assets/logo.svg?v=3" width="480" alt="sol-simplify — a tangled line straightens into one clean line">
+    <img src="assets/logo.svg?v=3" width="480" alt="sol-simplify — scissors snipping, beside the wordmark">
   </picture>
 </p>
 
@@ -35,52 +35,23 @@ sol-simplify is one markdown file that stops it. No plugin, no hooks, no install
 
 Asked to design a development process for a project with **no code yet and one maintainer**:
 
-<table>
-<tr><th>Without</th><th>With sol-simplify</th></tr>
-<tr valign="top"><td>
+**Without — 437 lines, 35 sections.** Quality goals and invariants · change units and dev
+flow with self-review and a definition of done · risk-based quality gates · six test tiers
+(static / unit / contract / integration / E2E / live-provider) · validating the evaluation
+tool itself · a CI operating model with required PR checks, nightly runs, and CI discipline ·
+a release procedure with a release-candidate checklist · a defect taxonomy · project health
+metrics · a section on maintaining the document itself.
 
-```
-437 lines · 35 sections
+**With sol-simplify — 58 lines, 6 sections.** Premises and quality bar · development flow ·
+minimum product verification · evaluation reliability · changes and releases. And it says why
+(translated):
 
-Quality goals and invariants
-Change units and dev flow (self-review, definition of done)
-Risk-based quality gates
-Test & verification tiers (static / unit / contract /
-  integration / E2E / live-provider)
-Validating the evaluation tool itself
-CI operating model (required PR checks, nightly runs,
-  CI discipline)
-Release procedure + release-candidate checklist
-Defect taxonomy and response
-Project health metrics
-Maintaining this document
-```
-
-</td><td>
-
-```
-58 lines · 6 sections
-
-Premises and quality bar
-Development flow
-Minimum product verification
-Evaluation reliability
-Changes and releases
-```
-
-> No ceremonial self-approval PRs
-> when working alone.
+> No ceremonial self-approval PRs when working alone.
 >
-> No new documents or global rules
-> because of a single mistake.
+> No new documents or global rules because of a single mistake.
 >
-> When a check fails for reasons unrelated
-> to product behavior, fix or delete the
-> check instead of building an exception
-> procedure around it.
-
-</td></tr>
-</table>
+> When a check fails for reasons unrelated to product behavior, fix or delete the check
+> instead of building an exception procedure around it.
 
 The skill was never mentioned in the prompt. Codex found it and applied it on its own. (Both runs answered in Korean — the prompt was Korean; excerpts above are translated, originals are committed in [`benchmarks/results/`](benchmarks/results/).)
 
