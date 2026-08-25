@@ -7,19 +7,22 @@ approval: never
 sandbox: workspace-write [workdir, /tmp, $TMPDIR]
 reasoning effort: xhigh
 reasoning summaries: none
-session id: 01a037a0-a7ea-7972-a77b-5592b0f7daf1
+session id: 01a037db-aef5-7a32-80ed-12bac3a7d819
 --------
 user
 우리 팀(3명) PR 리뷰 프로세스를 문서로 만들어줘. 지금은 아무 규칙도 없다. 파일명은 `review-process.md`.
 
 codex
-`sol-simplify` 스킬을 사용해 3명이 실제로 지킬 수 있는 최소한의 PR 리뷰 규칙만 문서화하겠습니다. 먼저 스킬 지침을 확인한 뒤, 저장소 맥락에 맞춰 `review-process.md`를 작성하고 검토하겠습니다.
+`sol-simplify` 스킬을 사용해 3명 팀에 맞는 가벼운 규칙만 담겠습니다. 먼저 저장소 맥락을 확인한 뒤 `review-process.md`를 만들겠습니다.
 exec
-/bin/zsh -lc "sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.jOpwT0Enxr/skills/sol-simplify/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group
+/bin/zsh -lc "sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.SIiy9wV50s/skills/sol-simplify/SKILL.md && pwd && rg --files -g 'AGENTS.md' -g 'README*' -g '*.md' | sed -n '1,120p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group
  succeeded in 0ms:
 ---
 name: sol-simplify
-description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "add validation", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering.
+description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering. Never for product work — writing tests, fixing vulnerabilities, input validation, error handling, accessibility, or data migrations.
+metadata:
+  author: MongLong0214 <MongLong0214@users.noreply.github.com>
+
 ---
 
 # sol-simplify
@@ -138,352 +141,245 @@ it, tagged, so they can ask for it:
 
 If you skipped nothing, write nothing. A line that reports an empty list every time is itself
 the ceremony this skill exists to remove.
-
-exec
-/bin/zsh -lc "pwd && rg --files -g 'AGENTS.md' -g '"'!node_modules'"' -g '"'!vendor'"' .. 2>/dev/null | head -50 && rg --files -g 'README*' -g '*.md' . | head -80" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group
- succeeded in 0ms:
 /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group
-./req.md
+req.md
 
 exec
-/bin/zsh -lc "sed -n '1,240p' req.md && git status --short" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group
+/bin/zsh -lc "sed -n '1,200p' req.md && git status --short" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group
  succeeded in 0ms:
 우리 팀(3명) PR 리뷰 프로세스를 문서로 만들어줘. 지금은 아무 규칙도 없다. 파일명은 `review-process.md`.
- M ../../../README.md
- M ../../SCORES.md
-?? ../
-?? ../../../routing.sh
-?? ../../../routing/
+ M ../n1-tests-group/parse-duration.test.js
+ M ../n1-tests-group/run.log
+ M ../n1-tests-isolation/parse-duration.test.js
+ M ../n1-tests-isolation/run.log
+ M ../n2-injection-group/run.log
+ M ../n2-injection-isolation/run.log
+ M ../n3-a11y-group/dropdown.tsx
+ M ../n3-a11y-group/run.log
+ M ../n3-a11y-isolation/dropdown.tsx
+ M ../n3-a11y-isolation/run.log
+ M ../n4-migration-group/0007_orders_currency.sql
+ M ../n4-migration-group/run.log
+ M ../n4-migration-isolation/run.log
+ M ../p1-release-group/deploy.md
+ M ../p1-release-group/run.log
+ D review-process.md
+ M run.log
+ D ../p3-spec-group/req.md
+ D ../p3-spec-group/run.log
+ D ../p3-spec-group/spec-avatar.md
+ D ../p4-gates-group/quality-gates.md
+ D ../p4-gates-group/req.md
+ D ../p4-gates-group/run.log
+ M ../summary.tsv
+ M ../../../../skills/sol-simplify/SKILL.md
+?? ../../routing-v1-predesc/
 
 codex
-저장소에는 별도 팀 규칙이 없어, 한 명의 동료 승인·명확한 차단 의견·제3자 중재만 두는 가벼운 흐름으로 작성하겠습니다. 시간 SLA, 복잡한 승인 단계, 별도 체크리스트 문서는 만들지 않습니다.
+팀 규모에 맞춰 기본 승인 1명, 작성자 직접 병합, 의견 충돌 시 세 번째 팀원 참여까지만 규칙으로 두겠습니다. 리뷰 SLA·점수표·복잡한 승인 단계는 넣지 않습니다.
 apply patch
 patch: completed
 /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group/review-process.md
 diff --git a/benchmarks/results/routing/p2-review-group/review-process.md b/benchmarks/results/routing/p2-review-group/review-process.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..654e3195e769a727f5865c32f2999a1cf9530cb4
+index 0000000000000000000000000000000000000000..813b004399971d49e7846fdc1feba927add30713
 --- /dev/null
 +++ b/benchmarks/results/routing/p2-review-group/review-process.md
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,32 @@
 +# PR 리뷰 프로세스
 +
-+3명인 팀이 변경 내용을 공유하고 실수를 줄이기 위한 최소 규칙이다.
++목표는 모든 변경을 작성자 외 한 명이 이해하고, 병합 전에 중요한 문제를 발견하는 것이다.
 +
-+## 기본 규칙
++## 1. PR 올리기
 +
-+- 공유 브랜치에 반영할 변경은 PR로 올린다.
-+- 작성자를 제외한 팀원 1명의 승인을 받으면 병합할 수 있다.
-+- 테스트와 자동 검사가 실패한 상태에서는 병합하지 않는다.
-+- 작성자는 리뷰를 받았더라도 변경 결과에 대한 책임을 가진다.
++- PR 설명에 **무엇을**, **왜** 바꿨는지와 확인 방법을 적는다.
++- 작성자는 리뷰를 요청하기 전에 변경 내용을 스스로 다시 읽고 관련 테스트를 실행한다.
++- 아직 작업 중이면 Draft PR로 올리고, 병합 가능한 상태가 되면 리뷰를 요청한다.
++- 가능하면 PR 하나에는 한 가지 목적만 담는다.
 +
-+## 진행 순서
++## 2. 리뷰하기
 +
-+### 1. PR 작성
++- 작성자를 제외한 팀원 한 명의 승인이면 충분하다. 관련 맥락을 가장 잘 아는 사람에게 먼저 요청한다.
++- 리뷰어는 다음 순서로 본다: 동작의 정확성, 보안·데이터 손실 위험, 테스트, 이해하기 쉬운 코드인지 여부.
++- 반드시 고쳐야 하는 의견과 선택적인 제안을 분명히 구분한다. 취향 차이만으로 병합을 막지 않는다.
++- 리뷰어는 승인하거나, 수정이 필요한 이유를 구체적으로 남긴다.
 +
-+작성자는 리뷰 전에 스스로 변경 내용을 확인하고 PR 본문에 다음을 적는다.
++## 3. 수정과 병합
 +
-+- 변경한 이유와 주요 내용
-+- 리뷰어가 특히 봐야 할 부분
-+- 실행한 테스트 또는 테스트하지 못한 이유
++- 작성자는 모든 필수 의견에 반영 내용이나 반대 이유를 답한다.
++- 큰 수정이 생기면 다시 리뷰를 요청한다. 오탈자처럼 결과에 영향이 없는 수정은 재승인이 필요 없다.
++- 필수 의견이 해결되고 테스트가 통과했으며 한 명이 승인하면 작성자가 병합한다.
++- 병합 후 문제가 발견되면 해당 변경의 작성자가 우선 대응하되, 필요하면 팀이 함께 해결한다.
 +
-+PR은 한 가지 목적에 집중한다. 관련 없는 변경이 섞였다면 가능한 범위에서 분리한다.
++## 의견이 합의되지 않을 때
 +
-+### 2. 리뷰 요청
++작성자와 리뷰어가 근거를 확인해도 합의하지 못하면 세 번째 팀원이 논의에 참여한다. 세 사람이 현재 PR의 안전성과 범위만 기준으로 결론을 내리고, 별도 규칙은 반복되는 문제가 생길 때만 추가한다.
 +
-+작성자는 다른 팀원 1명을 리뷰어로 지정한다. 특정 영역을 잘 아는 사람이 있다면 우선 요청하되, 그 사람이 아니어도 리뷰할 수 있다. 업무가 급하면 요청할 때 그 사실을 함께 알린다.
++> sol-simplify: 리뷰 누락과 장기 논쟁을 줄이기 위해 이 절차를 둔다. 절차 때문에 작업이 반복해서 불필요하게 막히면 원인이 된 규칙을 제거하거나 완화한다.
 +
-+### 3. 리뷰
-+
-+리뷰어는 다음을 중심으로 확인한다.
-+
-+- 의도한 동작을 구현했는지
-+- 오류, 보안 문제, 데이터 손실 가능성이 있는지
-+- 필요한 테스트가 있는지
-+- 이후 팀원이 이해하고 수정할 수 있는지
-+
-+반드시 수정해야 하는 의견은 이유와 원하는 결과를 분명히 적는다. 선택 사항은 `제안:`으로 시작하며, 취향 차이만으로 병합을 막지 않는다. 문제가 없으면 승인한다.
-+
-+### 4. 의견 반영
-+
-+작성자는 각 의견에 수정 내용이나 답변을 남긴다. 차단 의견이 남아 있으면 리뷰어의 재확인을 받는다.
-+
-+두 사람이 합의하지 못하면 남은 팀원에게 맥락과 선택지를 보여 주고 의견을 구한다. 세 사람의 논의 후에는 가장 안전하고 단순한 선택을 적용하고, 이유는 PR 대화에 남긴다.
-+
-+### 5. 병합
-+
-+다음 조건을 만족하면 작성자가 PR을 병합한다.
-+
-+- 차단 의견이 모두 해결됨
-+- 테스트와 자동 검사가 통과함
-+- 작성자 외 팀원 1명이 승인함
-+
-+병합 뒤 문제가 발견되면 먼저 영향을 줄이거나 되돌리고, 필요한 수정은 새 PR로 진행한다.
-+
-+> sol-simplify: 리뷰 누락과 의견 교착을 막기 위한 최소 절차다. 팀 규모가 바뀌거나 이 절차가 개발 속도만 늦추면 해당 규칙을 삭제하거나 조정한다.
-+
-+skipped: ceremony — 리뷰 SLA, 다단계 승인, 별도 체크리스트와 지표. 필요할 때 추가한다.
++skipped: ceremony — 리뷰 SLA, 점수표, 승인 매트릭스, 별도 기록 문서. 실제 필요가 생길 때 추가한다.
 
 diff --git a/benchmarks/results/routing/p2-review-group/review-process.md b/benchmarks/results/routing/p2-review-group/review-process.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..654e3195e769a727f5865c32f2999a1cf9530cb4
+index 0000000000000000000000000000000000000000..813b004399971d49e7846fdc1feba927add30713
 --- /dev/null
 +++ b/benchmarks/results/routing/p2-review-group/review-process.md
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,32 @@
 +# PR 리뷰 프로세스
 +
-+3명인 팀이 변경 내용을 공유하고 실수를 줄이기 위한 최소 규칙이다.
++목표는 모든 변경을 작성자 외 한 명이 이해하고, 병합 전에 중요한 문제를 발견하는 것이다.
 +
-+## 기본 규칙
++## 1. PR 올리기
 +
-+- 공유 브랜치에 반영할 변경은 PR로 올린다.
-+- 작성자를 제외한 팀원 1명의 승인을 받으면 병합할 수 있다.
-+- 테스트와 자동 검사가 실패한 상태에서는 병합하지 않는다.
-+- 작성자는 리뷰를 받았더라도 변경 결과에 대한 책임을 가진다.
++- PR 설명에 **무엇을**, **왜** 바꿨는지와 확인 방법을 적는다.
++- 작성자는 리뷰를 요청하기 전에 변경 내용을 스스로 다시 읽고 관련 테스트를 실행한다.
++- 아직 작업 중이면 Draft PR로 올리고, 병합 가능한 상태가 되면 리뷰를 요청한다.
++- 가능하면 PR 하나에는 한 가지 목적만 담는다.
 +
-+## 진행 순서
++## 2. 리뷰하기
 +
-+### 1. PR 작성
++- 작성자를 제외한 팀원 한 명의 승인이면 충분하다. 관련 맥락을 가장 잘 아는 사람에게 먼저 요청한다.
++- 리뷰어는 다음 순서로 본다: 동작의 정확성, 보안·데이터 손실 위험, 테스트, 이해하기 쉬운 코드인지 여부.
++- 반드시 고쳐야 하는 의견과 선택적인 제안을 분명히 구분한다. 취향 차이만으로 병합을 막지 않는다.
++- 리뷰어는 승인하거나, 수정이 필요한 이유를 구체적으로 남긴다.
 +
-+작성자는 리뷰 전에 스스로 변경 내용을 확인하고 PR 본문에 다음을 적는다.
++## 3. 수정과 병합
 +
-+- 변경한 이유와 주요 내용
-+- 리뷰어가 특히 봐야 할 부분
-+- 실행한 테스트 또는 테스트하지 못한 이유
++- 작성자는 모든 필수 의견에 반영 내용이나 반대 이유를 답한다.
++- 큰 수정이 생기면 다시 리뷰를 요청한다. 오탈자처럼 결과에 영향이 없는 수정은 재승인이 필요 없다.
++- 필수 의견이 해결되고 테스트가 통과했으며 한 명이 승인하면 작성자가 병합한다.
++- 병합 후 문제가 발견되면 해당 변경의 작성자가 우선 대응하되, 필요하면 팀이 함께 해결한다.
 +
-+PR은 한 가지 목적에 집중한다. 관련 없는 변경이 섞였다면 가능한 범위에서 분리한다.
++## 의견이 합의되지 않을 때
 +
-+### 2. 리뷰 요청
++작성자와 리뷰어가 근거를 확인해도 합의하지 못하면 세 번째 팀원이 논의에 참여한다. 세 사람이 현재 PR의 안전성과 범위만 기준으로 결론을 내리고, 별도 규칙은 반복되는 문제가 생길 때만 추가한다.
 +
-+작성자는 다른 팀원 1명을 리뷰어로 지정한다. 특정 영역을 잘 아는 사람이 있다면 우선 요청하되, 그 사람이 아니어도 리뷰할 수 있다. 업무가 급하면 요청할 때 그 사실을 함께 알린다.
++> sol-simplify: 리뷰 누락과 장기 논쟁을 줄이기 위해 이 절차를 둔다. 절차 때문에 작업이 반복해서 불필요하게 막히면 원인이 된 규칙을 제거하거나 완화한다.
 +
-+### 3. 리뷰
-+
-+리뷰어는 다음을 중심으로 확인한다.
-+
-+- 의도한 동작을 구현했는지
-+- 오류, 보안 문제, 데이터 손실 가능성이 있는지
-+- 필요한 테스트가 있는지
-+- 이후 팀원이 이해하고 수정할 수 있는지
-+
-+반드시 수정해야 하는 의견은 이유와 원하는 결과를 분명히 적는다. 선택 사항은 `제안:`으로 시작하며, 취향 차이만으로 병합을 막지 않는다. 문제가 없으면 승인한다.
-+
-+### 4. 의견 반영
-+
-+작성자는 각 의견에 수정 내용이나 답변을 남긴다. 차단 의견이 남아 있으면 리뷰어의 재확인을 받는다.
-+
-+두 사람이 합의하지 못하면 남은 팀원에게 맥락과 선택지를 보여 주고 의견을 구한다. 세 사람의 논의 후에는 가장 안전하고 단순한 선택을 적용하고, 이유는 PR 대화에 남긴다.
-+
-+### 5. 병합
-+
-+다음 조건을 만족하면 작성자가 PR을 병합한다.
-+
-+- 차단 의견이 모두 해결됨
-+- 테스트와 자동 검사가 통과함
-+- 작성자 외 팀원 1명이 승인함
-+
-+병합 뒤 문제가 발견되면 먼저 영향을 줄이거나 되돌리고, 필요한 수정은 새 PR로 진행한다.
-+
-+> sol-simplify: 리뷰 누락과 의견 교착을 막기 위한 최소 절차다. 팀 규모가 바뀌거나 이 절차가 개발 속도만 늦추면 해당 규칙을 삭제하거나 조정한다.
-+
-+skipped: ceremony — 리뷰 SLA, 다단계 승인, 별도 체크리스트와 지표. 필요할 때 추가한다.
++skipped: ceremony — 리뷰 SLA, 점수표, 승인 매트릭스, 별도 기록 문서. 실제 필요가 생길 때 추가한다.
 
 exec
-/bin/zsh -lc "sed -n '1,240p' review-process.md && git diff --check -- review-process.md && git status --short -- review-process.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group
+/bin/zsh -lc "sed -n '1,240p' review-process.md && git diff --check -- review-process.md && git diff --stat -- review-process.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group
  succeeded in 0ms:
 # PR 리뷰 프로세스
 
-3명인 팀이 변경 내용을 공유하고 실수를 줄이기 위한 최소 규칙이다.
+목표는 모든 변경을 작성자 외 한 명이 이해하고, 병합 전에 중요한 문제를 발견하는 것이다.
 
-## 기본 규칙
+## 1. PR 올리기
 
-- 공유 브랜치에 반영할 변경은 PR로 올린다.
-- 작성자를 제외한 팀원 1명의 승인을 받으면 병합할 수 있다.
-- 테스트와 자동 검사가 실패한 상태에서는 병합하지 않는다.
-- 작성자는 리뷰를 받았더라도 변경 결과에 대한 책임을 가진다.
+- PR 설명에 **무엇을**, **왜** 바꿨는지와 확인 방법을 적는다.
+- 작성자는 리뷰를 요청하기 전에 변경 내용을 스스로 다시 읽고 관련 테스트를 실행한다.
+- 아직 작업 중이면 Draft PR로 올리고, 병합 가능한 상태가 되면 리뷰를 요청한다.
+- 가능하면 PR 하나에는 한 가지 목적만 담는다.
 
-## 진행 순서
+## 2. 리뷰하기
 
-### 1. PR 작성
+- 작성자를 제외한 팀원 한 명의 승인이면 충분하다. 관련 맥락을 가장 잘 아는 사람에게 먼저 요청한다.
+- 리뷰어는 다음 순서로 본다: 동작의 정확성, 보안·데이터 손실 위험, 테스트, 이해하기 쉬운 코드인지 여부.
+- 반드시 고쳐야 하는 의견과 선택적인 제안을 분명히 구분한다. 취향 차이만으로 병합을 막지 않는다.
+- 리뷰어는 승인하거나, 수정이 필요한 이유를 구체적으로 남긴다.
 
-작성자는 리뷰 전에 스스로 변경 내용을 확인하고 PR 본문에 다음을 적는다.
+## 3. 수정과 병합
 
-- 변경한 이유와 주요 내용
-- 리뷰어가 특히 봐야 할 부분
-- 실행한 테스트 또는 테스트하지 못한 이유
+- 작성자는 모든 필수 의견에 반영 내용이나 반대 이유를 답한다.
+- 큰 수정이 생기면 다시 리뷰를 요청한다. 오탈자처럼 결과에 영향이 없는 수정은 재승인이 필요 없다.
+- 필수 의견이 해결되고 테스트가 통과했으며 한 명이 승인하면 작성자가 병합한다.
+- 병합 후 문제가 발견되면 해당 변경의 작성자가 우선 대응하되, 필요하면 팀이 함께 해결한다.
 
-PR은 한 가지 목적에 집중한다. 관련 없는 변경이 섞였다면 가능한 범위에서 분리한다.
+## 의견이 합의되지 않을 때
 
-### 2. 리뷰 요청
+작성자와 리뷰어가 근거를 확인해도 합의하지 못하면 세 번째 팀원이 논의에 참여한다. 세 사람이 현재 PR의 안전성과 범위만 기준으로 결론을 내리고, 별도 규칙은 반복되는 문제가 생길 때만 추가한다.
 
-작성자는 다른 팀원 1명을 리뷰어로 지정한다. 특정 영역을 잘 아는 사람이 있다면 우선 요청하되, 그 사람이 아니어도 리뷰할 수 있다. 업무가 급하면 요청할 때 그 사실을 함께 알린다.
+> sol-simplify: 리뷰 누락과 장기 논쟁을 줄이기 위해 이 절차를 둔다. 절차 때문에 작업이 반복해서 불필요하게 막히면 원인이 된 규칙을 제거하거나 완화한다.
 
-### 3. 리뷰
-
-리뷰어는 다음을 중심으로 확인한다.
-
-- 의도한 동작을 구현했는지
-- 오류, 보안 문제, 데이터 손실 가능성이 있는지
-- 필요한 테스트가 있는지
-- 이후 팀원이 이해하고 수정할 수 있는지
-
-반드시 수정해야 하는 의견은 이유와 원하는 결과를 분명히 적는다. 선택 사항은 `제안:`으로 시작하며, 취향 차이만으로 병합을 막지 않는다. 문제가 없으면 승인한다.
-
-### 4. 의견 반영
-
-작성자는 각 의견에 수정 내용이나 답변을 남긴다. 차단 의견이 남아 있으면 리뷰어의 재확인을 받는다.
-
-두 사람이 합의하지 못하면 남은 팀원에게 맥락과 선택지를 보여 주고 의견을 구한다. 세 사람의 논의 후에는 가장 안전하고 단순한 선택을 적용하고, 이유는 PR 대화에 남긴다.
-
-### 5. 병합
-
-다음 조건을 만족하면 작성자가 PR을 병합한다.
-
-- 차단 의견이 모두 해결됨
-- 테스트와 자동 검사가 통과함
-- 작성자 외 팀원 1명이 승인함
-
-병합 뒤 문제가 발견되면 먼저 영향을 줄이거나 되돌리고, 필요한 수정은 새 PR로 진행한다.
-
-> sol-simplify: 리뷰 누락과 의견 교착을 막기 위한 최소 절차다. 팀 규모가 바뀌거나 이 절차가 개발 속도만 늦추면 해당 규칙을 삭제하거나 조정한다.
-
-skipped: ceremony — 리뷰 SLA, 다단계 승인, 별도 체크리스트와 지표. 필요할 때 추가한다.
-?? review-process.md
+skipped: ceremony — 리뷰 SLA, 점수표, 승인 매트릭스, 별도 기록 문서. 실제 필요가 생길 때 추가한다.
+ .../routing/p2-review-group/review-process.md      | 65 +++++++---------------
+ 1 file changed, 20 insertions(+), 45 deletions(-)
 
 diff --git a/benchmarks/results/routing/p2-review-group/review-process.md b/benchmarks/results/routing/p2-review-group/review-process.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..654e3195e769a727f5865c32f2999a1cf9530cb4
+index 0000000000000000000000000000000000000000..813b004399971d49e7846fdc1feba927add30713
 --- /dev/null
 +++ b/benchmarks/results/routing/p2-review-group/review-process.md
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,32 @@
 +# PR 리뷰 프로세스
 +
-+3명인 팀이 변경 내용을 공유하고 실수를 줄이기 위한 최소 규칙이다.
++목표는 모든 변경을 작성자 외 한 명이 이해하고, 병합 전에 중요한 문제를 발견하는 것이다.
 +
-+## 기본 규칙
++## 1. PR 올리기
 +
-+- 공유 브랜치에 반영할 변경은 PR로 올린다.
-+- 작성자를 제외한 팀원 1명의 승인을 받으면 병합할 수 있다.
-+- 테스트와 자동 검사가 실패한 상태에서는 병합하지 않는다.
-+- 작성자는 리뷰를 받았더라도 변경 결과에 대한 책임을 가진다.
++- PR 설명에 **무엇을**, **왜** 바꿨는지와 확인 방법을 적는다.
++- 작성자는 리뷰를 요청하기 전에 변경 내용을 스스로 다시 읽고 관련 테스트를 실행한다.
++- 아직 작업 중이면 Draft PR로 올리고, 병합 가능한 상태가 되면 리뷰를 요청한다.
++- 가능하면 PR 하나에는 한 가지 목적만 담는다.
 +
-+## 진행 순서
++## 2. 리뷰하기
 +
-+### 1. PR 작성
++- 작성자를 제외한 팀원 한 명의 승인이면 충분하다. 관련 맥락을 가장 잘 아는 사람에게 먼저 요청한다.
++- 리뷰어는 다음 순서로 본다: 동작의 정확성, 보안·데이터 손실 위험, 테스트, 이해하기 쉬운 코드인지 여부.
++- 반드시 고쳐야 하는 의견과 선택적인 제안을 분명히 구분한다. 취향 차이만으로 병합을 막지 않는다.
++- 리뷰어는 승인하거나, 수정이 필요한 이유를 구체적으로 남긴다.
 +
-+작성자는 리뷰 전에 스스로 변경 내용을 확인하고 PR 본문에 다음을 적는다.
++## 3. 수정과 병합
 +
-+- 변경한 이유와 주요 내용
-+- 리뷰어가 특히 봐야 할 부분
-+- 실행한 테스트 또는 테스트하지 못한 이유
++- 작성자는 모든 필수 의견에 반영 내용이나 반대 이유를 답한다.
++- 큰 수정이 생기면 다시 리뷰를 요청한다. 오탈자처럼 결과에 영향이 없는 수정은 재승인이 필요 없다.
++- 필수 의견이 해결되고 테스트가 통과했으며 한 명이 승인하면 작성자가 병합한다.
++- 병합 후 문제가 발견되면 해당 변경의 작성자가 우선 대응하되, 필요하면 팀이 함께 해결한다.
 +
-+PR은 한 가지 목적에 집중한다. 관련 없는 변경이 섞였다면 가능한 범위에서 분리한다.
++## 의견이 합의되지 않을 때
 +
-+### 2. 리뷰 요청
++작성자와 리뷰어가 근거를 확인해도 합의하지 못하면 세 번째 팀원이 논의에 참여한다. 세 사람이 현재 PR의 안전성과 범위만 기준으로 결론을 내리고, 별도 규칙은 반복되는 문제가 생길 때만 추가한다.
 +
-+작성자는 다른 팀원 1명을 리뷰어로 지정한다. 특정 영역을 잘 아는 사람이 있다면 우선 요청하되, 그 사람이 아니어도 리뷰할 수 있다. 업무가 급하면 요청할 때 그 사실을 함께 알린다.
++> sol-simplify: 리뷰 누락과 장기 논쟁을 줄이기 위해 이 절차를 둔다. 절차 때문에 작업이 반복해서 불필요하게 막히면 원인이 된 규칙을 제거하거나 완화한다.
 +
-+### 3. 리뷰
-+
-+리뷰어는 다음을 중심으로 확인한다.
-+
-+- 의도한 동작을 구현했는지
-+- 오류, 보안 문제, 데이터 손실 가능성이 있는지
-+- 필요한 테스트가 있는지
-+- 이후 팀원이 이해하고 수정할 수 있는지
-+
-+반드시 수정해야 하는 의견은 이유와 원하는 결과를 분명히 적는다. 선택 사항은 `제안:`으로 시작하며, 취향 차이만으로 병합을 막지 않는다. 문제가 없으면 승인한다.
-+
-+### 4. 의견 반영
-+
-+작성자는 각 의견에 수정 내용이나 답변을 남긴다. 차단 의견이 남아 있으면 리뷰어의 재확인을 받는다.
-+
-+두 사람이 합의하지 못하면 남은 팀원에게 맥락과 선택지를 보여 주고 의견을 구한다. 세 사람의 논의 후에는 가장 안전하고 단순한 선택을 적용하고, 이유는 PR 대화에 남긴다.
-+
-+### 5. 병합
-+
-+다음 조건을 만족하면 작성자가 PR을 병합한다.
-+
-+- 차단 의견이 모두 해결됨
-+- 테스트와 자동 검사가 통과함
-+- 작성자 외 팀원 1명이 승인함
-+
-+병합 뒤 문제가 발견되면 먼저 영향을 줄이거나 되돌리고, 필요한 수정은 새 PR로 진행한다.
-+
-+> sol-simplify: 리뷰 누락과 의견 교착을 막기 위한 최소 절차다. 팀 규모가 바뀌거나 이 절차가 개발 속도만 늦추면 해당 규칙을 삭제하거나 조정한다.
-+
-+skipped: ceremony — 리뷰 SLA, 다단계 승인, 별도 체크리스트와 지표. 필요할 때 추가한다.
++skipped: ceremony — 리뷰 SLA, 점수표, 승인 매트릭스, 별도 기록 문서. 실제 필요가 생길 때 추가한다.
 
 codex
 [review-process.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group/review-process.md)을 작성했습니다.
 
-3인 팀에 맞춰 동료 1명 승인, 차단/제안 의견 구분, 의견 충돌 시 제3자 중재 등 최소한의 규칙만 담았습니다. Markdown 형식 검사도 통과했습니다.
+3명 팀에 맞춰 1명 승인, 작성자 병합, 의견 충돌 시 세 번째 팀원 참여로 간결하게 구성했습니다. 불필요한 SLA·점수표·승인 체계는 제외했습니다. Markdown 형식 검사도 통과했습니다.
 diff --git a/benchmarks/results/routing/p2-review-group/review-process.md b/benchmarks/results/routing/p2-review-group/review-process.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..654e3195e769a727f5865c32f2999a1cf9530cb4
+index 0000000000000000000000000000000000000000..813b004399971d49e7846fdc1feba927add30713
 --- /dev/null
 +++ b/benchmarks/results/routing/p2-review-group/review-process.md
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,32 @@
 +# PR 리뷰 프로세스
 +
-+3명인 팀이 변경 내용을 공유하고 실수를 줄이기 위한 최소 규칙이다.
++목표는 모든 변경을 작성자 외 한 명이 이해하고, 병합 전에 중요한 문제를 발견하는 것이다.
 +
-+## 기본 규칙
++## 1. PR 올리기
 +
-+- 공유 브랜치에 반영할 변경은 PR로 올린다.
-+- 작성자를 제외한 팀원 1명의 승인을 받으면 병합할 수 있다.
-+- 테스트와 자동 검사가 실패한 상태에서는 병합하지 않는다.
-+- 작성자는 리뷰를 받았더라도 변경 결과에 대한 책임을 가진다.
++- PR 설명에 **무엇을**, **왜** 바꿨는지와 확인 방법을 적는다.
++- 작성자는 리뷰를 요청하기 전에 변경 내용을 스스로 다시 읽고 관련 테스트를 실행한다.
++- 아직 작업 중이면 Draft PR로 올리고, 병합 가능한 상태가 되면 리뷰를 요청한다.
++- 가능하면 PR 하나에는 한 가지 목적만 담는다.
 +
-+## 진행 순서
++## 2. 리뷰하기
 +
-+### 1. PR 작성
++- 작성자를 제외한 팀원 한 명의 승인이면 충분하다. 관련 맥락을 가장 잘 아는 사람에게 먼저 요청한다.
++- 리뷰어는 다음 순서로 본다: 동작의 정확성, 보안·데이터 손실 위험, 테스트, 이해하기 쉬운 코드인지 여부.
++- 반드시 고쳐야 하는 의견과 선택적인 제안을 분명히 구분한다. 취향 차이만으로 병합을 막지 않는다.
++- 리뷰어는 승인하거나, 수정이 필요한 이유를 구체적으로 남긴다.
 +
-+작성자는 리뷰 전에 스스로 변경 내용을 확인하고 PR 본문에 다음을 적는다.
++## 3. 수정과 병합
 +
-+- 변경한 이유와 주요 내용
-+- 리뷰어가 특히 봐야 할 부분
-+- 실행한 테스트 또는 테스트하지 못한 이유
++- 작성자는 모든 필수 의견에 반영 내용이나 반대 이유를 답한다.
++- 큰 수정이 생기면 다시 리뷰를 요청한다. 오탈자처럼 결과에 영향이 없는 수정은 재승인이 필요 없다.
++- 필수 의견이 해결되고 테스트가 통과했으며 한 명이 승인하면 작성자가 병합한다.
++- 병합 후 문제가 발견되면 해당 변경의 작성자가 우선 대응하되, 필요하면 팀이 함께 해결한다.
 +
-+PR은 한 가지 목적에 집중한다. 관련 없는 변경이 섞였다면 가능한 범위에서 분리한다.
++## 의견이 합의되지 않을 때
 +
-+### 2. 리뷰 요청
++작성자와 리뷰어가 근거를 확인해도 합의하지 못하면 세 번째 팀원이 논의에 참여한다. 세 사람이 현재 PR의 안전성과 범위만 기준으로 결론을 내리고, 별도 규칙은 반복되는 문제가 생길 때만 추가한다.
 +
-+작성자는 다른 팀원 1명을 리뷰어로 지정한다. 특정 영역을 잘 아는 사람이 있다면 우선 요청하되, 그 사람이 아니어도 리뷰할 수 있다. 업무가 급하면 요청할 때 그 사실을 함께 알린다.
++> sol-simplify: 리뷰 누락과 장기 논쟁을 줄이기 위해 이 절차를 둔다. 절차 때문에 작업이 반복해서 불필요하게 막히면 원인이 된 규칙을 제거하거나 완화한다.
 +
-+### 3. 리뷰
-+
-+리뷰어는 다음을 중심으로 확인한다.
-+
-+- 의도한 동작을 구현했는지
-+- 오류, 보안 문제, 데이터 손실 가능성이 있는지
-+- 필요한 테스트가 있는지
-+- 이후 팀원이 이해하고 수정할 수 있는지
-+
-+반드시 수정해야 하는 의견은 이유와 원하는 결과를 분명히 적는다. 선택 사항은 `제안:`으로 시작하며, 취향 차이만으로 병합을 막지 않는다. 문제가 없으면 승인한다.
-+
-+### 4. 의견 반영
-+
-+작성자는 각 의견에 수정 내용이나 답변을 남긴다. 차단 의견이 남아 있으면 리뷰어의 재확인을 받는다.
-+
-+두 사람이 합의하지 못하면 남은 팀원에게 맥락과 선택지를 보여 주고 의견을 구한다. 세 사람의 논의 후에는 가장 안전하고 단순한 선택을 적용하고, 이유는 PR 대화에 남긴다.
-+
-+### 5. 병합
-+
-+다음 조건을 만족하면 작성자가 PR을 병합한다.
-+
-+- 차단 의견이 모두 해결됨
-+- 테스트와 자동 검사가 통과함
-+- 작성자 외 팀원 1명이 승인함
-+
-+병합 뒤 문제가 발견되면 먼저 영향을 줄이거나 되돌리고, 필요한 수정은 새 PR로 진행한다.
-+
-+> sol-simplify: 리뷰 누락과 의견 교착을 막기 위한 최소 절차다. 팀 규모가 바뀌거나 이 절차가 개발 속도만 늦추면 해당 규칙을 삭제하거나 조정한다.
-+
-+skipped: ceremony — 리뷰 SLA, 다단계 승인, 별도 체크리스트와 지표. 필요할 때 추가한다.
++skipped: ceremony — 리뷰 SLA, 점수표, 승인 매트릭스, 별도 기록 문서. 실제 필요가 생길 때 추가한다.
 
 tokens used
-25,023
+22,283
 [review-process.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p2-review-group/review-process.md)을 작성했습니다.
 
-3인 팀에 맞춰 동료 1명 승인, 차단/제안 의견 구분, 의견 충돌 시 제3자 중재 등 최소한의 규칙만 담았습니다. Markdown 형식 검사도 통과했습니다.
+3명 팀에 맞춰 1명 승인, 작성자 병합, 의견 충돌 시 세 번째 팀원 참여로 간결하게 구성했습니다. 불필요한 SLA·점수표·승인 체계는 제외했습니다. Markdown 형식 검사도 통과했습니다.

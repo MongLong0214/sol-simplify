@@ -123,19 +123,27 @@ Every individual file there is defensible. Code-level advice — *use the stdlib
 
 Stages 3 and 4 are what nothing else addresses, and the reason a one-line prompt is not enough.
 
-## Numbers
+## Does it work?
 
-Five scenarios, four arms (nothing / two one-line instructions / the skill), every score cited to the line it was found on, every raw output committed.
+Five ordinary requests, each sent three ways — plain, with a *"keep it simple"* sentence added,
+and with the skill installed. Same model, same prompt every time.
 
-| scenario | off | one-line prompt | **sol-simplify** |
-|---|---|---|---|
-| **01-prd** — PRD for one bookmark button | ceremony 4–5 | ceremony 0 | **ceremony 0** |
-| **02-process** — dev process, 0-line solo project | ceremony 5–6 | ceremony 1–2 | **ceremony 0** |
-| **03-loop** — repo trapped in its own gates | **rebuild + feed** | **shrink** | **dismantle** |
-| **04-guardrail** — process legitimately required | kept 4/4 · ceremony 2 | kept 4/4 · ceremony 2 | **kept 4/4 · ceremony 0** |
-| **05-incident** — one bad merge | invents PR templates, grows AGENTS.md | regression test, nothing enforcing it | **regression test + CI, rules untouched** |
+The number is **how many things the model added that nobody asked for**: a made-up latency
+target, a staged rollout, an approval step for a team of one. **0 is best.**
 
-The skill is picked up automatically on tasks it should fire on and stays out of tasks it should not, with competing skills installed alongside it. Full per-run citations, the scoring rubric, discovery and routing results, and the known limits: [`benchmarks/`](benchmarks/).
+| request | plain | "keep it simple" | **with the skill** |
+|---|:--:|:--:|:--:|
+| PRD for one bookmark button | 4–5 | 0 | **0** |
+| Dev process for a solo project with no code yet | 5–6 | 1–2 | **0** |
+| Payments team facing an audit asks for 4 process docs | all 4 + 2 extra | all 4 + 2 extra | **all 4 + 0 extra** |
+| Prevent a repeat of one bad merge | a PR template and permanent new rules | a test, but nothing enforcing it | **a test, and the CI check that enforces it** |
+| The agent's own gates now block all work — what now? | rebuilds them | leaves the 14,000-line machine standing | **deletes it** |
+
+Row three is the one to check if you worry this makes an agent cut corners: when the process is
+genuinely required, it keeps all of it.
+
+Every number traces to a line in the committed output. Full detail and limits:
+[`benchmarks/`](benchmarks/).
 
 ## FAQ
 

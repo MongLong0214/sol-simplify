@@ -51,8 +51,13 @@ probe() { # $1 = probe name, $2 = mode
 
 report() { # $1 = probe, $2 = mode, $3 = dir
   local loaded target expect verdict
-  loaded=$(grep -oE 'skills/[a-z-]+/SKILL\.md' "$3/run.log" 2>/dev/null \
-           | sed 's|skills/||; s|/SKILL.md||' | sort -u | paste -sd, - || true)
+  # A genuine read is an absolute path into this run's CODEX_HOME. Git status and diff output
+  # print repo-relative paths (../../skills/...), so an uncommitted edit under skills/ would
+  # otherwise register as an activation — it did, on every probe, until this was anchored.
+  # Paths can be shell-quoted, so ' and " are excluded from the match rather than just space.
+  loaded=$(grep -oE "[^ \"']*/skills/[a-z-]+/SKILL\.md" "$3/run.log" 2>/dev/null \
+           | grep -v '\.\.' | grep '^/' \
+           | sed 's|.*/skills/||; s|/SKILL.md||' | sort -u | paste -sd, - || true)
   if [ -z "$loaded" ]; then loaded='-'; fi
   case "$loaded" in *sol-simplify*) target=yes ;; *) target=no ;; esac
   case "$1" in p*) expect=yes ;; *) expect=no ;; esac
@@ -62,7 +67,10 @@ report() { # $1 = probe, $2 = mode, $3 = dir
 }
 
 mkdir -p "$OUT"
-: > "$OUT/summary.tsv"
+# Appending across invocations would mix generations; truncating on a single-probe run would
+# throw away the other eleven. Only a full sweep starts a fresh summary.
+if [ $# -eq 0 ]; then : > "$OUT/summary.tsv"; fi
+touch "$OUT/summary.tsv"
 
 if [ $# -gt 0 ]; then
   case "$1" in

@@ -1,5 +1,11 @@
-import { useEffect, useId, useRef, useState } from "react";
-import type { KeyboardEvent } from "react";
+import {
+  type FocusEvent,
+  type KeyboardEvent,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 
 export interface DropdownProps {
   options: string[];
@@ -12,32 +18,47 @@ export default function Dropdown({ options, value, onChange }: DropdownProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const optionRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const menuId = useId();
-  const triggerId = `${menuId}-trigger`;
-
+  const id = useId();
+  const triggerId = `${id}-trigger`;
+  const listboxId = `${id}-listbox`;
   const selectedIndex = options.indexOf(value);
 
   const openMenu = (index = selectedIndex >= 0 ? selectedIndex : 0) => {
     if (options.length === 0) return;
+
     setActiveIndex(index);
     setOpen(true);
   };
 
   const closeMenu = (restoreFocus = false) => {
     setOpen(false);
-    if (restoreFocus) {
-      requestAnimationFrame(() => triggerRef.current?.focus());
-    }
+    if (restoreFocus) triggerRef.current?.focus();
   };
 
   const selectOption = (index: number) => {
-    onChange(options[index]);
+    const option = options[index];
+    if (option === undefined) return;
+
+    onChange(option);
     closeMenu(true);
   };
 
   useEffect(() => {
-    if (open) optionRefs.current[activeIndex]?.focus();
-  }, [activeIndex, open]);
+    if (!open) return;
+
+    if (options.length === 0) {
+      setOpen(false);
+      triggerRef.current?.focus();
+      return;
+    }
+
+    if (activeIndex >= options.length) {
+      setActiveIndex(options.length - 1);
+      return;
+    }
+
+    optionRefs.current[activeIndex]?.focus();
+  }, [activeIndex, open, options.length]);
 
   const handleTriggerKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     switch (event.key) {
@@ -57,12 +78,10 @@ export default function Dropdown({ options, value, onChange }: DropdownProps) {
         event.preventDefault();
         openMenu(options.length - 1);
         break;
-      default:
-        break;
     }
   };
 
-  const handleMenuKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+  const handleListboxKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();
@@ -70,7 +89,9 @@ export default function Dropdown({ options, value, onChange }: DropdownProps) {
         break;
       case "ArrowUp":
         event.preventDefault();
-        setActiveIndex((index) => (index - 1 + options.length) % options.length);
+        setActiveIndex(
+          (index) => (index - 1 + options.length) % options.length,
+        );
         break;
       case "Home":
         event.preventDefault();
@@ -89,27 +110,24 @@ export default function Dropdown({ options, value, onChange }: DropdownProps) {
         event.preventDefault();
         closeMenu(true);
         break;
-      default:
-        break;
     }
   };
 
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) closeMenu();
+  };
+
   return (
-    <div
-      className="dropdown"
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) closeMenu();
-      }}
-    >
+    <div className="dropdown" onBlur={handleBlur}>
       <button
-        id={triggerId}
         ref={triggerRef}
+        id={triggerId}
         type="button"
         className="trigger"
         disabled={options.length === 0}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-controls={open ? menuId : undefined}
+        aria-controls={open ? listboxId : undefined}
         onClick={() => (open ? closeMenu() : openMenu())}
         onKeyDown={handleTriggerKeyDown}
       >
@@ -118,24 +136,24 @@ export default function Dropdown({ options, value, onChange }: DropdownProps) {
 
       {open && (
         <div
-          id={menuId}
+          id={listboxId}
           className="menu"
           role="listbox"
           aria-labelledby={triggerId}
-          onKeyDown={handleMenuKeyDown}
+          onKeyDown={handleListboxKeyDown}
         >
           {options.map((option, index) => (
             <div
-              key={option}
+              key={`${option}-${index}`}
               ref={(element) => {
                 optionRefs.current[index] = element;
               }}
               className="item"
               role="option"
-              aria-selected={option === value}
+              aria-selected={index === selectedIndex}
               tabIndex={index === activeIndex ? 0 : -1}
+              onFocus={() => setActiveIndex(index)}
               onClick={() => selectOption(index)}
-              onMouseEnter={() => setActiveIndex(index)}
             >
               {option}
             </div>

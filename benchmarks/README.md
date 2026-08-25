@@ -37,8 +37,10 @@ an injection, accessibility, a data migration). Each runs twice — once with th
 (`isolation`), once with four competing neighbour skills installed alongside it (`group`, the
 realistic install). Activation is read off the transcript rather than judged: Codex opens a
 skill by reading its `SKILL.md`, so the path lands in `run.log`. Results and the two known
-isolation-mode over-triggers are in
-[`results/SCORES.md`](results/SCORES.md#discovery-and-routing).
+two sweeps — before and after the
+description fix the first sweep prompted — are in
+[`results/SCORES.md`](results/SCORES.md#discovery-and-routing), with raw outputs under
+`results/routing/` and `results/routing-v1-predesc/`.
 
 Requires an authenticated `codex` CLI. Override the model with `SOLSIMPLIFY_MODEL` and the
 reasoning effort with `SOLSIMPLIFY_EFFORT`. Outputs land in `results/<prompt>-<arm>/` and

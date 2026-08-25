@@ -4,10 +4,10 @@ import { parseDuration } from './parse-duration.js';
 
 describe('parseDuration', () => {
   it.each([
-    ['1ms', 1],
-    ['2s', 2_000],
-    ['3m', 180_000],
-    ['4h', 14_400_000],
+    ['12ms', 12],
+    ['3s', 3_000],
+    ['5m', 300_000],
+    ['2h', 7_200_000],
   ])('converts %s to milliseconds', (input, expected) => {
     expect(parseDuration(input)).toBe(expected);
   });
@@ -16,8 +16,8 @@ describe('parseDuration', () => {
     expect(parseDuration('0ms')).toBe(0);
   });
 
-  it.each(['', '10', '-1s', '1.5s', '1d', ' 1s', '1s '])(
-    'rejects an invalid duration: %j',
+  it.each(['', '10', '10d', '-1s', '1.5s', ' 1s', '1s '])(
+    'rejects invalid duration %j',
     (input) => {
       expect(() => parseDuration(input)).toThrow(`bad duration: ${input}`);
     },

@@ -1,6 +1,6 @@
-n1-tests	isolation	sol-simplify	yes	FAIL
+n1-tests	isolation	-	no	PASS
 n1-tests	group	test-writer	no	PASS
-n2-injection	isolation	sol-simplify	yes	FAIL
+n2-injection	isolation	-	no	PASS
 n2-injection	group	security-review	no	PASS
 n3-a11y	isolation	-	no	PASS
 n3-a11y	group	-	no	PASS

@@ -124,7 +124,10 @@ export default function Dropdown({
 
   function handleBlur(event: ReactFocusEvent<HTMLDivElement>) {
     const nextTarget = event.relatedTarget;
-    if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
+    if (
+      !(nextTarget instanceof Node) ||
+      !event.currentTarget.contains(nextTarget)
+    ) {
       closeMenu();
     }
   }

@@ -103,9 +103,12 @@ be the author choosing one.
 | 04-guardrail kept / ceremony | 1 off, 2 on | 4/4 · 2 | — | **4/4** · 0 and 1 |
 | 05-incident C10 | 2 | 1, 1 | — | **0, 0** |
 
-**Ceremony across the eleven committed skill runs: 0 in ten of them, 1 in the eleventh**
-(04-guardrail-on-2, a canary step). Requested items never score, so 04's kept controls are
-excluded by definition. Baseline ceremony was 4–6 on document tasks in every run.
+**Ceremony across all fourteen ceremony-scored skill runs: 0 in thirteen of them, 1 in the
+fourteenth** — `04-guardrail-on-2`, a canary step. Fourteen is four runs each on `01-prd` and
+`02-process` and three each on `04-guardrail` and `05-incident`, counting the symmetric re-runs
+below; `03-loop` is scored by verdict, not ceremony, so its two runs are not in that total.
+Requested items never score, so 04's kept controls are excluded by definition. Baseline ceremony
+was 4–6 on document tasks in every run.
 
 ## Symmetric re-run
 
@@ -182,47 +185,62 @@ requests (`release-planner`, `code-reviewer`, `security-review`, `test-writer`);
 mode** installs sol-simplify alone. Activation is read off the transcript, not judged: Codex
 opens a skill by reading its `SKILL.md`, so the path appears in `run.log`.
 
-| probe | isolation | group | expected |
+The first sweep found the skill firing on two negative probes in isolation. The description was
+the cause and it was fixed; both sweeps are kept so the fix can be checked rather than taken on
+trust. `routing-v1-predesc/` is the pre-fix sweep, `routing/` the post-fix one.
+
+| probe | v1 · before | v2 · after | expected |
 |---|---|---|---|
-| n1-tests — write unit tests | **sol-simplify** ✗ | test-writer ✓ | no activation |
-| n2-injection — fix SQL injection | **sol-simplify** ✗ | security-review ✓ | no activation |
+| n1-tests — write unit tests, isolation | **sol-simplify** ✗ | none ✓ | no activation |
+| n1-tests — group | test-writer ✓ | test-writer ✓ | no activation |
+| n2-injection — fix SQL injection, isolation | **sol-simplify** ✗ | none ✓ | no activation |
+| n2-injection — group | security-review ✓ | security-review ✓ | no activation |
 | n3-a11y — keyboard accessibility | none ✓ | none ✓ | no activation |
 | n4-migration — NOT NULL + backfill | none ✓ | none ✓ | no activation |
-| p1-release — first deploy, solo project | — | release-planner + **sol-simplify** ✓ | activation |
-| p2-review — PR review process doc | — | **sol-simplify** ✓ | activation |
-| p3-spec — spec before implementing | — | **sol-simplify** ✓ | activation |
-| p4-gates — quality gates for CI | — | **sol-simplify** ✓ | activation |
+| p1-release — first deploy, solo project | release-planner + **sol-simplify** ✓ | same ✓ | activation |
+| p2-review — PR review process doc | **sol-simplify** ✓ | **sol-simplify** ✓ | activation |
+| p3-spec — spec before implementing | **sol-simplify** ✓ | **sol-simplify** ✓ | activation |
+| p4-gates — quality gates for CI | **sol-simplify** ✓ | **sol-simplify** ✓ | activation |
 
-**Group mode is clean: 4/4 negatives left alone, 4/4 positives routed to this skill.** Group
-mode is also the realistic install — nobody runs one skill.
+**v1: 10 of 12 cells. v2: 12 of 12.**
 
-**The two failures are isolation-only, and neither damaged the deliverable.** With no neighbour
-to route to, the agent consulted the only skill present. `n1` still produced twelve test cases
-including the boundary and error paths; `n2` still produced a correctly parameterised query
-with no hand-rolled sanitiser. That is a process-metric failure with the outcome metric intact
-— the distinction ACES draws between skill execution and accuracy, and the reason both are
-graded separately.
+**What the fix was.** The description listed `"add validation"` as a trigger while the body's
+*Never cut these* protects `Input validation at trust boundaries` — the frontmatter and the body
+said opposite things, and `n2` fired in exactly that gap. The intended meaning, invented
+validators and gates, is already carried by *"when adding a check, validator, or gate"*, so the
+string was removed rather than reworded. A boundary clause was appended naming the domains the
+body already protects: *"Never for product work — writing tests, fixing vulnerabilities, input
+validation, error handling, accessibility, or data migrations."* Nothing was narrowed; the
+positive triggers are untouched, which is why `p1`–`p4` are unchanged. The description grew from
+687 to 802 characters, against a static advisory to shorten it — the paper's ρ = 0.14 between
+structural scores and runtime effect is the reason that advisory did not win.
 
-**`p1` is the strongest single result here.** `release-planner` was co-loaded and pulls the
+**Neither over-trigger damaged its deliverable.** Before the fix, `n1` still produced twelve
+test cases covering the boundary and error paths, and `n2` still produced a correctly
+parameterised query with no hand-rolled sanitiser. That is a process-metric failure with the
+outcome metric intact — the distinction ACES draws between skill execution and accuracy, and the
+reason both are graded separately rather than collapsed into one verdict.
+
+**`p1` is the strongest single result here.** `release-planner` is co-loaded and pulls the
 opposite way — it asks for rollout stages and a per-stage owner. The document came back at 19
 lines with four headings, ceremony 0, and closed with the skill's own disclosure line naming
 exactly what the neighbour wanted added: `skipped: ceremony — 다단계 롤아웃, 승인 절차, 배포
 자동화. 필요해질 때 추가한다.` An isolation-only benchmark cannot produce that condition.
 
-**The description was left alone.** The static scanner flags it as broad and without negative
-triggers, and in isolation it does over-trigger — but the measured harm is zero and group-mode
-discrimination is 8/8. Narrowing it to fix a single-skill-install artefact would put the 4/4
-positive routing at risk to buy nothing measurable. Revisit if a group-mode negative ever
-fires.
+**Activation detection is anchored to absolute paths.** Git status and diff output print
+repo-relative paths (`../../skills/...`), and a reader with uncommitted edits under `skills/`
+would see every probe register as an activation. That happened during this work — the v2 sweep's
+live verdicts were wrong until the pattern required a leading `/` and rejected `..`. The scores
+above are re-derived from the committed logs with the anchored pattern.
 
-**Limitation:** this measures routing, not lift. The positive probes have no baseline arm, so
-no ceremony delta is claimed from them.
+**Limitation:** this measures routing, not lift. The positive probes have no baseline arm, so no
+ceremony delta is claimed from them.
 
-**Skill auto-pickup on prompts it should fire on: 16 of 16** — the eleven committed runs, one
-verification that a plugin-installed copy (no manual `~/.codex/skills/` file present) is
-discovered the same way, and the four group-mode positive probes above. The skill was never
-named in any prompt. On prompts it should *not* fire on, see the routing table: 4 of 4 left
-alone in group mode, 2 of 4 in isolation.
+**Skill auto-pickup on prompts it should fire on: 20 of 20** — the eleven committed runs, four
+symmetric re-runs, one verification that a plugin-installed copy (no manual `~/.codex/skills/`
+file present) is discovered the same way, and the four group-mode positive probes above, which
+held across both sweeps. The skill was never named in any prompt. On prompts it should *not*
+fire on: 8 of 8 after the description fix, 6 of 8 before it.
 
 ## Where the one-line prompt is enough — and where it is not
 

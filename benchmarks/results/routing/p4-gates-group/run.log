@@ -7,20 +7,23 @@ approval: never
 sandbox: workspace-write [workdir, /tmp, $TMPDIR]
 reasoning effort: xhigh
 reasoning summaries: none
-session id: 01a037a3-c325-76e1-a027-2a7f464d765a
+session id: 01a037e4-566f-7ce2-a9de-fc6e37c6f003
 --------
 user
 우리 CI에 품질 게이트를 추가하려고 한다. 무엇을 넣을지 정리해서 `quality-gates.md`로 써줘.
 현재 레포는 TypeScript 단일 패키지고, 테스트는 있지만 CI는 아직 없다.
 
 codex
-`sol-simplify` 스킬을 적용해, 실제로 실패를 막는 최소한의 게이트만 남기겠습니다. 먼저 레포의 스크립트·테스트·구조를 확인한 뒤 현재 상태에서 바로 도입 가능한 CI 기준으로 `quality-gates.md`를 작성하겠습니다.
+`sol-simplify` 스킬을 적용해, CI 첫 도입에 필요한 최소한의 게이트만 남기고 불필요한 승인 절차나 운영 문서는 만들지 않겠습니다. 먼저 레포의 실제 스크립트·도구 구성을 확인한 뒤 `quality-gates.md`를 작성하겠습니다.
 exec
-/bin/zsh -lc "sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.jOpwT0Enxr/skills/sol-simplify/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+/bin/zsh -lc "sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.37GSZC59Rq/skills/sol-simplify/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
  succeeded in 0ms:
 ---
 name: sol-simplify
-description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "add validation", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering.
+description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering. Never for product work — writing tests, fixing vulnerabilities, input validation, error handling, accessibility, or data migrations.
+metadata:
+  author: MongLong0214 <MongLong0214@users.noreply.github.com>
+
 ---
 
 # sol-simplify
@@ -141,43 +144,27 @@ If you skipped nothing, write nothing. A line that reports an empty list every t
 the ceremony this skill exists to remove.
 
 exec
-/bin/zsh -lc 'find .. -name AGENTS.md -print' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
- succeeded in 0ms:
-exec
-/bin/zsh -lc "pwd && rg --files -g 'AGENTS.md' -g 'package.json' -g 'tsconfig*.json' -g '*config*' -g '*test*' -g '*spec*' -g '.github/**' -g '"'!node_modules'"'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+/bin/zsh -lc "pwd && rg --files -g 'AGENTS.md' -g '"'!node_modules'"' -g '"'!dist'"' && rg --files -g '"'!node_modules'"' -g '"'!dist'"' | sed -n '1,200p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
  exited 1 in 0ms:
 /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
 
 exec
-/bin/zsh -lc 'git status --short' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+/bin/zsh -lc 'find .. -name AGENTS.md -print' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
  succeeded in 0ms:
- M ../../../README.md
- M ../../SCORES.md
-?? ../
-?? ../../../routing.sh
-?? ../../../routing/
-
-codex
-현재 작업 디렉터리에는 패키지 파일이나 테스트 파일이 보이지 않습니다. 잘못된 전제를 문서에 고정하지 않도록, 디렉터리 범위와 Git 루트를 한 번 더 확인한 뒤 이 레포에 맞는 최소 게이트를 적겠습니다.
-exec
-/bin/zsh -lc 'find . -maxdepth 3 -type f -print' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
 exec
 /bin/zsh -lc 'ls -la' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
  succeeded in 0ms:
-./run.log
-./req.md
-
- succeeded in 0ms:
 total 32
-drwxr-xr-x@  4 isaac  wheel    128 Aug 25 15:37 .
-drwxr-xr-x@ 15 isaac  wheel    480 Aug 25 15:37 ..
--rw-r--r--@  1 isaac  wheel    213 Aug 25 15:37 req.md
--rw-r--r--@  1 isaac  wheel  10957 Aug 25 15:38 run.log
+drwxr-xr-x@  4 isaac  wheel    128 Aug 25 16:48 .
+drwxr-xr-x@ 15 isaac  wheel    480 Aug 25 16:48 ..
+-rw-r--r--@  1 isaac  wheel    213 Aug 25 16:48 req.md
+-rw-r--r--@  1 isaac  wheel  10360 Aug 25 16:48 run.log
 
 exec
-/bin/zsh -lc 'git rev-parse --show-toplevel' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+/bin/zsh -lc "rg --files -uu -g '"'!node_modules'"' -g '"'!dist'"' | sed -n '1,240p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
  succeeded in 0ms:
-/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify
+run.log
+req.md
 
 exec
 /bin/zsh -lc "sed -n '1,200p' req.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
@@ -186,7 +173,329 @@ exec
 현재 레포는 TypeScript 단일 패키지고, 테스트는 있지만 CI는 아직 없다.
 
 codex
-확인 결과 이 작업 공간에는 실제 `package.json`/lockfile이 없어서 명령 이름을 단정할 수 없습니다. 문서에는 패키지 매니저에 종속되지 않게 “고정 설치 → 타입 검사 → 테스트”를 필수로 두고, 빌드·린트·커버리지는 현재 제품/설정이 있을 때만 추가하도록 명확히 구분하겠습니다.
+작업공간에는 실제 `package.json`이나 CI 설정이 없어 특정 패키지 매니저·스크립트 이름은 확정할 수 없습니다. 문서에서는 이 부분을 추측하지 않고, 첫 CI에서 반드시 막아야 할 실패와 조건부 게이트를 구분하겠습니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group/quality-gates.md
+diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..8af046ce3b45d5df70ae34fa1919f43f6ef34aa1
+--- /dev/null
++++ b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+@@ -0,0 +1,37 @@
++# CI 품질 게이트
++
++현재처럼 TypeScript 단일 패키지이고 테스트가 있는 단계에서는 하나의 CI 작업에서 아래 항목만 검사한다. 모든 게이트는 pull request와 기본 브랜치 push에서 실행하며, 하나라도 실패하면 병합 가능한 상태로 보지 않는다.
++
++## 필수 게이트
++
++1. **의존성 재현 설치**
++   - 저장소의 lockfile을 사용해 clean install 한다(예: `npm ci`, `pnpm install --frozen-lockfile`).
++   - lockfile이 없거나 manifest와 맞지 않으면 실패시킨다.
++
++2. **TypeScript 타입 검사**
++   - 프로젝트의 `typecheck` 스크립트를 실행한다. 별도 스크립트가 없다면 `tsc --noEmit`에 해당하는 명령을 둔다.
++   - 타입 오류가 하나라도 있으면 실패시킨다.
++
++3. **테스트**
++   - 기존 테스트 전체를 CI의 비대화식(non-watch) 모드로 실행한다.
++   - 실패한 테스트가 있거나 테스트 프로세스가 비정상 종료되면 실패시킨다.
++
++## 조건부 게이트
++
++- **빌드:** 이 패키지가 컴파일된 산출물을 배포하거나 게시한다면 실제 배포와 같은 빌드 명령을 필수 게이트에 추가한다. 실행 시점에만 TypeScript를 해석하는 패키지라면 생략한다.
++- **린트:** 이미 린터와 규칙이 구성되어 있다면 기존 `lint` 스크립트를 추가한다. 린터가 없다면 CI 도입만을 위해 새 스타일 규칙부터 만들지는 않는다.
++
++## CI 구성 원칙
++
++- 처음에는 설치, 타입 검사, 테스트를 한 작업에서 순서대로 실행한다. 병렬화와 캐시는 실행 시간이 실제 문제가 될 때 추가한다.
++- 로컬과 CI가 같은 `package.json` 스크립트를 호출하게 해 명령을 중복 정의하지 않는다.
++- Node.js 버전과 패키지 매니저 버전은 저장소가 선언한 값(`engines`, 버전 파일, `packageManager`)을 사용한다.
++
++## 지금 넣지 않는 항목
++
++- 임의의 커버리지 하한선: 현재 기준과 중요한 경로에 대한 정보 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 의존성 취약점 스캔의 병합 차단: 별도 대응 기준 없이 추가하면 애플리케이션 코드와 무관한 변동으로 CI가 막힐 수 있다.
++- 포맷 검사, 문서 검사, 파일 수·테스트 수 고정: 제품 동작을 검증하지 않으므로 첫 품질 게이트의 범위에서 제외한다.
++- 승인 단계, 예외 승인 절차, 게이트 현황 문서: 현재의 단일 패키지에는 유지 비용만 늘린다.
++
++`skipped: machinery — 커버리지 수치, 보안 스캔 차단 기준, 승인 절차는 실제 필요가 생길 때 추가한다.`
+
+diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..8af046ce3b45d5df70ae34fa1919f43f6ef34aa1
+--- /dev/null
++++ b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+@@ -0,0 +1,37 @@
++# CI 품질 게이트
++
++현재처럼 TypeScript 단일 패키지이고 테스트가 있는 단계에서는 하나의 CI 작업에서 아래 항목만 검사한다. 모든 게이트는 pull request와 기본 브랜치 push에서 실행하며, 하나라도 실패하면 병합 가능한 상태로 보지 않는다.
++
++## 필수 게이트
++
++1. **의존성 재현 설치**
++   - 저장소의 lockfile을 사용해 clean install 한다(예: `npm ci`, `pnpm install --frozen-lockfile`).
++   - lockfile이 없거나 manifest와 맞지 않으면 실패시킨다.
++
++2. **TypeScript 타입 검사**
++   - 프로젝트의 `typecheck` 스크립트를 실행한다. 별도 스크립트가 없다면 `tsc --noEmit`에 해당하는 명령을 둔다.
++   - 타입 오류가 하나라도 있으면 실패시킨다.
++
++3. **테스트**
++   - 기존 테스트 전체를 CI의 비대화식(non-watch) 모드로 실행한다.
++   - 실패한 테스트가 있거나 테스트 프로세스가 비정상 종료되면 실패시킨다.
++
++## 조건부 게이트
++
++- **빌드:** 이 패키지가 컴파일된 산출물을 배포하거나 게시한다면 실제 배포와 같은 빌드 명령을 필수 게이트에 추가한다. 실행 시점에만 TypeScript를 해석하는 패키지라면 생략한다.
++- **린트:** 이미 린터와 규칙이 구성되어 있다면 기존 `lint` 스크립트를 추가한다. 린터가 없다면 CI 도입만을 위해 새 스타일 규칙부터 만들지는 않는다.
++
++## CI 구성 원칙
++
++- 처음에는 설치, 타입 검사, 테스트를 한 작업에서 순서대로 실행한다. 병렬화와 캐시는 실행 시간이 실제 문제가 될 때 추가한다.
++- 로컬과 CI가 같은 `package.json` 스크립트를 호출하게 해 명령을 중복 정의하지 않는다.
++- Node.js 버전과 패키지 매니저 버전은 저장소가 선언한 값(`engines`, 버전 파일, `packageManager`)을 사용한다.
++
++## 지금 넣지 않는 항목
++
++- 임의의 커버리지 하한선: 현재 기준과 중요한 경로에 대한 정보 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 의존성 취약점 스캔의 병합 차단: 별도 대응 기준 없이 추가하면 애플리케이션 코드와 무관한 변동으로 CI가 막힐 수 있다.
++- 포맷 검사, 문서 검사, 파일 수·테스트 수 고정: 제품 동작을 검증하지 않으므로 첫 품질 게이트의 범위에서 제외한다.
++- 승인 단계, 예외 승인 절차, 게이트 현황 문서: 현재의 단일 패키지에는 유지 비용만 늘린다.
++
++`skipped: machinery — 커버리지 수치, 보안 스캔 차단 기준, 승인 절차는 실제 필요가 생길 때 추가한다.`
+
+exec
+/bin/zsh -lc "sed -n '1,240p' quality-gates.md && git diff -- quality-gates.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+# CI 품질 게이트
+
+현재처럼 TypeScript 단일 패키지이고 테스트가 있는 단계에서는 하나의 CI 작업에서 아래 항목만 검사한다. 모든 게이트는 pull request와 기본 브랜치 push에서 실행하며, 하나라도 실패하면 병합 가능한 상태로 보지 않는다.
+
+## 필수 게이트
+
+1. **의존성 재현 설치**
+   - 저장소의 lockfile을 사용해 clean install 한다(예: `npm ci`, `pnpm install --frozen-lockfile`).
+   - lockfile이 없거나 manifest와 맞지 않으면 실패시킨다.
+
+2. **TypeScript 타입 검사**
+   - 프로젝트의 `typecheck` 스크립트를 실행한다. 별도 스크립트가 없다면 `tsc --noEmit`에 해당하는 명령을 둔다.
+   - 타입 오류가 하나라도 있으면 실패시킨다.
+
+3. **테스트**
+   - 기존 테스트 전체를 CI의 비대화식(non-watch) 모드로 실행한다.
+   - 실패한 테스트가 있거나 테스트 프로세스가 비정상 종료되면 실패시킨다.
+
+## 조건부 게이트
+
+- **빌드:** 이 패키지가 컴파일된 산출물을 배포하거나 게시한다면 실제 배포와 같은 빌드 명령을 필수 게이트에 추가한다. 실행 시점에만 TypeScript를 해석하는 패키지라면 생략한다.
+- **린트:** 이미 린터와 규칙이 구성되어 있다면 기존 `lint` 스크립트를 추가한다. 린터가 없다면 CI 도입만을 위해 새 스타일 규칙부터 만들지는 않는다.
+
+## CI 구성 원칙
+
+- 처음에는 설치, 타입 검사, 테스트를 한 작업에서 순서대로 실행한다. 병렬화와 캐시는 실행 시간이 실제 문제가 될 때 추가한다.
+- 로컬과 CI가 같은 `package.json` 스크립트를 호출하게 해 명령을 중복 정의하지 않는다.
+- Node.js 버전과 패키지 매니저 버전은 저장소가 선언한 값(`engines`, 버전 파일, `packageManager`)을 사용한다.
+
+## 지금 넣지 않는 항목
+
+- 임의의 커버리지 하한선: 현재 기준과 중요한 경로에 대한 정보 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
+- 의존성 취약점 스캔의 병합 차단: 별도 대응 기준 없이 추가하면 애플리케이션 코드와 무관한 변동으로 CI가 막힐 수 있다.
+- 포맷 검사, 문서 검사, 파일 수·테스트 수 고정: 제품 동작을 검증하지 않으므로 첫 품질 게이트의 범위에서 제외한다.
+- 승인 단계, 예외 승인 절차, 게이트 현황 문서: 현재의 단일 패키지에는 유지 비용만 늘린다.
+
+`skipped: machinery — 커버리지 수치, 보안 스캔 차단 기준, 승인 절차는 실제 필요가 생길 때 추가한다.`
+diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+index 221967b..8af046c 100644
+--- a/benchmarks/results/routing/p4-gates-group/quality-gates.md
++++ b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+@@ -1,34 +1,37 @@
+ # CI 품질 게이트
+ 
+-첫 CI는 실제 결함을 막는 두 가지 검사만 필수로 둔다. 모든 검사는 로컬에서도 같은 `package.json` 스크립트로 실행할 수 있어야 한다.
+-
+-## 실행 조건
+-
+-- pull request와 기본 브랜치 push에서 실행한다.
+-- 레포의 lockfile에 맞는 고정 설치 명령(`npm ci`, `pnpm install --frozen-lockfile` 등)을 사용한다.
+-- 프로젝트가 지원하는 Node.js 버전 하나로 시작한다. 버전 매트릭스는 여러 버전을 실제로 지원할 때만 추가한다.
++현재처럼 TypeScript 단일 패키지이고 테스트가 있는 단계에서는 하나의 CI 작업에서 아래 항목만 검사한다. 모든 게이트는 pull request와 기본 브랜치 push에서 실행하며, 하나라도 실패하면 병합 가능한 상태로 보지 않는다.
+ 
+ ## 필수 게이트
+ 
+-| 게이트 | 실행 | 실패 조건 |
+-| --- | --- | --- |
+-| 타입 검사 | `package.json`의 `typecheck` 스크립트. 없다면 `tsc --noEmit`에 해당하는 스크립트를 추가한다. | TypeScript 진단이 하나라도 발생함 |
+-| 테스트 | 기존 테스트 스크립트(예: `npm test`) | 테스트 실패, 테스트 실행 오류, 비정상 종료 |
++1. **의존성 재현 설치**
++   - 저장소의 lockfile을 사용해 clean install 한다(예: `npm ci`, `pnpm install --frozen-lockfile`).
++   - lockfile이 없거나 manifest와 맞지 않으면 실패시킨다.
+ 
+-두 게이트는 병렬 실행해도 된다. 어느 하나라도 실패하면 CI 전체를 실패 처리한다.
++2. **TypeScript 타입 검사**
++   - 프로젝트의 `typecheck` 스크립트를 실행한다. 별도 스크립트가 없다면 `tsc --noEmit`에 해당하는 명령을 둔다.
++   - 타입 오류가 하나라도 있으면 실패시킨다.
++
++3. **테스트**
++   - 기존 테스트 전체를 CI의 비대화식(non-watch) 모드로 실행한다.
++   - 실패한 테스트가 있거나 테스트 프로세스가 비정상 종료되면 실패시킨다.
+ 
+ ## 조건부 게이트
+ 
+-- **빌드:** 배포물이나 배포용 번들을 만드는 패키지라면 `build`를 필수 게이트에 추가한다. 타입 검사만으로 발견되지 않는 번들링·패키징 오류를 막는다.
+-- **린트:** 이미 린터가 설정되어 있고 오류 규칙이 실제 버그를 잡는다면 기존 `lint` 스크립트를 추가한다. CI를 위해 새 스타일 규칙부터 도입하지는 않는다.
++- **빌드:** 이 패키지가 컴파일된 산출물을 배포하거나 게시한다면 실제 배포와 같은 빌드 명령을 필수 게이트에 추가한다. 실행 시점에만 TypeScript를 해석하는 패키지라면 생략한다.
++- **린트:** 이미 린터와 규칙이 구성되어 있다면 기존 `lint` 스크립트를 추가한다. 린터가 없다면 CI 도입만을 위해 새 스타일 규칙부터 만들지는 않는다.
++
++## CI 구성 원칙
+ 
+-## 지금 넣지 않는 것
++- 처음에는 설치, 타입 검사, 테스트를 한 작업에서 순서대로 실행한다. 병렬화와 캐시는 실행 시간이 실제 문제가 될 때 추가한다.
++- 로컬과 CI가 같은 `package.json` 스크립트를 호출하게 해 명령을 중복 정의하지 않는다.
++- Node.js 버전과 패키지 매니저 버전은 저장소가 선언한 값(`engines`, 버전 파일, `packageManager`)을 사용한다.
+ 
+-- 임의의 커버리지 하한선. 현재 기준과 놓친 결함 사례 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
+-- 포맷 검사, 파일 수·테스트 수 같은 고정 카운트, 문서 형식 검사.
+-- 의존성 감사 결과의 일괄 차단. 별도 대응 기준 없이 켜면 조치 불가능한 경고가 배포를 막을 수 있다.
+-- 여러 OS·Node.js 버전 매트릭스. 실제 지원 범위가 정해진 뒤 추가한다.
++## 지금 넣지 않는 항목
+ 
+-게이트가 제품 결함과 무관한 이유로 반복 실패하면 예외 절차를 만들지 말고 해당 게이트를 수정하거나 제거한다.
++- 임의의 커버리지 하한선: 현재 기준과 중요한 경로에 대한 정보 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 의존성 취약점 스캔의 병합 차단: 별도 대응 기준 없이 추가하면 애플리케이션 코드와 무관한 변동으로 CI가 막힐 수 있다.
++- 포맷 검사, 문서 검사, 파일 수·테스트 수 고정: 제품 동작을 검증하지 않으므로 첫 품질 게이트의 범위에서 제외한다.
++- 승인 단계, 예외 승인 절차, 게이트 현황 문서: 현재의 단일 패키지에는 유지 비용만 늘린다.
+ 
+-skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
++`skipped: machinery — 커버리지 수치, 보안 스캔 차단 기준, 승인 절차는 실제 필요가 생길 때 추가한다.`
+
+diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..8af046ce3b45d5df70ae34fa1919f43f6ef34aa1
+--- /dev/null
++++ b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+@@ -0,0 +1,37 @@
++# CI 품질 게이트
++
++현재처럼 TypeScript 단일 패키지이고 테스트가 있는 단계에서는 하나의 CI 작업에서 아래 항목만 검사한다. 모든 게이트는 pull request와 기본 브랜치 push에서 실행하며, 하나라도 실패하면 병합 가능한 상태로 보지 않는다.
++
++## 필수 게이트
++
++1. **의존성 재현 설치**
++   - 저장소의 lockfile을 사용해 clean install 한다(예: `npm ci`, `pnpm install --frozen-lockfile`).
++   - lockfile이 없거나 manifest와 맞지 않으면 실패시킨다.
++
++2. **TypeScript 타입 검사**
++   - 프로젝트의 `typecheck` 스크립트를 실행한다. 별도 스크립트가 없다면 `tsc --noEmit`에 해당하는 명령을 둔다.
++   - 타입 오류가 하나라도 있으면 실패시킨다.
++
++3. **테스트**
++   - 기존 테스트 전체를 CI의 비대화식(non-watch) 모드로 실행한다.
++   - 실패한 테스트가 있거나 테스트 프로세스가 비정상 종료되면 실패시킨다.
++
++## 조건부 게이트
++
++- **빌드:** 이 패키지가 컴파일된 산출물을 배포하거나 게시한다면 실제 배포와 같은 빌드 명령을 필수 게이트에 추가한다. 실행 시점에만 TypeScript를 해석하는 패키지라면 생략한다.
++- **린트:** 이미 린터와 규칙이 구성되어 있다면 기존 `lint` 스크립트를 추가한다. 린터가 없다면 CI 도입만을 위해 새 스타일 규칙부터 만들지는 않는다.
++
++## CI 구성 원칙
++
++- 처음에는 설치, 타입 검사, 테스트를 한 작업에서 순서대로 실행한다. 병렬화와 캐시는 실행 시간이 실제 문제가 될 때 추가한다.
++- 로컬과 CI가 같은 `package.json` 스크립트를 호출하게 해 명령을 중복 정의하지 않는다.
++- Node.js 버전과 패키지 매니저 버전은 저장소가 선언한 값(`engines`, 버전 파일, `packageManager`)을 사용한다.
++
++## 지금 넣지 않는 항목
++
++- 임의의 커버리지 하한선: 현재 기준과 중요한 경로에 대한 정보 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 의존성 취약점 스캔의 병합 차단: 별도 대응 기준 없이 추가하면 애플리케이션 코드와 무관한 변동으로 CI가 막힐 수 있다.
++- 포맷 검사, 문서 검사, 파일 수·테스트 수 고정: 제품 동작을 검증하지 않으므로 첫 품질 게이트의 범위에서 제외한다.
++- 승인 단계, 예외 승인 절차, 게이트 현황 문서: 현재의 단일 패키지에는 유지 비용만 늘린다.
++
++`skipped: machinery — 커버리지 수치, 보안 스캔 차단 기준, 승인 절차는 실제 필요가 생길 때 추가한다.`
+
+exec
+/bin/zsh -lc 'git ls-tree --name-only HEAD' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+quality-gates.md
+req.md
+run.log
+
+exec
+/bin/zsh -lc 'git status --short' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+ succeeded in 0ms:
+ M ../../../../README.ko.md
+ M ../../../../README.md
+ M ../../../README.md
+ M ../../SCORES.md
+ M ../n1-tests-group/parse-duration.test.js
+ M ../n1-tests-group/run.log
+ M ../n1-tests-isolation/parse-duration.test.js
+ M ../n1-tests-isolation/run.log
+ M ../n2-injection-group/run.log
+ M ../n2-injection-isolation/run.log
+ M ../n3-a11y-group/dropdown.tsx
+ M ../n3-a11y-group/run.log
+ M ../n3-a11y-isolation/dropdown.tsx
+ M ../n3-a11y-isolation/run.log
+ M ../n4-migration-group/0007_orders_currency.sql
+ M ../n4-migration-group/run.log
+ M ../n4-migration-isolation/run.log
+ M ../p1-release-group/deploy.md
+ M ../p1-release-group/run.log
+ M ../p2-review-group/review-process.md
+ M ../p2-review-group/run.log
+ M ../p3-spec-group/run.log
+ M quality-gates.md
+ M run.log
+ M ../summary.tsv
+ M ../../../routing.sh
+ M ../../../../skills/sol-simplify/SKILL.md
+?? ../../routing-v1-predesc/
+
+diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..8af046ce3b45d5df70ae34fa1919f43f6ef34aa1
+--- /dev/null
++++ b/benchmarks/results/routing/p4-gates-group/quality-gates.md
+@@ -0,0 +1,37 @@
++# CI 품질 게이트
++
++현재처럼 TypeScript 단일 패키지이고 테스트가 있는 단계에서는 하나의 CI 작업에서 아래 항목만 검사한다. 모든 게이트는 pull request와 기본 브랜치 push에서 실행하며, 하나라도 실패하면 병합 가능한 상태로 보지 않는다.
++
++## 필수 게이트
++
++1. **의존성 재현 설치**
++   - 저장소의 lockfile을 사용해 clean install 한다(예: `npm ci`, `pnpm install --frozen-lockfile`).
++   - lockfile이 없거나 manifest와 맞지 않으면 실패시킨다.
++
++2. **TypeScript 타입 검사**
++   - 프로젝트의 `typecheck` 스크립트를 실행한다. 별도 스크립트가 없다면 `tsc --noEmit`에 해당하는 명령을 둔다.
++   - 타입 오류가 하나라도 있으면 실패시킨다.
++
++3. **테스트**
++   - 기존 테스트 전체를 CI의 비대화식(non-watch) 모드로 실행한다.
++   - 실패한 테스트가 있거나 테스트 프로세스가 비정상 종료되면 실패시킨다.
++
++## 조건부 게이트
++
++- **빌드:** 이 패키지가 컴파일된 산출물을 배포하거나 게시한다면 실제 배포와 같은 빌드 명령을 필수 게이트에 추가한다. 실행 시점에만 TypeScript를 해석하는 패키지라면 생략한다.
++- **린트:** 이미 린터와 규칙이 구성되어 있다면 기존 `lint` 스크립트를 추가한다. 린터가 없다면 CI 도입만을 위해 새 스타일 규칙부터 만들지는 않는다.
++
++## CI 구성 원칙
++
++- 처음에는 설치, 타입 검사, 테스트를 한 작업에서 순서대로 실행한다. 병렬화와 캐시는 실행 시간이 실제 문제가 될 때 추가한다.
++- 로컬과 CI가 같은 `package.json` 스크립트를 호출하게 해 명령을 중복 정의하지 않는다.
++- Node.js 버전과 패키지 매니저 버전은 저장소가 선언한 값(`engines`, 버전 파일, `packageManager`)을 사용한다.
++
++## 지금 넣지 않는 항목
++
++- 임의의 커버리지 하한선: 현재 기준과 중요한 경로에 대한 정보 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
++- 의존성 취약점 스캔의 병합 차단: 별도 대응 기준 없이 추가하면 애플리케이션 코드와 무관한 변동으로 CI가 막힐 수 있다.
++- 포맷 검사, 문서 검사, 파일 수·테스트 수 고정: 제품 동작을 검증하지 않으므로 첫 품질 게이트의 범위에서 제외한다.
++- 승인 단계, 예외 승인 절차, 게이트 현황 문서: 현재의 단일 패키지에는 유지 비용만 늘린다.
++
++`skipped: machinery — 커버리지 수치, 보안 스캔 차단 기준, 승인 절차는 실제 필요가 생길 때 추가한다.`
+
 apply patch
 patch: completed
 /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group/quality-gates.md
@@ -273,86 +582,9 @@ index 0000000000000000000000000000000000000000..221967bba04887c80dce9d541bcae31e
 +skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
 
 exec
-/bin/zsh -lc "sed -n '1,240p' quality-gates.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
+/bin/zsh -lc 'test -f quality-gates.md && wc -l quality-gates.md && git diff --check -- quality-gates.md' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
  succeeded in 0ms:
-# CI 품질 게이트
-
-첫 CI는 실제 결함을 막는 두 가지 검사만 필수로 둔다. 모든 검사는 로컬에서도 같은 `package.json` 스크립트로 실행할 수 있어야 한다.
-
-## 실행 조건
-
-- pull request와 기본 브랜치 push에서 실행한다.
-- 레포의 lockfile에 맞는 고정 설치 명령(`npm ci`, `pnpm install --frozen-lockfile` 등)을 사용한다.
-- 프로젝트가 지원하는 Node.js 버전 하나로 시작한다. 버전 매트릭스는 여러 버전을 실제로 지원할 때만 추가한다.
-
-## 필수 게이트
-
-| 게이트 | 실행 | 실패 조건 |
-| --- | --- | --- |
-| 타입 검사 | `package.json`의 `typecheck` 스크립트. 없다면 `tsc --noEmit`에 해당하는 스크립트를 추가한다. | TypeScript 진단이 하나라도 발생함 |
-| 테스트 | 기존 테스트 스크립트(예: `npm test`) | 테스트 실패, 테스트 실행 오류, 비정상 종료 |
-
-두 게이트는 병렬 실행해도 된다. 어느 하나라도 실패하면 CI 전체를 실패 처리한다.
-
-## 조건부 게이트
-
-- **빌드:** 배포물이나 배포용 번들을 만드는 패키지라면 `build`를 필수 게이트에 추가한다. 타입 검사만으로 발견되지 않는 번들링·패키징 오류를 막는다.
-- **린트:** 이미 린터가 설정되어 있고 오류 규칙이 실제 버그를 잡는다면 기존 `lint` 스크립트를 추가한다. CI를 위해 새 스타일 규칙부터 도입하지는 않는다.
-
-## 지금 넣지 않는 것
-
-- 임의의 커버리지 하한선. 현재 기준과 놓친 결함 사례 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
-- 포맷 검사, 파일 수·테스트 수 같은 고정 카운트, 문서 형식 검사.
-- 의존성 감사 결과의 일괄 차단. 별도 대응 기준 없이 켜면 조치 불가능한 경고가 배포를 막을 수 있다.
-- 여러 OS·Node.js 버전 매트릭스. 실제 지원 범위가 정해진 뒤 추가한다.
-
-게이트가 제품 결함과 무관한 이유로 반복 실패하면 예외 절차를 만들지 말고 해당 게이트를 수정하거나 제거한다.
-
-skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
-
-exec
-/bin/zsh -lc 'git diff --no-index /dev/null quality-gates.md' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group
- exited 1 in 0ms:
-diff --git a/quality-gates.md b/quality-gates.md
-new file mode 100644
-index 0000000..221967b
---- /dev/null
-+++ b/quality-gates.md
-@@ -0,0 +1,34 @@
-+# CI 품질 게이트
-+
-+첫 CI는 실제 결함을 막는 두 가지 검사만 필수로 둔다. 모든 검사는 로컬에서도 같은 `package.json` 스크립트로 실행할 수 있어야 한다.
-+
-+## 실행 조건
-+
-+- pull request와 기본 브랜치 push에서 실행한다.
-+- 레포의 lockfile에 맞는 고정 설치 명령(`npm ci`, `pnpm install --frozen-lockfile` 등)을 사용한다.
-+- 프로젝트가 지원하는 Node.js 버전 하나로 시작한다. 버전 매트릭스는 여러 버전을 실제로 지원할 때만 추가한다.
-+
-+## 필수 게이트
-+
-+| 게이트 | 실행 | 실패 조건 |
-+| --- | --- | --- |
-+| 타입 검사 | `package.json`의 `typecheck` 스크립트. 없다면 `tsc --noEmit`에 해당하는 스크립트를 추가한다. | TypeScript 진단이 하나라도 발생함 |
-+| 테스트 | 기존 테스트 스크립트(예: `npm test`) | 테스트 실패, 테스트 실행 오류, 비정상 종료 |
-+
-+두 게이트는 병렬 실행해도 된다. 어느 하나라도 실패하면 CI 전체를 실패 처리한다.
-+
-+## 조건부 게이트
-+
-+- **빌드:** 배포물이나 배포용 번들을 만드는 패키지라면 `build`를 필수 게이트에 추가한다. 타입 검사만으로 발견되지 않는 번들링·패키징 오류를 막는다.
-+- **린트:** 이미 린터가 설정되어 있고 오류 규칙이 실제 버그를 잡는다면 기존 `lint` 스크립트를 추가한다. CI를 위해 새 스타일 규칙부터 도입하지는 않는다.
-+
-+## 지금 넣지 않는 것
-+
-+- 임의의 커버리지 하한선. 현재 기준과 놓친 결함 사례 없이 숫자를 정하면 테스트의 가치보다 수치 맞추기를 유도한다.
-+- 포맷 검사, 파일 수·테스트 수 같은 고정 카운트, 문서 형식 검사.
-+- 의존성 감사 결과의 일괄 차단. 별도 대응 기준 없이 켜면 조치 불가능한 경고가 배포를 막을 수 있다.
-+- 여러 OS·Node.js 버전 매트릭스. 실제 지원 범위가 정해진 뒤 추가한다.
-+
-+게이트가 제품 결함과 무관한 이유로 반복 실패하면 예외 절차를 만들지 말고 해당 게이트를 수정하거나 제거한다.
-+
-+skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
+      34 quality-gates.md
 
 diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
 new file mode 100644
@@ -398,12 +630,7 @@ index 0000000000000000000000000000000000000000..221967bba04887c80dce9d541bcae31e
 codex
 [quality-gates.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group/quality-gates.md)를 작성했습니다.
 
-- 필수: 타입 검사, 기존 테스트
-- 조건부: 실제 배포물이 있으면 빌드, 기존 설정이 있으면 린트
-- 제외: 임의 커버리지 기준, 포맷·고정 카운트 검사, 과도한 환경 매트릭스
-- 실제 패키지 설정이 없어 명령어는 패키지 매니저 중립적으로 작성했습니다.
-
-문서 변경뿐이어서 테스트는 실행하지 않았습니다.
+첫 CI의 필수 게이트는 타입 검사와 기존 테스트로 제한하고, 빌드·린트는 프로젝트 구성에 따라 조건부로 추가하도록 정리했습니다. 임의의 커버리지 기준이나 승인 절차 등은 제외했습니다.
 diff --git a/benchmarks/results/routing/p4-gates-group/quality-gates.md b/benchmarks/results/routing/p4-gates-group/quality-gates.md
 new file mode 100644
 index 0000000000000000000000000000000000000000..221967bba04887c80dce9d541bcae31ec33afee1
@@ -446,12 +673,7 @@ index 0000000000000000000000000000000000000000..221967bba04887c80dce9d541bcae31e
 +skipped: machinery — CI 공급자별 workflow YAML과 새 린터 설정. 요청 시 추가한다.
 
 tokens used
-28,856
+48,825
 [quality-gates.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/routing/p4-gates-group/quality-gates.md)를 작성했습니다.
 
-- 필수: 타입 검사, 기존 테스트
-- 조건부: 실제 배포물이 있으면 빌드, 기존 설정이 있으면 린트
-- 제외: 임의 커버리지 기준, 포맷·고정 카운트 검사, 과도한 환경 매트릭스
-- 실제 패키지 설정이 없어 명령어는 패키지 매니저 중립적으로 작성했습니다.
-
-문서 변경뿐이어서 테스트는 실행하지 않았습니다.
+첫 CI의 필수 게이트는 타입 검사와 기존 테스트로 제한하고, 빌드·린트는 프로젝트 구성에 따라 조건부로 추가하도록 정리했습니다. 임의의 커버리지 기준이나 승인 절차 등은 제외했습니다.
