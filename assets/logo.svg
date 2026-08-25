@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220">
+  <defs>
+    <clipPath id="r"><rect width="220" height="220" rx="44"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="220" height="220" fill="#141414"/>
+    <!-- left tape: taut -->
+    <path d="M -10 118 L 96 103 L 98 117 L -10 132 Z" fill="#D6453F"/>
+    <!-- right tape: released, drooping -->
+    <path d="M 124 104 C 156 108 182 124 230 156 L 226 170 C 180 140 154 126 122 118 Z" fill="#D6453F" opacity="0.92"/>
+    <!-- cut ends -->
+    <path d="M 96 103 L 108 100 L 110 114 L 98 117 Z" fill="#F0655E"/>
+    <path d="M 112 100 L 124 104 L 122 118 L 110 114 Z" fill="#F0655E" opacity="0.85"/>
+    <!-- the cut: clean gap with spark lines -->
+    <g stroke="#EDEDED" stroke-width="4" stroke-linecap="round">
+      <line x1="110" y1="78" x2="110" y2="92"/>
+      <line x1="96" y1="84" x2="102" y2="94"/>
+      <line x1="124" y1="84" x2="118" y2="94"/>
+    </g>
+  </g>
+</svg>
