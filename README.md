@@ -1,8 +1,9 @@
 <p align="center">
-  <img src="assets/logo.svg" width="140" alt="sol-simplify">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <img src="assets/logo.svg" width="480" alt="sol-simplify — a tangled line straightens into one clean line">
+  </picture>
 </p>
-
-<h1 align="center">sol-simplify</h1>
 
 <p align="center">
   <em>It built the gate. Then the gate stopped letting it work.</em>
@@ -172,7 +173,14 @@ One markdown file. Pick whichever fits your agent.
 
 ### Codex
 
-Drop it in. It activates on its own — no config, no restart.
+As a plugin — versioned, updatable, both skills at once:
+
+```bash
+codex plugin marketplace add MongLong0214/sol-simplify
+codex plugin add sol-simplify@sol-simplify
+```
+
+Or zero-dependency — drop the file in, it activates on its own:
 
 ```bash
 mkdir -p ~/.codex/skills/sol-simplify
@@ -181,6 +189,13 @@ curl -sL https://raw.githubusercontent.com/MongLong0214/sol-simplify/main/skills
 ```
 
 ### Claude Code
+
+```
+/plugin marketplace add MongLong0214/sol-simplify
+/plugin install sol-simplify@sol-simplify
+```
+
+Or copy the file:
 
 ```bash
 mkdir -p ~/.claude/skills/sol-simplify
@@ -239,8 +254,8 @@ Restraint applies to process the agent invented, never to the product's real obl
 **Does a shorter document mean a better one?**
 No, and the benchmark refuses to claim it. Ceremony count is the measured axis; line count is reported next to it as context. The outputs are committed so you can read them and disagree.
 
-**Why not ship a plugin, hooks, or an installer?**
-A tool against manufactured process should not manufacture process. The A/B showed a plain skill file is picked up on its own, so everything beyond the file would be decoration. There is no `CONTRIBUTING.md` here for the same reason.
+**Why no hooks, installer, or runtime code?**
+A tool against manufactured process should not manufacture process. The payload is one markdown file that agents pick up on their own (12/12 measured); the only additions are three static JSON manifests, which exist solely so `codex plugin add` and `/plugin install` work and run nothing. There is no `CONTRIBUTING.md` here for the same reason.
 
 **Will this make the agent skip tests?**
 Measured: no. In the incident scenario every skill run fixed the root cause and added the regression test (one verified it red→green before shipping); in the guardrail scenario the skill kept every requested control, 4/4, twice. Tests that exercise behavior are in the never-cut list; if you ever see it cut a real one, that is a bug worth an issue.

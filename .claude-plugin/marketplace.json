@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "sol-simplify",
+  "description": "One markdown file that stops coding agents from building bureaucracy around their own work.",
+  "owner": {
+    "name": "MongLong0214",
+    "url": "https://github.com/MongLong0214"
+  },
+  "plugins": [
+    {
+      "name": "sol-simplify",
+      "description": "Anti-bureaucracy skill for coding agents. Ceremony 0-for-12 across five benchmark scenarios on gpt-5.6-sol.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

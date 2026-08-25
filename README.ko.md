@@ -1,8 +1,9 @@
 <p align="center">
-  <img src="assets/logo.svg" width="140" alt="sol-simplify">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <img src="assets/logo.svg" width="480" alt="sol-simplify — a tangled line straightens into one clean line">
+  </picture>
 </p>
-
-<h1 align="center">sol-simplify</h1>
 
 <p align="center">
   <em>게이트를 만들었다. 그 게이트가 자기 일을 막기 시작했다.</em>
@@ -141,13 +142,13 @@ sol-simplify: <존재 이유>, remove when <제거 조건>
 
 스킬을 켠 모든 런의 ceremony: **12번 중 12번 0.** 스킬 자동 픽업: 프롬프트에 이름 언급 0회로 **12/12**.
 
-합계보다 값진 디테일 셋:
+합계 뒤에 숨은 디테일이 더 값지다.
 
-- **PRD 베이스라인 3개가 독립적으로 똑같은 허구의 `p95 500ms` 목표를 발명했다.** 이 습성은 랜덤이 아니라 체계적이다.
+- **PRD 베이스라인 3개가 독립적으로 똑같은 허구의 `p95 500ms` 목표를 발명했다.** 이 습성은 체계적이다. 우연이면 세 번 같은 숫자가 나올 수 없다.
 - **프로세스 베이스라인 3개 중 2개가 자기 게이트에 대한 공식 면제(waiver) 정책을 작성했다** — 감사 대상 레포를 데드락시킨 바로 그 메커니즘. 한 줄 지시 arm도 하나 만들었다.
 - **가드레일 시나리오에서 스킬은 요청된 항목 전부를 유지했다** — 체크리스트, 승인 절차, 롤백, 감사 기록, 실제 PCI DSS v4.0.1 컨트롤 매핑까지 — 그리고 자기 마커로 그것들을 *보호*했다: `sol-simplify: 독립 승인과 증적은 PCI DSS 6.5.1…을 위해 존재한다.` 요청된 절차를 자르는 건 결함이고, 벤치마크가 그걸 검사한다.
 
-**한 줄 지시로 충분한 경우:** 널리 알려진 그 문장 — *"Make the smallest change that fully solves the task…"* — 은 문서 태스크의 분량 감소 대부분을 공짜로 얻는다. 이번 실측에서 못 한 것: 게이트 면제 절차를 만들었고, 14,000줄 승인 기계를 그대로 뒀다. 스킬의 가치는 3–4단계에 집중된다 — 실패가 *크기*가 아니라 *방향*인 곳.
+**한 줄 지시로 충분한 경우:** 널리 알려진 그 문장 — *"Make the smallest change that fully solves the task…"* — 은 문서 태스크의 분량 감소 대부분을 공짜로 얻는다. 이번 실측에서 못 한 것: 게이트 면제 절차를 만들었고, 14,000줄 승인 기계를 그대로 뒀다. 스킬의 가치는 3–4단계에 집중된다 — 실패의 축이 *크기*에서 *방향*으로 넘어가는 곳.
 
 ## 설치
 
@@ -155,7 +156,14 @@ sol-simplify: <존재 이유>, remove when <제거 조건>
 
 ### Codex
 
-넣으면 알아서 발동한다 — 설정도 재시작도 없다.
+플러그인으로 — 버전 관리·업데이트·스킬 2개 일괄:
+
+```bash
+codex plugin marketplace add MongLong0214/sol-simplify
+codex plugin add sol-simplify@sol-simplify
+```
+
+의존성 0으로 — 파일만 넣으면 알아서 발동한다:
 
 ```bash
 mkdir -p ~/.codex/skills/sol-simplify
@@ -164,6 +172,13 @@ curl -sL https://raw.githubusercontent.com/MongLong0214/sol-simplify/main/skills
 ```
 
 ### Claude Code
+
+```
+/plugin marketplace add MongLong0214/sol-simplify
+/plugin install sol-simplify@sol-simplify
+```
+
+파일 복사도 된다:
 
 ```bash
 mkdir -p ~/.claude/skills/sol-simplify
@@ -190,7 +205,7 @@ curl -sL https://raw.githubusercontent.com/MongLong0214/sol-simplify/main/skills
 
 ## 이미 병든 레포 진단
 
-두 번째 스킬 [`skills/sol-simplify-audit`](skills/sol-simplify-audit/SKILL.md)은 예방이 아니라 진단용이다. ceremony ratio(기계 줄수 대 제품 줄수)를 측정하고, 아무것도 배송하지 않은 유지보수 커밋을 찾고, 삭제 대상을 랭킹해서 보고만 한다 — 파일은 건드리지 않는다.
+두 번째 스킬 [`skills/sol-simplify-audit`](skills/sol-simplify-audit/SKILL.md)은 진단용이다. ceremony ratio(기계 줄수 대 제품 줄수)를 측정하고, 아무것도 배송하지 않은 유지보수 커밋을 찾고, 삭제 대상을 랭킹해서 보고만 한다 — 파일은 건드리지 않는다.
 
 ```bash
 mkdir -p ~/.codex/skills/sol-simplify-audit
@@ -222,8 +237,8 @@ curl -sL https://raw.githubusercontent.com/MongLong0214/sol-simplify/main/skills
 **짧은 문서가 더 좋은 문서인가?**
 아니고, 벤치마크도 그렇게 주장하지 않는다. 측정 축은 ceremony 카운트고 줄 수는 맥락으로만 병기한다. 산출물이 전부 커밋되어 있으니 직접 읽고 반박할 수 있다.
 
-**왜 플러그인·훅·인스톨러를 안 만들었나?**
-제조된 절차에 반대하는 도구가 절차를 제조하면 안 되니까. A/B에서 순수 스킬 파일이 12/12로 자동 픽업됐으니, 파일 밖의 모든 것은 장식이다. 이 레포에 CONTRIBUTING.md가 없는 것도 같은 이유다.
+**왜 훅·인스톨러·런타임 코드가 없나?**
+제조된 절차에 반대하는 도구가 절차를 제조하면 안 되니까. 페이로드는 에이전트가 스스로 집는(실측 12/12) 마크다운 파일 하나고, 추가된 것은 정적 JSON manifest 3개뿐이다 — `codex plugin add`와 `/plugin install`이 동작하게 할 뿐 아무것도 실행하지 않는다. 이 레포에 CONTRIBUTING.md가 없는 것도 같은 이유다.
 
 **에이전트가 테스트를 건너뛰게 되지 않나?**
 실측: 아니다. 사건 시나리오에서 모든 스킬 런이 근본 원인을 고치고 회귀 테스트를 추가했으며(한 런은 red→green까지 검증), 가드레일 시나리오에서 요청된 컨트롤을 두 번 다 4/4로 유지했다. 실제 테스트를 자르는 걸 본다면 그건 이슈 감이다.

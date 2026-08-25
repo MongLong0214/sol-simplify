@@ -1,0 +1,11 @@
+{
+  "name": "sol-simplify",
+  "version": "1.0.0",
+  "description": "Stops coding agents from building bureaucracy around their own work: invented gates, approval flows, verification machinery, governance documents nobody asked for.",
+  "author": {
+    "name": "MongLong0214",
+    "url": "https://github.com/MongLong0214"
+  },
+  "homepage": "https://github.com/MongLong0214/sol-simplify",
+  "license": "MIT"
+}

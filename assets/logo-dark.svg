@@ -36,9 +36,9 @@
   </style>
   <g fill="none" stroke-linecap="round" stroke-linejoin="round">
     <path class="ss-tangle" pathLength="100" d="M 20 70 C 34 24, 84 12, 100 40 C 112 62, 82 86, 62 74 C 40 60, 58 30, 92 30 C 120 30, 130 52, 116 66 C 102 80, 82 72, 88 54 C 94 36, 128 34, 146 48 C 160 58, 158 62, 174 62" stroke="#e05d52" stroke-width="8.5" opacity="0.96"/>
-    <path class="ss-line" pathLength="100" d="M 174 62 H 262" stroke="#1f1f1f" stroke-width="8.5"/>
-    <path class="ss-flow" pathLength="100" d="M 174 62 H 262" stroke="#1f1f1f" stroke-width="9" stroke-dasharray="14 30" opacity="0.45"/>
-    <circle class="ss-dot" cx="262" cy="62" r="6" fill="#1f1f1f"/>
+    <path class="ss-line" pathLength="100" d="M 174 62 H 262" stroke="#ededed" stroke-width="8.5"/>
+    <path class="ss-flow" pathLength="100" d="M 174 62 H 262" stroke="#ededed" stroke-width="9" stroke-dasharray="14 30" opacity="0.45"/>
+    <circle class="ss-dot" cx="262" cy="62" r="6" fill="#ededed"/>
   </g>
-  <text x="304" y="78" fill="#1f1f1f" font-size="46" font-weight="650" letter-spacing="0.5">sol-<tspan fill="#e05d52">simplify</tspan></text>
+  <text x="304" y="78" fill="#ededed" font-size="46" font-weight="650" letter-spacing="0.5">sol-<tspan fill="#e05d52">simplify</tspan></text>
 </svg>
