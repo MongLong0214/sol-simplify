@@ -18,7 +18,7 @@
 
 <p align="center">
   <strong>ceremony scored 0 in 10 of 11 skill runs &middot; 437 invented lines &rarr; 58 &middot; one markdown file</strong><br>
-  <sub>Measured on <code>gpt-5.6-sol</code> at <code>xhigh</code> effort against a fixed 10-category rubric, every score cited to a line, all raw outputs committed. Baselines scored 4–6 on the same rubric. The one non-zero skill run is named in the scores. Single scorer — independent re-scoring welcome. A one-sentence prompt is run as a control arm — it shortens documents but wrote a gate-waiver procedure and left a 14,000-line authorization machine standing. Single model, n=1–3 per cell. <a href="benchmarks/results/SCORES.md">Scores</a> &middot; <a href="benchmarks/">reproduce it</a>.</sub>
+  <sub>Measured on <code>gpt-5.6-sol</code> at <code>xhigh</code> effort against a fixed 10-category rubric — every score cited to the line it was found on, every raw output committed, and a one-sentence prompt run as a control arm so the skill has to beat it. Method, scoring and known limits: <a href="benchmarks/results/SCORES.md">scores</a> &middot; <a href="benchmarks/">reproduce it</a>.</sub>
 </p>
 
 <p align="center">

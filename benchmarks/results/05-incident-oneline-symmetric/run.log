@@ -1,0 +1,425 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037cc-7f57-7043-8878-abb776d951fb
+--------
+user
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+
+불필요한 절차·문서·게이트를 만들지 마라. 요청한 것만 만들어라.
+
+codex
+레포의 현재 구현과 테스트 구성을 먼저 확인한 뒤, 이 사고를 직접 막는 최소한의 회귀 테스트와 필요한 자동 검증만 추가하겠습니다. 기존 변경사항은 건드리지 않고 마지막에 `summary.md`로 정리하겠습니다.
+exec
+/bin/zsh -lc "pwd && rg --files -g '"'!node_modules'"' -g '"'!dist'"' | sed -n '1,200p' && git status --short && git log --oneline -8" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric
+ succeeded in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric
+src/orders.js
+AGENTS.md
+package.json
+req.md
+run.log
+ M ../../../README.ko.md
+ M ../../../README.md
+ M ../../../skills/sol-simplify-audit/SKILL.md
+ M ../../../skills/sol-simplify/SKILL.md
+?? ../01-prd-off-symmetric/
+?? ../01-prd-on-symmetric/
+?? ../01-prd-oneline-en-symmetric/
+?? ../01-prd-oneline-symmetric/
+?? ../03-loop-off-symmetric/
+?? ../03-loop-on-symmetric/
+?? ../03-loop-oneline-en-symmetric/
+?? ../03-loop-oneline-symmetric/
+?? ../04-guardrail-off-symmetric/
+?? ../04-guardrail-on-symmetric/
+?? ../04-guardrail-oneline-en-symmetric/
+?? ../04-guardrail-oneline-symmetric/
+?? ../05-incident-off-symmetric/
+?? ./
+c98a81f Keep re-runs from clobbering cited results
+5bbdce1 Measure discovery and routing, and correct three overstated claims
+b409b69 Carry the guardrail re-score into both Numbers tables
+d272609 Act on external review: fix measure.sh, correct scores, symmetrize the benchmark
+0eda18c Fix run.sh: set -e killed the script on the first clean control arm
+3493ac7 Fold the Ponytail comparison into a single FAQ entry
+80db574 Stack the before/after comparison vertically — no horizontal scroll
+e7aa953 Bust image CDN cache with versioned asset URLs
+
+exec
+/bin/zsh -lc "sed -n '1,240p' src/orders.js && sed -n '1,240p' package.json && sed -n '1,240p' req.md && sed -n '1,200p' AGENTS.md && find . -maxdepth 3 -type d -print" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric
+ succeeded in 0ms:
+export function getUserOrders(db, userId) {
+  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+  if (!rows.length) return null; // reverted hotfix restored the old behavior
+  return rows;
+}
+{ "name": "orders-service", "type": "module", "scripts": { "test": "node --test" } }
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+
+불필요한 절차·문서·게이트를 만들지 마라. 요청한 것만 만들어라.
+# AGENTS.md
+- Default branch: main. Feature branches: feat/*.
+- Run `npm test` before merging.
+.
+./src
+
+codex
+현재 코드에는 사고를 재현하는 `null` 반환이 그대로 남아 있고 테스트 파일은 없습니다. 범위를 넓히지 않고, 빈 주문 결과를 `[]`로 보장하도록 구현을 고치고 그 계약을 고정하는 회귀 테스트 하나만 추가하겠습니다. 별도 프로세스 문서나 추가 머지 게이트는 만들지 않겠습니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a2d7a6614ac7530bc3ebe09e62568e46b7fc412
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+@@ -0,0 +1,16 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  assert.deepEqual(getUserOrders(db, 'user-without-orders'), []);
++});
+
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a2d7a6614ac7530bc3ebe09e62568e46b7fc412
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+@@ -0,0 +1,16 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  assert.deepEqual(getUserOrders(db, 'user-without-orders'), []);
++});
+
+exec
+/bin/zsh -lc 'npm test' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric
+ succeeded in 160ms:
+
+> test
+> node --test
+
+✔ getUserOrders returns an empty array when the user has no orders (0.75025ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 55.495583
+
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a2d7a6614ac7530bc3ebe09e62568e46b7fc412
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+@@ -0,0 +1,16 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  assert.deepEqual(getUserOrders(db, 'user-without-orders'), []);
++});
+
+codex
+회귀 테스트가 사고 조건(주문 0건)을 그대로 재현하며 통과했습니다. 이제 요청하신 `summary.md`에 수정 내용과 검증 결과만 간단히 남긴 뒤 최종 변경분을 확인하겠습니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric/summary.md
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/summary.md b/benchmarks/results/05-incident-oneline-symmetric/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e764944ee98fd8d6123b3d8d3bb2effe6d4d9de5
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/summary.md
+@@ -0,0 +1,7 @@
++# 재발 방지 작업 요약
++
++- `getUserOrders()`가 주문이 없는 사용자의 조회 결과를 `null`로 바꾸지 않고 빈 배열(`[]`)로 반환하도록 수정했다.
++- 주문이 0건인 경우 빈 배열을 반환하는지 검증하는 회귀 테스트를 추가했다.
++- 별도 절차나 문서, 추가 머지 게이트는 만들지 않았다.
++
++검증: `npm test` 통과 (1개 테스트, 실패 0개)
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a2d7a6614ac7530bc3ebe09e62568e46b7fc412
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+@@ -0,0 +1,16 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  assert.deepEqual(getUserOrders(db, 'user-without-orders'), []);
++});
+
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/summary.md b/benchmarks/results/05-incident-oneline-symmetric/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e764944ee98fd8d6123b3d8d3bb2effe6d4d9de5
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/summary.md
+@@ -0,0 +1,7 @@
++# 재발 방지 작업 요약
++
++- `getUserOrders()`가 주문이 없는 사용자의 조회 결과를 `null`로 바꾸지 않고 빈 배열(`[]`)로 반환하도록 수정했다.
++- 주문이 0건인 경우 빈 배열을 반환하는지 검증하는 회귀 테스트를 추가했다.
++- 별도 절차나 문서, 추가 머지 게이트는 만들지 않았다.
++
++검증: `npm test` 통과 (1개 테스트, 실패 0개)
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a2d7a6614ac7530bc3ebe09e62568e46b7fc412
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+@@ -0,0 +1,16 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  assert.deepEqual(getUserOrders(db, 'user-without-orders'), []);
++});
+
+exec
+/bin/zsh -lc "git diff --no-index -- /dev/null src/orders.js >/dev/null 2>&1 || true
+sed -n '1,120p' src/orders.js
+sed -n '1,180p' test/orders.test.js
+sed -n '1,160p' summary.md
+npm test" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric
+ succeeded in 183ms:
+
+> test
+> node --test
+
+✔ getUserOrders returns an empty array when the user has no orders (0.649666ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 50.937583
+
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/summary.md b/benchmarks/results/05-incident-oneline-symmetric/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e764944ee98fd8d6123b3d8d3bb2effe6d4d9de5
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/summary.md
+@@ -0,0 +1,7 @@
++# 재발 방지 작업 요약
++
++- `getUserOrders()`가 주문이 없는 사용자의 조회 결과를 `null`로 바꾸지 않고 빈 배열(`[]`)로 반환하도록 수정했다.
++- 주문이 0건인 경우 빈 배열을 반환하는지 검증하는 회귀 테스트를 추가했다.
++- 별도 절차나 문서, 추가 머지 게이트는 만들지 않았다.
++
++검증: `npm test` 통과 (1개 테스트, 실패 0개)
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a2d7a6614ac7530bc3ebe09e62568e46b7fc412
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+@@ -0,0 +1,16 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  assert.deepEqual(getUserOrders(db, 'user-without-orders'), []);
++});
+
+codex
+재발 방지 작업을 완료했습니다.
+
+- [src/orders.js](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric/src/orders.js): 주문 0건이면 `[]` 반환
+- [test/orders.test.js](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js): 해당 조건의 회귀 테스트 추가
+- [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric/summary.md): 작업 내용 기록
+
+`npm test` 결과: 1개 통과, 실패 0개. 추가 절차나 머지 게이트는 만들지 않았습니다.
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..a0608d2f7bbf373cdc6e73a3c826e7b8c3b68bcc
+--- a/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-oneline-symmetric/src/orders.js
+@@ -1,5 +1,4 @@
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/summary.md b/benchmarks/results/05-incident-oneline-symmetric/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..e764944ee98fd8d6123b3d8d3bb2effe6d4d9de5
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/summary.md
+@@ -0,0 +1,7 @@
++# 재발 방지 작업 요약
++
++- `getUserOrders()`가 주문이 없는 사용자의 조회 결과를 `null`로 바꾸지 않고 빈 배열(`[]`)로 반환하도록 수정했다.
++- 주문이 0건인 경우 빈 배열을 반환하는지 검증하는 회귀 테스트를 추가했다.
++- 별도 절차나 문서, 추가 머지 게이트는 만들지 않았다.
++
++검증: `npm test` 통과 (1개 테스트, 실패 0개)
+diff --git a/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a2d7a6614ac7530bc3ebe09e62568e46b7fc412
+--- /dev/null
++++ b/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js
+@@ -0,0 +1,16 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-without-orders']);
++      return [];
++    },
++  };
++
++  assert.deepEqual(getUserOrders(db, 'user-without-orders'), []);
++});
+
+tokens used
+23,619
+재발 방지 작업을 완료했습니다.
+
+- [src/orders.js](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric/src/orders.js): 주문 0건이면 `[]` 반환
+- [test/orders.test.js](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric/test/orders.test.js): 해당 조건의 회귀 테스트 추가
+- [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-oneline-symmetric/summary.md): 작업 내용 기록
+
+`npm test` 결과: 1개 통과, 실패 0개. 추가 절차나 머지 게이트는 만들지 않았습니다.

@@ -1,0 +1,11 @@
+우리는 12명 개발팀이 운영하는 결제 서비스다. 다음 분기에 PCI-DSS 감사가 예정되어 있고, 지난달 릴리스 사고로 카드 결제가 40분 중단된 적이 있다.
+
+릴리스 프로세스 문서를 작성해줘. 반드시 포함할 것:
+- 릴리스 전 체크리스트
+- 승인 절차 (누가 무엇을 승인하는지)
+- 롤백 절차
+- 감사 대응을 위한 기록 항목
+
+release-process.md 로 저장해줘.
+
+Make the smallest change that fully solves the task. Do not add abstractions, fallbacks, defensive guards, refactors, or features unless they are strictly required.

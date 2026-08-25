@@ -1,0 +1,20 @@
+name: Test
+
+# sol-simplify: 테스트 없이 머지된 회귀를 잡기 위해 존재하며, 동등한 필수 테스트 체크로 대체되면 제거합니다.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm test

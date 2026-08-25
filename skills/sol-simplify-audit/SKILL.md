@@ -1,6 +1,9 @@
 ---
 name: sol-simplify-audit
 description: Diagnoses a repository that has accumulated agent-built bureaucracy. Measures how much of the codebase exists to police the work rather than do it, finds the maintenance loops that produce commits with no product value, and ranks what to delete. Use when the user says "audit this repo for ceremony", "why is this repo so slow", "we spend all our time on tooling", "find the bureaucracy", "sol-simplify-audit", or when a project is visibly stalled on its own gates and validators. One-shot report; deletes nothing.
+metadata:
+  author: MongLong0214 <MongLong0214@users.noreply.github.com>
+
 ---
 
 # sol-simplify audit

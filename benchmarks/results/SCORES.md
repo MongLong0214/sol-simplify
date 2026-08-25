@@ -107,6 +107,65 @@ be the author choosing one.
 (04-guardrail-on-2, a canary step). Requested items never score, so 04's kept controls are
 excluded by definition. Baseline ceremony was 4–6 on document tasks in every run.
 
+## Symmetric re-run
+
+The runs above were not environmentally symmetric: control arms ran in a throwaway
+`CODEX_HOME` while skill arms ran in the author's real `~/.codex`, which held other skills and
+settings. `run.sh` now builds both bases from credentials alone. This is all five scenarios
+re-run under it, four arms each — one run per cell, so read them as a check on the earlier
+numbers rather than as a replacement for them.
+
+Line counts are `wc -l` of the produced document. `run.sh` used to print a different figure —
+non-blank lines, with the prompt and any seeded `AGENTS.md` folded in — so a reproduction
+disagreed with this table. That counter now matches what is recorded here.
+
+| scenario | off | oneline | oneline-en | on |
+|---|--:|--:|--:|--:|
+| 01-prd — lines / ceremony | 403 / **4** | 94 / **0** | 90 / **0** | 96 / **0** |
+| 02-process — lines / ceremony | (see above) | — | — | 86 / **0** |
+| 03-loop — lines / verdict | 344 / rebuild+feed | 82 / shrink | 99 / shrink | 20 / **dismantle** |
+| 04-guardrail — lines / kept / ceremony | 298 / 4/4 / **2** | 64 / 4/4 / **2** | 75 / 4/4 / **2** | 103 / **4/4** / **0** |
+| 05-incident — C10 | **1** | 0 | 0 | **0** |
+
+**The baselines did not move; the skill arm did.** Against the medians of the original runs,
+`off` went 386 → 403 on `01-prd` and 303 → 298 on `04-guardrail`, while `on` went 150 → 96 and
+148 → 103. Whatever the author's real `~/.codex` was adding, it was inflating the skill arm,
+not the controls — so the original numbers understated the effect rather than manufacturing it.
+
+**Ceremony citations for the symmetric runs.**
+
+- `01-prd-off`: C1 L274–275 (`p95 500ms`, `p95 800ms`) · C2 L387 (§17 출시 계획, 5 stages) ·
+  C5 L395 (feature-flag shutdown and table retention) · C6 L294 (§14 분석 이벤트·성공 지표).
+  No C4 — it has 수용 기준 but no separate definition-of-done on top of it, which is what the
+  earlier `off #1` was scored for.
+- `04-guardrail-off`: C1 L94 (`p95/p99`) · C2 L90 (canary ratio, per-stage observation window).
+- `04-guardrail-oneline`: C1 L31 (a 5-minute decision limit) + L64 (12-month retention with no
+  requirement cited) · C2 L31 (staged rollout targets).
+- `04-guardrail-oneline-en`: C1 L55 (30 minutes of focused monitoring) · C2 L33, L42 (staged
+  rollout from minimum traffic).
+- `04-guardrail-on`: none. Its 12-month retention cites requirement 10.5.1 explicitly, so it is
+  sourced rather than invented — the same standard applied to `oneline`, which cites no
+  requirement number anywhere. The canary step that made `04-guardrail-on-2` the one non-zero
+  run did not recur.
+- `05-incident-off`: C10 — invented `.github/pull_request_template.md` and grew the seeded
+  `AGENTS.md` from three rules to five. Third independent replication of that habit.
+
+**Kept score.** Every skill run keeps everything the prompt asked for: `01-prd` 4/4 across all
+four skill runs including the 96-line symmetric one, `02-process` 2/2 across all four,
+`04-guardrail` 4/4 in all three. Ceremony reaching 0 is not being bought with substance.
+
+**Where the skill and the one-line prompt separate — and where they do not.** On `01-prd` they
+tie at ceremony 0, and the one-line arms are the same length as the skill arm; on a prompt
+whose baseline only reaches 4, there is nothing left for a longer instruction to win. The
+separation is on `04-guardrail`, where process is legitimately required: both one-line arms cut
+the document in half and still manufactured the same two categories the baseline did — staged
+exposure and an invented duration — while the skill arm manufactured neither and kept all four
+requested items. `05-incident` separates differently: both one-line arms reached C10 = 0 by
+doing less, adding a regression test but nothing that enforces the repo's existing "run npm
+test before merging" rule, so the same commit could merge untested again. The skill arm added
+the CI check with its own removal condition, left `AGENTS.md` alone, and named the one step it
+could not take from inside the repo — making the `test` check required in the branch ruleset.
+
 ## Discovery and routing
 
 Ceremony scores say what the skill does *once loaded*. They say nothing about whether an agent

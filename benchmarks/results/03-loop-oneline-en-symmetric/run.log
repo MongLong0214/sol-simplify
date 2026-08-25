@@ -1,0 +1,2540 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037b6-d2da-7060-a478-e80e6f7d60e4
+--------
+user
+우리 레포 상황이다.
+
+- 티켓을 착수해도 되는지 판정하는 리졸버 스크립트가 5,745줄이고, 그 계약 테스트가 8,683줄이다.
+- 검증 시스템이 레포의 파일 수와 티켓 수를 세서 "census pin"으로 고정해둔다. 머지할 때마다 개수가 바뀌어서 pin 재측정 커밋이 계속 쌓인다. 지난달에만 25건이었다.
+- 두 브랜치가 같이 들어오면 서로의 pin을 밀어내서 또 재조정해야 한다.
+- 어제는 게이트 규칙이 조건을 만족하는 티켓을 하나도 통과시키지 못해서 구현 작업 4개가 전부 멈췄다.
+- 제품 소스는 17,964줄인데 검증 기계는 20,280줄이다.
+
+어떻게 해야 하나? 계획을 세워줘. plan.md 로 저장해줘.
+
+Make the smallest change that fully solves the task. Do not add abstractions, fallbacks, defensive guards, refactors, or features unless they are strictly required.
+
+codex
+구현 계획 요청이므로 `plannotator-visual-explainer` 스킬의 계획 작성 규칙을 적용하겠습니다. 먼저 레포 구조와 현재 리졸버·census pin·게이트 계약을 확인한 뒤, 가장 작은 변경 경로만 `plan.md`에 담겠습니다.
+exec
+/bin/zsh -lc "sed -n '1,240p' /Users/isaac/.agents/skills/plannotator-visual-explainer/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ succeeded in 0ms:
+---
+name: plannotator-visual-explainer
+description: >
+  Generate self-contained HTML visualizations with Plannotator theming. Use for implementation
+  plans, PR explainers, architecture diagrams, data tables, slide decks, and any visual
+  explanation of technical concepts. Plans and PR explainers follow Plannotator's prescriptive
+  approach; all other visual content delegates to nicobailon/visual-explainer.
+---
+
+# Plannotator Visual Explainer
+
+Three paths depending on content type. Each has its own references and structure.
+
+## Route by content type
+
+**Implementation plan, design doc, or proposal** → Follow the [Plan path](#plan-path). Read `references/design-system.md` and `references/svg-patterns.md`. Prescriptive structure.
+
+**PR explainer, diff review, or code change walkthrough** → Follow the [PR path](#pr-path). Read `references/design-system.md` and `references/pr-components.md`. Prescriptive structure.
+
+**Everything else** (architecture diagrams, data tables, slide decks, project recaps, general visual explanations) → Follow the [Visual explainer path](#visual-explainer-path). Delegates to nicobailon/visual-explainer with Plannotator theme tokens.
+
+## Delivery
+
+Always deliver via Plannotator's annotation UI. Do NOT use `open` or `xdg-open`.
+
+**Plans/proposals** (user should approve/deny):
+```bash
+plannotator annotate <file> --render-html --gate
+```
+
+**Everything else** (informational):
+```bash
+plannotator annotate <file> --render-html
+```
+
+---
+
+## Plan path
+
+For implementation plans, design docs, feature specs, migration guides, and proposals.
+
+**Before generating, read:**
+1. `references/design-system.md` — Plannotator theme tokens, typography, component patterns
+2. `references/svg-patterns.md` — inline SVG building blocks for architecture diagrams, flowcharts, data flow
+
+**Document structure (in order, pick what fits):**
+
+1. **Header** — eyebrow label (mono, uppercase), title (serif, large), prompt box (the original brief)
+2. **Summary strip** — 3-5 stat cards showing key numbers at a glance (components, endpoints, tables, etc.)
+3. **Milestones / timeline** — vertical timeline showing phases without time estimates. Phases show sequence and dependencies, not duration.
+4. **Architecture / data flow** — inline SVG diagram. Use for 3+ interacting components. Highlighted boxes for new components, dashed arrows for async paths.
+5. **Mockups** — build UI mockups in HTML/CSS directly, not as descriptions
+6. **Key code** — dark-theme code blocks with syntax highlighting. Only architecturally significant interfaces/schemas — not every function.
+7. **Risks & mitigations** — table with severity badges (HIGH/MED/LOW)
+8. **Open questions** — callout cards with decision owner ("Decide with: backend team")
+
+Not every plan needs every section. Skip what doesn't serve the content. Never include time estimates, boilerplate sections, or exhaustive file lists.
+
+**Adapt to the task:** Backend → lead with data flow. Frontend → lead with mockups. Refactoring → lead with before/after diagrams. Infrastructure → lead with architecture.
+
+**Quality bar:** The plan answers "what, why, and how" within 30 seconds of reading. Whitespace is a feature — one idea per viewport.
+
+---
+
+## PR path
+
+For PR walkthroughs, diff reviews, code change explainers, and reviewer guides.
+
+**Before generating, read:**
+1. `references/design-system.md` — Plannotator theme tokens, typography, component patterns
+2. `references/pr-components.md` — diff rendering, review comment bubbles, risk chips, file cards, before/after panels
+
+**Document structure (in order, pick what fits):**
+
+1. **Header** — PR title, meta strip (file count, +/- lines, branch, author)
+2. **TL;DR** — bordered card with primary accent left border. 2-3 sentences. Readers who see nothing else should get the gist.
+3. **Why** — motivation and before/after comparison (two-column grid)
+4. **File tour** — collapsible cards per file. Each has: file path + badge (NEW/MOD/DEL) + line stats, a "why" paragraph, and important diff hunks. High-risk files expanded, safe files collapsed.
+5. **Risk map** — visual chips showing which files need careful review vs. which are mechanical. Three tiers: attention (destructive), medium (warning), safe (success).
+6. **Where to focus** — numbered callout cards. Each names a file/function and describes the concern.
+7. **Test plan** — checkbox-style verification checklist
+8. **Rollout** (if applicable) — phased deployment with feature flags
+
+Use Pierre diffs via CDN for syntax-highlighted inline diffs — see `references/pr-components.md` for the pattern.
+
+---
+
+## Visual explainer path
+
+For architecture diagrams, data tables, slide decks, project recaps, comparisons, and any other visual explanation.
+
+**Before generating:**
+
+1. Ensure `visual-explainer` is installed:
+   - Check: `~/.claude/skills/visual-explainer/SKILL.md` or `~/.agents/skills/visual-explainer/SKILL.md`
+   - If not found: `npx skills add nicobailon/visual-explainer -g --yes`
+2. Read visual-explainer's `SKILL.md` (workflow, diagram types, anti-slop rules)
+3. Read the relevant visual-explainer references and templates for your content type
+4. Read `references/theme-override.md` — Plannotator tokens replacing Nico's palettes
+
+Follow visual-explainer's structure, component classes (`.ve-card`, `.kpi-card`, `.pipeline`), and anti-slop rules. The only override is the color/typography layer — Plannotator tokens instead of Nico's custom palettes.
+
+---
+
+## Design philosophy (all paths)
+
+- **Whitespace is a feature.** Generous padding, large section gaps. If cramped, add space — don't shrink text.
+- **One idea per viewport.** Hero section, then diagram, then detail grid — not all crammed together.
+- **Show, don't describe.** A timeline shows sequencing. A diagram shows relationships. A code block shows the interface.
+- **No time estimates.** Timelines show phases and dependencies. Never attach hour/day estimates.
+
+exec
+/bin/zsh -lc 'cat /Users/isaac/.agents/skills/plannotator-visual-explainer/references/design-system.md' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+exec
+/bin/zsh -lc 'cat /Users/isaac/.agents/skills/plannotator-visual-explainer/references/svg-patterns.md' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ succeeded in 0ms:
+# Design System Reference
+
+Plan documents use Plannotator's semantic theme tokens. This makes them theme-aware: standalone files render with bundled defaults; embedded in the Plannotator UI, they inherit whatever theme is active (30+ themes, light and dark variants).
+
+## Standalone defaults
+
+Include this `:root` block so the plan works when opened directly in a browser. These are the Plannotator light theme values — they get overridden when embedded.
+
+```css
+:root {
+  --background: oklch(0.97 0.005 260);
+  --foreground: oklch(0.18 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 260);
+  --primary: oklch(0.50 0.25 280);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.50 0.18 180);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.92 0.01 260);
+  --muted-foreground: oklch(0.40 0.02 260);
+  --accent: oklch(0.60 0.22 50);
+  --accent-foreground: oklch(0.18 0.02 260);
+  --destructive: oklch(0.50 0.25 25);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.45 0.20 150);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.55 0.18 85);
+  --warning-foreground: oklch(0.18 0.02 260);
+  --border: oklch(0.88 0.01 260);
+  --input: oklch(0.92 0.01 260);
+  --ring: oklch(0.50 0.25 280);
+  --code-bg: oklch(0.92 0.01 260);
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  --font-display: ui-serif, Georgia, 'Times New Roman', serif;
+  --radius: 0.625rem;
+}
+```
+
+`--font-display` is plan-specific — used for headings and titles to create visual contrast with the body. It's not part of the core Plannotator theme, so it won't be overridden when embedded (which is the desired behavior).
+
+## Token usage map
+
+| Role | Token | SVG equivalent |
+|------|-------|----------------|
+| Page background | `--background` | — |
+| Primary text | `--foreground` | `fill` on text |
+| Card / panel background | `--card` | `fill` on rects |
+| Subdued text, labels, captions | `--muted-foreground` | `fill` on labels |
+| Soft backgrounds, secondary fills | `--muted` | `fill` on secondary rects |
+| Primary accent (CTA, attention, keywords) | `--primary` | `stroke` / `fill` on highlighted elements |
+| Warm accent | `--accent` | — |
+| Positive / success | `--success` | `stroke` / `fill` on success paths |
+| Caution | `--warning` | `fill` on warning badges |
+| Error / destructive | `--destructive` | `stroke` / `fill` on error paths |
+| Borders, dividers | `--border` | `stroke` on box outlines |
+| Arrow strokes, diagram lines | `--muted-foreground` | `stroke` on connectors |
+| Code block background | `--code-bg` | — |
+| Body font | `--font-sans` | `font-family` on SVG body text |
+| Code / labels font | `--font-mono` | `font-family` on SVG labels |
+| Display / heading font | `--font-display` | `font-family` on SVG titles |
+
+## Base styles
+
+```css
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--background);
+  color: var(--foreground);
+  line-height: 1.65;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 64px 24px;
+}
+```
+
+## Typography
+
+**Headings** — `var(--font-display)`, weight 500, `var(--foreground)`.
+- H1: `2rem` page title
+- H2: `1.4rem` section headers
+- H3: `1.15rem` subsection headers
+
+**Body** — `var(--font-sans)`, weight 400, `0.95rem`, line-height `1.65`. Max paragraph width `65ch`.
+
+**Labels & metadata** — `var(--font-mono)`, `0.7–0.8rem`, weight 500, uppercase, letter-spacing `0.06em`, `var(--muted-foreground)`.
+
+**Code** — `var(--font-mono)`, `0.85rem`, line-height `1.55`.
+
+## Component patterns
+
+### Page header
+
+```html
+<header>
+  <span class="eyebrow">Implementation plan · Project name</span>
+  <h1>Plan Title Goes Here</h1>
+  <div class="prompt-box">
+    <span class="prompt-label">Brief</span>
+    <p>The original task or problem statement that motivated this plan.</p>
+  </div>
+</header>
+```
+
+```css
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-foreground);
+}
+
+header h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 8px 0 24px;
+  line-height: 1.2;
+}
+
+.prompt-box {
+  background: var(--muted);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 24px;
+}
+
+.prompt-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-foreground);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.prompt-box p {
+  font-size: 0.92rem;
+  color: var(--muted-foreground);
+  line-height: 1.55;
+}
+```
+
+### Summary strip (stat cards)
+
+```html
+<div class="summary-strip">
+  <div class="stat-card">
+    <span class="stat-value">4</span>
+    <span class="stat-label">Components</span>
+  </div>
+  <!-- more cards -->
+</div>
+```
+
+```css
+.summary-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.stat-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 24px;
+  text-align: center;
+  background: var(--card);
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+  display: block;
+  color: var(--foreground);
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-foreground);
+  margin-top: 4px;
+  display: block;
+}
+```
+
+### Section header
+
+```html
+<section>
+  <div class="section-header">
+    <span class="section-number">01</span>
+    <h2>Solution Overview</h2>
+  </div>
+  <!-- content -->
+</section>
+```
+
+```css
+section { margin-top: 64px; }
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.section-number {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.section-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+```
+
+### Code block (dark theme)
+
+```html
+<div class="code-panel">
+  <span class="code-label">src/api/handler.ts</span>
+  <pre><code><span class="kw">interface</span> <span class="fn">PlanRequest</span> {
+  <span class="fn">title</span>: <span class="kw">string</span>;
+  <span class="fn">sections</span>: <span class="fn">Section</span>[];
+}</code></pre>
+</div>
+```
+
+```css
+.code-panel {
+  background: var(--code-bg);
+  border-radius: var(--radius);
+  padding: 24px;
+  overflow-x: auto;
+  margin: 16px 0;
+  border: 1.5px solid var(--border);
+}
+
+.code-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.code-panel pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--foreground);
+}
+
+/* Syntax tokens — these use semantic roles, not fixed colors */
+.code-panel .kw  { color: var(--primary); }         /* keywords */
+.code-panel .fn  { color: var(--accent); }           /* identifiers, types */
+.code-panel .str { color: var(--success); }          /* strings */
+.code-panel .cm  { color: var(--muted-foreground); font-style: italic; } /* comments */
+.code-panel .num { color: var(--warning); }          /* numbers */
+```
+
+### Risk table
+
+```html
+<div class="risk-grid">
+  <div class="risk-row">
+    <div class="risk-name">Database migration on large table</div>
+    <div><span class="badge high">HIGH</span></div>
+    <div class="risk-mitigation">Run during off-peak with online DDL</div>
+  </div>
+  <!-- more rows -->
+</div>
+```
+
+```css
+.risk-grid {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.risk-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1.5fr;
+  gap: 24px;
+  padding: 16px 24px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.risk-row:last-child { border-bottom: none; }
+.risk-name { font-weight: 500; }
+.risk-mitigation { font-size: 0.9rem; color: var(--muted-foreground); }
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: calc(var(--radius) - 4px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge.high {
+  background: color-mix(in oklab, var(--destructive) 15%, transparent);
+  color: var(--destructive);
+}
+.badge.med {
+  background: color-mix(in oklab, var(--warning) 15%, transparent);
+  color: var(--warning);
+}
+.badge.low {
+  background: color-mix(in oklab, var(--success) 15%, transparent);
+  color: var(--success);
+}
+```
+
+### Callout / open question
+
+```html
+<div class="callout">
+  <h3>Should we use WebSockets or SSE?</h3>
+  <p>SSE is simpler but unidirectional. WebSockets add infrastructure complexity.</p>
+  <span class="decide-with">Decide with: infrastructure team</span>
+</div>
+```
+
+```css
+.callout {
+  border-left: 3px solid var(--primary);
+  padding: 16px 24px;
+  margin: 16px 0;
+  background: var(--card);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.callout h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.callout p {
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+  line-height: 1.55;
+}
+
+.decide-with {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--primary);
+  font-weight: 500;
+  display: block;
+  margin-top: 8px;
+}
+```
+
+### Tag chips
+
+```html
+<div class="tags">
+  <span class="tag">packages/server</span>
+  <span class="tag highlight">new endpoint</span>
+</div>
+```
+
+```css
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  border-radius: calc(var(--radius) - 4px);
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.tag.highlight {
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+  color: var(--primary);
+}
+```
+
+### Diagram panel
+
+Wraps SVG diagrams in a bordered container:
+
+```html
+<div class="diagram-panel">
+  <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+    <!-- diagram content -->
+  </svg>
+  <span class="diagram-caption">Request flow through the API gateway</span>
+</div>
+```
+
+```css
+.diagram-panel {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 24px 0;
+  background: var(--card);
+}
+
+.diagram-caption {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted-foreground);
+  display: block;
+  margin-top: 8px;
+  text-align: center;
+}
+```
+
+### Two-column grid
+
+```css
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 720px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+```
+
+### Collapsible details
+
+```html
+<details>
+  <summary>Implementation details</summary>
+  <div class="details-body"><!-- content --></div>
+</details>
+```
+
+```css
+details {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  margin: 16px 0;
+}
+
+summary {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 16px 24px;
+  cursor: pointer;
+  list-style: none;
+}
+
+summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.2s;
+}
+
+details[open] summary::before { transform: rotate(90deg); }
+
+.details-body { padding: 0 24px 24px; }
+```
+
+### Milestone timeline
+
+Vertical timeline showing phases without time estimates.
+
+```html
+<div class="milestones">
+  <div class="milestone">
+    <div class="when">Phase 1</div>
+    <div class="dot-col"><span class="dot done"></span><span class="line"></span></div>
+    <div class="body">
+      <h3>Foundation</h3>
+      <p>Set up core infrastructure and initial integrations.</p>
+      <div class="tags"><span class="tag">packages/server</span></div>
+    </div>
+  </div>
+</div>
+```
+
+```css
+.milestones { display: flex; flex-direction: column; gap: 0; }
+
+.milestone {
+  display: grid;
+  grid-template-columns: 120px 28px 1fr;
+  gap: 0 18px;
+}
+
+.milestone .when {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  padding-top: 4px;
+}
+
+.milestone .dot-col { display: flex; flex-direction: column; align-items: center; }
+
+.milestone .dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--card);
+  border: 3px solid var(--primary);
+  flex-shrink: 0;
+}
+
+.milestone .dot.done { background: var(--success); border-color: var(--success); }
+
+.milestone .line { width: 2px; flex: 1; background: var(--border); margin: 4px 0; }
+.milestone:last-child .line { display: none; }
+
+.milestone .body { padding-bottom: 36px; }
+
+.milestone .body h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.milestone .body p {
+  font-size: 0.88rem;
+  color: var(--muted-foreground);
+  max-width: 620px;
+  margin-bottom: 10px;
+}
+```
+
+ succeeded in 0ms:
+# SVG Diagram Patterns
+
+Building blocks for creating diagrams in implementation plans. All SVGs are inline — no external dependencies. Compose these patterns to build architecture diagrams, data flow visualizations, flowcharts, and charts.
+
+All colors reference Plannotator theme tokens. In SVG, use the CSS custom property values directly via `style` attributes or the corresponding CSS classes.
+
+## Table of Contents
+1. [Arrow Markers](#arrow-markers)
+2. [Architecture Diagrams](#architecture-diagrams)
+3. [Flowcharts](#flowcharts)
+4. [Data Flow](#data-flow)
+5. [Bar Charts](#bar-charts)
+6. [Positioning & Layout](#positioning--layout)
+
+## Arrow markers
+
+Define reusable markers in `<defs>`. Reference them via `marker-end="url(#arrow)"`.
+
+```svg
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+          markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="var(--muted-foreground)"/>
+  </marker>
+
+  <marker id="arrow-primary" viewBox="0 0 10 10" refX="9" refY="5"
+          markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/>
+  </marker>
+
+  <marker id="arrow-success" viewBox="0 0 10 10" refX="9" refY="5"
+          markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="var(--success)"/>
+  </marker>
+
+  <marker id="arrow-destructive" viewBox="0 0 10 10" refX="9" refY="5"
+          markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="var(--destructive)"/>
+  </marker>
+</defs>
+```
+
+**Note on CSS vars in SVG:** `fill="var(--primary)"` works in inline SVG within an HTML document. For broader compatibility, you can also style via CSS classes instead of inline attributes.
+
+## Architecture diagrams
+
+Box-and-arrow diagrams showing how components connect.
+
+### Box node
+
+```svg
+<g transform="translate(100, 80)">
+  <rect width="140" height="56" rx="10" fill="var(--card)"
+        stroke="var(--border)" stroke-width="1.5"/>
+  <text x="70" y="24" text-anchor="middle"
+        font-family="var(--font-sans)" font-size="13" font-weight="600"
+        fill="var(--foreground)">API Server</text>
+  <text x="70" y="40" text-anchor="middle"
+        font-family="var(--font-mono)" font-size="10.5"
+        fill="var(--muted-foreground)">Express + middleware</text>
+</g>
+```
+
+### Highlighted box (new or hot-path component)
+
+```svg
+<g transform="translate(100, 80)">
+  <rect width="140" height="56" rx="10"
+        fill="color-mix(in oklab, var(--primary) 8%, transparent)"
+        stroke="var(--primary)" stroke-width="1.5"/>
+  <text x="70" y="24" text-anchor="middle"
+        font-family="var(--font-sans)" font-size="13" font-weight="600"
+        fill="var(--foreground)">New Service</text>
+  <text x="70" y="40" text-anchor="middle"
+        font-family="var(--font-mono)" font-size="10.5"
+        fill="var(--primary)">to be created</text>
+</g>
+```
+
+### Connecting arrows
+
+```svg
+<!-- Horizontal -->
+<line x1="240" y1="108" x2="320" y2="108"
+      stroke="var(--muted-foreground)" stroke-width="1.5"
+      marker-end="url(#arrow)"/>
+
+<!-- Vertical -->
+<line x1="170" y1="136" x2="170" y2="200"
+      stroke="var(--muted-foreground)" stroke-width="1.5"
+      marker-end="url(#arrow)"/>
+
+<!-- Dashed (async, optional, or secondary) -->
+<line x1="240" y1="108" x2="320" y2="108"
+      stroke="var(--primary)" stroke-width="1.5"
+      stroke-dasharray="5 4"
+      marker-end="url(#arrow-primary)"/>
+```
+
+### Edge labels
+
+Place at the midpoint of an arrow, offset above:
+
+```svg
+<text x="280" y="100" text-anchor="middle"
+      font-family="var(--font-mono)" font-size="9.5"
+      fill="var(--muted-foreground)">REST</text>
+```
+
+### Full architecture example
+
+```svg
+<svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;max-width:720px">
+  <style>
+    .box { fill: var(--card); stroke: var(--border); stroke-width: 1.5; }
+    .box-new { fill: color-mix(in oklab, var(--primary) 8%, transparent);
+               stroke: var(--primary); stroke-width: 1.5; }
+    .label { font-family: var(--font-sans); font-size: 13px;
+             font-weight: 600; fill: var(--foreground); }
+    .sublabel { font-family: var(--font-mono); font-size: 10.5px;
+                fill: var(--muted-foreground); }
+    .edge { stroke: var(--muted-foreground); stroke-width: 1.5; }
+    .edge-label { font-family: var(--font-mono); font-size: 9.5px;
+                  fill: var(--muted-foreground); }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted-foreground)"/>
+    </marker>
+  </defs>
+
+  <!-- Browser -->
+  <rect x="20" y="100" width="120" height="56" rx="10" class="box"/>
+  <text x="80" y="124" text-anchor="middle" class="label">Browser</text>
+  <text x="80" y="140" text-anchor="middle" class="sublabel">React SPA</text>
+
+  <!-- Arrow: Browser → API -->
+  <line x1="140" y1="128" x2="220" y2="128" class="edge" marker-end="url(#a)"/>
+  <text x="180" y="120" text-anchor="middle" class="edge-label">HTTPS</text>
+
+  <!-- API Gateway (new) -->
+  <rect x="220" y="100" width="140" height="56" rx="10" class="box-new"/>
+  <text x="290" y="124" text-anchor="middle" class="label">API Gateway</text>
+  <text x="290" y="140" text-anchor="middle" class="sublabel"
+        fill="var(--primary)">new</text>
+
+  <!-- Arrow: API → DB -->
+  <line x1="360" y1="128" x2="440" y2="128" class="edge" marker-end="url(#a)"/>
+
+  <!-- Postgres -->
+  <rect x="440" y="100" width="120" height="56" rx="10" class="box"/>
+  <text x="500" y="124" text-anchor="middle" class="label">Postgres</text>
+  <text x="500" y="140" text-anchor="middle" class="sublabel">existing</text>
+
+  <!-- Arrow: API → Cache (vertical) -->
+  <line x1="290" y1="156" x2="290" y2="210" class="edge" marker-end="url(#a)"/>
+
+  <!-- Redis -->
+  <rect x="220" y="210" width="140" height="48" rx="10" class="box"/>
+  <text x="290" y="240" text-anchor="middle" class="label">Redis Cache</text>
+</svg>
+```
+
+## Flowcharts
+
+### Process box
+
+```svg
+<rect x="250" y="80" width="120" height="40" rx="8"
+      fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text x="310" y="105" text-anchor="middle"
+      font-family="var(--font-sans)" font-size="12" font-weight="500"
+      fill="var(--foreground)">Parse input</text>
+```
+
+### Decision diamond
+
+```svg
+<path d="M310,262 L352,294 L310,326 L268,294 Z"
+      fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text x="310" y="298" text-anchor="middle"
+      font-family="var(--font-sans)" font-size="11" font-weight="500"
+      fill="var(--foreground)">Valid?</text>
+```
+
+### Terminal / pill node
+
+```svg
+<rect x="260" y="20" width="100" height="36" rx="18"
+      fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text x="310" y="43" text-anchor="middle"
+      font-family="var(--font-sans)" font-size="12" font-weight="500"
+      fill="var(--foreground)">Start</text>
+```
+
+### Success / failure endpoints
+
+```svg
+<!-- Success -->
+<rect x="260" y="400" width="100" height="36" rx="18"
+      fill="color-mix(in oklab, var(--success) 12%, transparent)"
+      stroke="var(--success)" stroke-width="1.5"/>
+<text x="310" y="423" text-anchor="middle"
+      font-family="var(--font-sans)" font-size="12" font-weight="600"
+      fill="var(--success)">Done</text>
+
+<!-- Failure -->
+<rect x="100" y="400" width="100" height="36" rx="18"
+      fill="color-mix(in oklab, var(--destructive) 12%, transparent)"
+      stroke="var(--destructive)" stroke-width="1.5"/>
+<text x="150" y="423" text-anchor="middle"
+      font-family="var(--font-sans)" font-size="12" font-weight="600"
+      fill="var(--destructive)">Error</text>
+```
+
+### Curved branch path
+
+For routing flow from a decision to a side branch:
+
+```svg
+<path d="M268,294 C200,294 160,294 160,240"
+      fill="none" stroke="var(--destructive)" stroke-width="1.5"
+      marker-end="url(#arrow-destructive)"/>
+```
+
+## Data flow
+
+### Request / response pair
+
+```svg
+<!-- Request (solid) -->
+<line x1="140" y1="100" x2="280" y2="100"
+      stroke="var(--muted-foreground)" stroke-width="1.5"
+      marker-end="url(#arrow)"/>
+<text x="210" y="92" text-anchor="middle"
+      font-family="var(--font-mono)" font-size="9.5"
+      fill="var(--muted-foreground)">POST /api/plan</text>
+
+<!-- Response (dashed) -->
+<line x1="280" y1="116" x2="140" y2="116"
+      stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="5 4"
+      marker-end="url(#arrow-primary)"/>
+<text x="210" y="132" text-anchor="middle"
+      font-family="var(--font-mono)" font-size="9.5"
+      fill="var(--primary)">{ plan, status }</text>
+```
+
+### Fan-out pattern
+
+```svg
+<!-- Source box radiating to multiple targets -->
+<line x1="200" y1="100" x2="340" y2="60"
+      stroke="var(--muted-foreground)" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="200" y1="100" x2="340" y2="100"
+      stroke="var(--muted-foreground)" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="200" y1="100" x2="340" y2="140"
+      stroke="var(--muted-foreground)" stroke-width="1.5" marker-end="url(#arrow)"/>
+```
+
+## Bar charts
+
+```svg
+<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;max-width:400px">
+  <!-- Gridlines -->
+  <line x1="40" y1="20" x2="380" y2="20"
+        stroke="var(--border)" stroke-width="1" opacity="0.5"/>
+  <line x1="40" y1="60" x2="380" y2="60"
+        stroke="var(--border)" stroke-width="1" opacity="0.5"/>
+  <line x1="40" y1="100" x2="380" y2="100"
+        stroke="var(--border)" stroke-width="1" opacity="0.5"/>
+  <line x1="40" y1="140" x2="380" y2="140"
+        stroke="var(--border)" stroke-width="1"/>
+
+  <!-- Y-axis labels -->
+  <text x="35" y="24" text-anchor="end"
+        font-family="var(--font-mono)" font-size="9"
+        fill="var(--muted-foreground)">30</text>
+  <text x="35" y="64" text-anchor="end"
+        font-family="var(--font-mono)" font-size="9"
+        fill="var(--muted-foreground)">20</text>
+  <text x="35" y="104" text-anchor="end"
+        font-family="var(--font-mono)" font-size="9"
+        fill="var(--muted-foreground)">10</text>
+
+  <!-- Bars (muted default, primary for peak) -->
+  <rect x="60" y="60" width="40" height="80" rx="4"
+        fill="var(--muted)"/>
+  <rect x="120" y="40" width="40" height="100" rx="4"
+        fill="var(--primary)"/>
+  <rect x="180" y="80" width="40" height="60" rx="4"
+        fill="var(--muted)"/>
+  <rect x="240" y="100" width="40" height="40" rx="4"
+        fill="var(--muted)"/>
+
+  <!-- Value labels -->
+  <text x="80" y="55" text-anchor="middle"
+        font-family="var(--font-mono)" font-size="10" font-weight="600"
+        fill="var(--foreground)">20</text>
+  <text x="140" y="35" text-anchor="middle"
+        font-family="var(--font-mono)" font-size="10" font-weight="600"
+        fill="var(--primary)">25</text>
+
+  <!-- X-axis labels -->
+  <text x="80" y="158" text-anchor="middle"
+        font-family="var(--font-mono)" font-size="9"
+        fill="var(--muted-foreground)">Q1</text>
+  <text x="140" y="158" text-anchor="middle"
+        font-family="var(--font-mono)" font-size="9"
+        fill="var(--muted-foreground)">Q2</text>
+  <text x="200" y="158" text-anchor="middle"
+        font-family="var(--font-mono)" font-size="9"
+        fill="var(--muted-foreground)">Q3</text>
+  <text x="260" y="158" text-anchor="middle"
+        font-family="var(--font-mono)" font-size="9"
+        fill="var(--muted-foreground)">Q4</text>
+</svg>
+```
+
+## Positioning & layout
+
+### SVG container sizing
+- Use `viewBox` with fixed coordinates; set `style="width:100%;max-width:NNNpx"` for responsive scaling
+- Standard widths: `720px` full-width, `480px` half-width, `360px` sidebar
+- Standard heights: `180–320px` for most diagrams
+
+### Box sizing
+- Standard node: `120–160px` wide, `48–56px` tall
+- Minimum gap between nodes: `60px` horizontal, `40px` vertical
+- Arrow label offset: `8–12px` above the line
+- Diagram padding: `20px` inside the viewBox edges
+
+### Color roles in diagrams
+
+| Element | Fill / stroke | Token |
+|---------|---------------|-------|
+| Box background | fill | `var(--card)` |
+| Box stroke | stroke | `var(--border)` |
+| Highlighted box bg | fill | `color-mix(in oklab, var(--primary) 8%, transparent)` |
+| Highlighted box stroke | stroke | `var(--primary)` |
+| Arrow / connector | stroke | `var(--muted-foreground)` |
+| Title text | fill | `var(--foreground)` |
+| Subtitle / label text | fill | `var(--muted-foreground)` |
+| Success path | stroke | `var(--success)` |
+| Error path | stroke | `var(--destructive)` |
+| Warning | fill | `var(--warning)` |
+
+### Using CSS classes in SVG
+
+For cleaner markup, define reusable classes in a `<style>` block inside the SVG:
+
+```svg
+<svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .box   { fill: var(--card); stroke: var(--border); stroke-width: 1.5; }
+    .new   { fill: color-mix(in oklab, var(--primary) 8%, transparent);
+             stroke: var(--primary); stroke-width: 1.5; }
+    .title { font-family: var(--font-sans); font-size: 13px;
+             font-weight: 600; fill: var(--foreground); }
+    .sub   { font-family: var(--font-mono); font-size: 10.5px;
+             fill: var(--muted-foreground); }
+    .conn  { stroke: var(--muted-foreground); stroke-width: 1.5; }
+  </style>
+  <!-- nodes and connectors use class="box", class="title", etc. -->
+</svg>
+```
+
+exec
+/bin/zsh -lc "pwd && rg --files -g 'AGENTS.md' -g '"'!node_modules'"' -g '"'!vendor'"' && rg --files -g '"'!node_modules'"' -g '"'!vendor'"' | sed -n '1,240p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ exited 1 in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+
+exec
+/bin/zsh -lc "ls -la && find . -maxdepth 3 -type f -print | sort | sed -n '1,240p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ succeeded in 0ms:
+total 80
+drwxr-xr-x@  4 isaac  wheel    128 Aug 25 15:58 .
+drwxr-xr-x@ 37 isaac  wheel   1184 Aug 25 15:58 ..
+-rw-r--r--@  1 isaac  wheel    925 Aug 25 15:58 req.md
+-rw-r--r--@  1 isaac  wheel  35617 Aug 25 15:59 run.log
+./req.md
+./run.log
+
+codex
+현재 작업 디렉터리에는 실제 제품 레포가 아니라 요청 기록(`req.md`, `run.log`)만 있어 구체 파일 경로를 역추적할 수 없습니다. 따라서 계획은 제공된 수치와 증상에 근거해, 변경 범위를 “census pin 제거 + 리졸버를 단일 판정 루프로 축소 + 계약 테스트를 행위 중심으로 교체”하는 최소 단위로 한정하겠습니다.
+exec
+/bin/zsh -lc "cat req.md && sed -n '1,220p' run.log" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ succeeded in 0ms:
+우리 레포 상황이다.
+
+- 티켓을 착수해도 되는지 판정하는 리졸버 스크립트가 5,745줄이고, 그 계약 테스트가 8,683줄이다.
+- 검증 시스템이 레포의 파일 수와 티켓 수를 세서 "census pin"으로 고정해둔다. 머지할 때마다 개수가 바뀌어서 pin 재측정 커밋이 계속 쌓인다. 지난달에만 25건이었다.
+- 두 브랜치가 같이 들어오면 서로의 pin을 밀어내서 또 재조정해야 한다.
+- 어제는 게이트 규칙이 조건을 만족하는 티켓을 하나도 통과시키지 못해서 구현 작업 4개가 전부 멈췄다.
+- 제품 소스는 17,964줄인데 검증 기계는 20,280줄이다.
+
+어떻게 해야 하나? 계획을 세워줘. plan.md 로 저장해줘.
+
+Make the smallest change that fully solves the task. Do not add abstractions, fallbacks, defensive guards, refactors, or features unless they are strictly required.
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037b6-d2da-7060-a478-e80e6f7d60e4
+--------
+user
+우리 레포 상황이다.
+
+- 티켓을 착수해도 되는지 판정하는 리졸버 스크립트가 5,745줄이고, 그 계약 테스트가 8,683줄이다.
+- 검증 시스템이 레포의 파일 수와 티켓 수를 세서 "census pin"으로 고정해둔다. 머지할 때마다 개수가 바뀌어서 pin 재측정 커밋이 계속 쌓인다. 지난달에만 25건이었다.
+- 두 브랜치가 같이 들어오면 서로의 pin을 밀어내서 또 재조정해야 한다.
+- 어제는 게이트 규칙이 조건을 만족하는 티켓을 하나도 통과시키지 못해서 구현 작업 4개가 전부 멈췄다.
+- 제품 소스는 17,964줄인데 검증 기계는 20,280줄이다.
+
+어떻게 해야 하나? 계획을 세워줘. plan.md 로 저장해줘.
+
+Make the smallest change that fully solves the task. Do not add abstractions, fallbacks, defensive guards, refactors, or features unless they are strictly required.
+
+codex
+구현 계획 요청이므로 `plannotator-visual-explainer` 스킬의 계획 작성 규칙을 적용하겠습니다. 먼저 레포 구조와 현재 리졸버·census pin·게이트 계약을 확인한 뒤, 가장 작은 변경 경로만 `plan.md`에 담겠습니다.
+exec
+/bin/zsh -lc "sed -n '1,240p' /Users/isaac/.agents/skills/plannotator-visual-explainer/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ succeeded in 0ms:
+---
+name: plannotator-visual-explainer
+description: >
+  Generate self-contained HTML visualizations with Plannotator theming. Use for implementation
+  plans, PR explainers, architecture diagrams, data tables, slide decks, and any visual
+  explanation of technical concepts. Plans and PR explainers follow Plannotator's prescriptive
+  approach; all other visual content delegates to nicobailon/visual-explainer.
+---
+
+# Plannotator Visual Explainer
+
+Three paths depending on content type. Each has its own references and structure.
+
+## Route by content type
+
+**Implementation plan, design doc, or proposal** → Follow the [Plan path](#plan-path). Read `references/design-system.md` and `references/svg-patterns.md`. Prescriptive structure.
+
+**PR explainer, diff review, or code change walkthrough** → Follow the [PR path](#pr-path). Read `references/design-system.md` and `references/pr-components.md`. Prescriptive structure.
+
+**Everything else** (architecture diagrams, data tables, slide decks, project recaps, general visual explanations) → Follow the [Visual explainer path](#visual-explainer-path). Delegates to nicobailon/visual-explainer with Plannotator theme tokens.
+
+## Delivery
+
+Always deliver via Plannotator's annotation UI. Do NOT use `open` or `xdg-open`.
+
+**Plans/proposals** (user should approve/deny):
+```bash
+plannotator annotate <file> --render-html --gate
+```
+
+**Everything else** (informational):
+```bash
+plannotator annotate <file> --render-html
+```
+
+---
+
+## Plan path
+
+For implementation plans, design docs, feature specs, migration guides, and proposals.
+
+**Before generating, read:**
+1. `references/design-system.md` — Plannotator theme tokens, typography, component patterns
+2. `references/svg-patterns.md` — inline SVG building blocks for architecture diagrams, flowcharts, data flow
+
+**Document structure (in order, pick what fits):**
+
+1. **Header** — eyebrow label (mono, uppercase), title (serif, large), prompt box (the original brief)
+2. **Summary strip** — 3-5 stat cards showing key numbers at a glance (components, endpoints, tables, etc.)
+3. **Milestones / timeline** — vertical timeline showing phases without time estimates. Phases show sequence and dependencies, not duration.
+4. **Architecture / data flow** — inline SVG diagram. Use for 3+ interacting components. Highlighted boxes for new components, dashed arrows for async paths.
+5. **Mockups** — build UI mockups in HTML/CSS directly, not as descriptions
+6. **Key code** — dark-theme code blocks with syntax highlighting. Only architecturally significant interfaces/schemas — not every function.
+7. **Risks & mitigations** — table with severity badges (HIGH/MED/LOW)
+8. **Open questions** — callout cards with decision owner ("Decide with: backend team")
+
+Not every plan needs every section. Skip what doesn't serve the content. Never include time estimates, boilerplate sections, or exhaustive file lists.
+
+**Adapt to the task:** Backend → lead with data flow. Frontend → lead with mockups. Refactoring → lead with before/after diagrams. Infrastructure → lead with architecture.
+
+**Quality bar:** The plan answers "what, why, and how" within 30 seconds of reading. Whitespace is a feature — one idea per viewport.
+
+---
+
+## PR path
+
+For PR walkthroughs, diff reviews, code change explainers, and reviewer guides.
+
+**Before generating, read:**
+1. `references/design-system.md` — Plannotator theme tokens, typography, component patterns
+2. `references/pr-components.md` — diff rendering, review comment bubbles, risk chips, file cards, before/after panels
+
+**Document structure (in order, pick what fits):**
+
+1. **Header** — PR title, meta strip (file count, +/- lines, branch, author)
+2. **TL;DR** — bordered card with primary accent left border. 2-3 sentences. Readers who see nothing else should get the gist.
+3. **Why** — motivation and before/after comparison (two-column grid)
+4. **File tour** — collapsible cards per file. Each has: file path + badge (NEW/MOD/DEL) + line stats, a "why" paragraph, and important diff hunks. High-risk files expanded, safe files collapsed.
+5. **Risk map** — visual chips showing which files need careful review vs. which are mechanical. Three tiers: attention (destructive), medium (warning), safe (success).
+6. **Where to focus** — numbered callout cards. Each names a file/function and describes the concern.
+7. **Test plan** — checkbox-style verification checklist
+8. **Rollout** (if applicable) — phased deployment with feature flags
+
+Use Pierre diffs via CDN for syntax-highlighted inline diffs — see `references/pr-components.md` for the pattern.
+
+---
+
+## Visual explainer path
+
+For architecture diagrams, data tables, slide decks, project recaps, comparisons, and any other visual explanation.
+
+**Before generating:**
+
+1. Ensure `visual-explainer` is installed:
+   - Check: `~/.claude/skills/visual-explainer/SKILL.md` or `~/.agents/skills/visual-explainer/SKILL.md`
+   - If not found: `npx skills add nicobailon/visual-explainer -g --yes`
+2. Read visual-explainer's `SKILL.md` (workflow, diagram types, anti-slop rules)
+3. Read the relevant visual-explainer references and templates for your content type
+4. Read `references/theme-override.md` — Plannotator tokens replacing Nico's palettes
+
+Follow visual-explainer's structure, component classes (`.ve-card`, `.kpi-card`, `.pipeline`), and anti-slop rules. The only override is the color/typography layer — Plannotator tokens instead of Nico's custom palettes.
+
+---
+
+## Design philosophy (all paths)
+
+- **Whitespace is a feature.** Generous padding, large section gaps. If cramped, add space — don't shrink text.
+- **One idea per viewport.** Hero section, then diagram, then detail grid — not all crammed together.
+- **Show, don't describe.** A timeline shows sequencing. A diagram shows relationships. A code block shows the interface.
+- **No time estimates.** Timelines show phases and dependencies. Never attach hour/day estimates.
+
+exec
+/bin/zsh -lc 'cat /Users/isaac/.agents/skills/plannotator-visual-explainer/references/design-system.md' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+exec
+/bin/zsh -lc 'cat /Users/isaac/.agents/skills/plannotator-visual-explainer/references/svg-patterns.md' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ succeeded in 0ms:
+# Design System Reference
+
+Plan documents use Plannotator's semantic theme tokens. This makes them theme-aware: standalone files render with bundled defaults; embedded in the Plannotator UI, they inherit whatever theme is active (30+ themes, light and dark variants).
+
+## Standalone defaults
+
+Include this `:root` block so the plan works when opened directly in a browser. These are the Plannotator light theme values — they get overridden when embedded.
+
+```css
+:root {
+  --background: oklch(0.97 0.005 260);
+  --foreground: oklch(0.18 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 260);
+  --primary: oklch(0.50 0.25 280);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.50 0.18 180);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.92 0.01 260);
+  --muted-foreground: oklch(0.40 0.02 260);
+  --accent: oklch(0.60 0.22 50);
+  --accent-foreground: oklch(0.18 0.02 260);
+  --destructive: oklch(0.50 0.25 25);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.45 0.20 150);
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.55 0.18 85);
+  --warning-foreground: oklch(0.18 0.02 260);
+  --border: oklch(0.88 0.01 260);
+  --input: oklch(0.92 0.01 260);
+  --ring: oklch(0.50 0.25 280);
+  --code-bg: oklch(0.92 0.01 260);
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+  --font-display: ui-serif, Georgia, 'Times New Roman', serif;
+  --radius: 0.625rem;
+}
+```
+
+`--font-display` is plan-specific — used for headings and titles to create visual contrast with the body. It's not part of the core Plannotator theme, so it won't be overridden when embedded (which is the desired behavior).
+
+## Token usage map
+
+| Role | Token | SVG equivalent |
+|------|-------|----------------|
+| Page background | `--background` | — |
+| Primary text | `--foreground` | `fill` on text |
+| Card / panel background | `--card` | `fill` on rects |
+| Subdued text, labels, captions | `--muted-foreground` | `fill` on labels |
+| Soft backgrounds, secondary fills | `--muted` | `fill` on secondary rects |
+| Primary accent (CTA, attention, keywords) | `--primary` | `stroke` / `fill` on highlighted elements |
+| Warm accent | `--accent` | — |
+| Positive / success | `--success` | `stroke` / `fill` on success paths |
+| Caution | `--warning` | `fill` on warning badges |
+| Error / destructive | `--destructive` | `stroke` / `fill` on error paths |
+| Borders, dividers | `--border` | `stroke` on box outlines |
+| Arrow strokes, diagram lines | `--muted-foreground` | `stroke` on connectors |
+| Code block background | `--code-bg` | — |
+| Body font | `--font-sans` | `font-family` on SVG body text |
+| Code / labels font | `--font-mono` | `font-family` on SVG labels |
+| Display / heading font | `--font-display` | `font-family` on SVG titles |
+
+## Base styles
+
+```css
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--background);
+  color: var(--foreground);
+  line-height: 1.65;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1694a50f337466338c104719c9e60dff43deb989
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,92 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 각 착수 조건마다 표의 두 행만 둔다: 조건 충족 시 허용, 그 조건 하나만 깨지면 기존 사유로 거부. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 동일 결정을 중복 계산하는 캐시·상태 전이·특수 경로와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1694a50f337466338c104719c9e60dff43deb989
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,92 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 각 착수 조건마다 표의 두 행만 둔다: 조건 충족 시 허용, 그 조건 하나만 깨지면 기존 사유로 거부. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 동일 결정을 중복 계산하는 캐시·상태 전이·특수 경로와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+exec
+/bin/zsh -lc "wc -l -w plan.md && sed -n '1,260p' plan.md && git status --short 2>/dev/null || true" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ succeeded in 0ms:
+      92     925 plan.md
+# 티켓 착수 게이트 단순화 계획
+
+> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
+
+## 판단
+
+지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
+
+동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
+
+## 변경 경계
+
+실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
+
+1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
+2. 그 리졸버의 계약 테스트
+3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
+4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
+
+CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
+
+## 목표 흐름
+
+```text
+canonical ticket source
+        |
+        v
+discover current tickets  ----  no expected total
+        |
+        v
+for each ticket: apply the existing eligibility predicate once
+        |
+        +---- eligible   -> existing allow result
+        |
+        `---- ineligible -> existing deny result + existing reason
+```
+
+검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
+
+## 실행 순서
+
+### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
+
+- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
+- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
+- 각 착수 조건마다 표의 두 행만 둔다: 조건 충족 시 허용, 그 조건 하나만 깨지면 기존 사유로 거부. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
+- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
+
+### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
+
+- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
+- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
+- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
+- 동일 결정을 중복 계산하는 캐시·상태 전이·특수 경로와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
+
+### 3. census pin을 끝까지 제거
+
+- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
+- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
+- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
+
+### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
+
+- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
+- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
+- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
+
+## 검증 및 완료 조건
+
+- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
+- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
+- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
+- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
+- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
+- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
+- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
+
+## 위험과 제어
+
+| 위험 | 제어 |
+|---|---|
+| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
+| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
+| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
+
+## 명시적 비목표
+
+- 게이트 비활성화 또는 fail-open
+- census pin 자동 갱신 봇이나 충돌 해결 도구
+- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
+- 제품 코드 리팩터링
+- 리졸버 공개 계약 변경
+ M ../../../README.ko.md
+ M ../../../README.md
+ M ../../../skills/sol-simplify-audit/SKILL.md
+ M ../../../skills/sol-simplify/SKILL.md
+?? ../01-prd-off-symmetric/
+?? ../01-prd-on-symmetric/
+?? ../01-prd-oneline-en-symmetric/
+?? ../01-prd-oneline-symmetric/
+?? ../03-loop-off-symmetric/
+?? ./
+?? ../03-loop-oneline-symmetric/
+
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1694a50f337466338c104719c9e60dff43deb989
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,92 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 각 착수 조건마다 표의 두 행만 둔다: 조건 충족 시 허용, 그 조건 하나만 깨지면 기존 사유로 거부. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 동일 결정을 중복 계산하는 캐시·상태 전이·특수 경로와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+codex
+초안을 `plan.md`에 저장했습니다. `plannotator-visual-explainer` 스킬 지침에 따라 이제 승인/주석 UI로 렌더링해 검토 결과를 반영하겠습니다. 이 단계는 계획 내용 변경 전 사용자 검토를 받기 위한 게이트입니다.
+exec
+/bin/zsh -lc 'plannotator annotate plan.md --render-html --gate' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ exited 1 in 431ms:
+Resolved: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+68536 |   const decisionPromise = new Promise((resolve7) => {
+68537 |     resolveDecision = resolve7;
+68538 |   });
+68539 |   let server2 = null;
+68540 |   for (let attempt = 1;attempt <= MAX_RETRIES3; attempt++) {
+68541 |       server2 = Bun.serve({
+                                 ^
+error: Failed to start server. Is port 0 in use?
+ syscall: "listen",
+   errno: 0,
+    code: "EADDRINUSE"
+
+      at startAnnotateServer (/$bunfs/root/plannotator-darwin-arm64:68541:26)
+
+Bun v1.3.11 (macOS arm64)
+
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1694a50f337466338c104719c9e60dff43deb989
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,92 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 각 착수 조건마다 표의 두 행만 둔다: 조건 충족 시 허용, 그 조건 하나만 깨지면 기존 사유로 거부. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 동일 결정을 중복 계산하는 캐시·상태 전이·특수 경로와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+exec
+/bin/zsh -lc 'plannotator annotate --help' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ exited 1 in 194ms:
+File not found: --help
+
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1694a50f337466338c104719c9e60dff43deb989
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,92 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 각 착수 조건마다 표의 두 행만 둔다: 조건 충족 시 허용, 그 조건 하나만 깨지면 기존 사유로 거부. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 동일 결정을 중복 계산하는 캐시·상태 전이·특수 경로와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+exec
+/bin/zsh -lc 'plannotator --help' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ succeeded in 161ms:
+Usage:
+  plannotator --help
+  plannotator --version, -v
+  plannotator [--browser <name>]
+  plannotator review [--git] [PR_URL]
+  plannotator annotate <file.md | file.html | https://... | folder/>  [--no-jina] [--gate] [--json] [--hook]
+  plannotator annotate-last [--stdin] [--gate] [--json] [--hook]
+  plannotator setup-goal <interview|facts> <bundle.json | -> [--json]
+  plannotator last
+  plannotator archive
+  plannotator sessions
+  plannotator improve-context
+
+Note:
+  running 'plannotator' without arguments is for hook integration and expects JSON on stdin
+
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1694a50f337466338c104719c9e60dff43deb989
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,92 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 각 착수 조건마다 표의 두 행만 둔다: 조건 충족 시 허용, 그 조건 하나만 깨지면 기존 사유로 거부. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 동일 결정을 중복 계산하는 캐시·상태 전이·특수 경로와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1db14b02e2eaa3fadb326023b7b6b1f6406bdb96
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,99 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++| 현재 기준 | 수치 |
++|---|---:|
++| 리졸버 + 계약 테스트 | 14,428줄 |
++| 전체 검증 / 제품 소스 | 20,280줄 / 17,964줄 |
++| 지난달 pin 재측정 커밋 | 25건 |
++| 어제 멈춘 구현 작업 | 4건 |
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 표에는 모든 조건을 만족하는 허용 행 하나와, 각 조건을 하나씩만 깨뜨린 거부 행 하나씩만 둔다. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 단일 순회와 같은 결정을 중복 수행하는 기존 분기와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1db14b02e2eaa3fadb326023b7b6b1f6406bdb96
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,99 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++| 현재 기준 | 수치 |
++|---|---:|
++| 리졸버 + 계약 테스트 | 14,428줄 |
++| 전체 검증 / 제품 소스 | 20,280줄 / 17,964줄 |
++| 지난달 pin 재측정 커밋 | 25건 |
++| 어제 멈춘 구현 작업 | 4건 |
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 표에는 모든 조건을 만족하는 허용 행 하나와, 각 조건을 하나씩만 깨뜨린 거부 행 하나씩만 둔다. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 단일 순회와 같은 결정을 중복 수행하는 기존 분기와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+exec
+/bin/zsh -lc "ls -la && test -s plan.md && awk 'BEGIN{f=0} /"'^```/{f=!f} END{exit f}'"' plan.md && printf 'markdown-fences: ok\\n' && wc -l -w plan.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric
+ succeeded in 0ms:
+total 296
+drwxr-xr-x@  5 isaac  wheel     160 Aug 25 16:01 .
+drwxr-xr-x@ 37 isaac  wheel    1184 Aug 25 15:58 ..
+-rw-r--r--@  1 isaac  wheel    7074 Aug 25 16:02 plan.md
+-rw-r--r--@  1 isaac  wheel     925 Aug 25 15:58 req.md
+-rw-r--r--@  1 isaac  wheel  117998 Aug 25 16:02 run.log
+markdown-fences: ok
+      99     967 plan.md
+
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1db14b02e2eaa3fadb326023b7b6b1f6406bdb96
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,99 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++| 현재 기준 | 수치 |
++|---|---:|
++| 리졸버 + 계약 테스트 | 14,428줄 |
++| 전체 검증 / 제품 소스 | 20,280줄 / 17,964줄 |
++| 지난달 pin 재측정 커밋 | 25건 |
++| 어제 멈춘 구현 작업 | 4건 |
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 표에는 모든 조건을 만족하는 허용 행 하나와, 각 조건을 하나씩만 깨뜨린 거부 행 하나씩만 둔다. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 단일 순회와 같은 결정을 중복 수행하는 기존 분기와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+codex
+[plan.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric/plan.md)에 저장했습니다.
+
+핵심은 다음 세 가지입니다.
+
+- 변동 개수에 대한 `census pin`과 재측정 경로 완전 삭제
+- 기존 공개 계약을 유지하면서 리졸버를 단일 티켓 순회로 축소
+- 8,683줄 계약 테스트를 최소 행위 기반 표 테스트로 교체
+
+실제 제품 레포가 없어 파일 경로는 계획에서 확정하지 않았습니다. Plannotator 검토 UI는 로컬 서버 포트 바인딩 오류로 열리지 않았으며, Markdown 구조와 코드 블록은 별도로 검증했습니다.
+diff --git a/benchmarks/results/03-loop-oneline-en-symmetric/plan.md b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1db14b02e2eaa3fadb326023b7b6b1f6406bdb96
+--- /dev/null
++++ b/benchmarks/results/03-loop-oneline-en-symmetric/plan.md
+@@ -0,0 +1,99 @@
++# 티켓 착수 게이트 단순화 계획
++
++> 목표: 변동하는 레포·티켓 개수를 고정값으로 검증하는 `census pin`을 없애고, 현재 외부 계약을 유지한 채 리졸버를 “발견된 각 티켓에 기존 착수 조건을 한 번 적용한다”는 단일 흐름으로 축소한다. 게이트를 끄거나 우회하지 않는다.
++
++| 현재 기준 | 수치 |
++|---|---:|
++| 리졸버 + 계약 테스트 | 14,428줄 |
++| 전체 검증 / 제품 소스 | 20,280줄 / 17,964줄 |
++| 지난달 pin 재측정 커밋 | 25건 |
++| 어제 멈춘 구현 작업 | 4건 |
++
++## 판단
++
++지금 문제는 pin 값이 틀린 것이 아니라 **변동하는 개수를 불변 계약으로 취급한 설계**다. 재측정 자동화나 충돌 해결 절차를 추가해도 두 브랜치가 서로의 pin을 무효화하는 구조는 남는다. 따라서 pin을 다시 맞추는 대신 정확한 개수 비교 자체를 삭제해야 한다.
++
++동시에 5,745줄 리졸버와 8,683줄 계약 테스트를 별도 구조로 재설계하지 않는다. 공개 입출력과 실제 착수 조건만 남기고, 같은 스크립트 안에서 한 번의 순회로 판정하도록 만든 뒤 그 계약만 작은 표 기반 테스트로 고정한다. 결과는 코드 추가가 아니라 대규모 순삭제여야 한다.
++
++## 변경 경계
++
++실제 제품 레포가 이 작업 디렉터리에 제공되지 않아 파일명은 확정하지 않는다. 구현 시 아래 네 대상만 찾아 수정한다.
++
++1. 티켓 착수 여부를 반환하는 현재 리졸버 스크립트
++2. 그 리졸버의 계약 테스트
++3. 파일 수·티켓 수의 기대값을 저장하는 pin 파일 또는 상수
++4. pin을 생성·재측정하거나 CI에서 비교하는 호출부
++
++CLI 인자, 입력 티켓 형식, 허용/거부 결과 형식, 실제 게이트 조건은 유지한다. 새 서비스, 설정, 추상화 계층, 호환 경로, 이중 실행, feature flag는 만들지 않는다.
++
++## 목표 흐름
++
++```text
++canonical ticket source
++        |
++        v
++discover current tickets  ----  no expected total
++        |
++        v
++for each ticket: apply the existing eligibility predicate once
++        |
++        +---- eligible   -> existing allow result
++        |
++        `---- ineligible -> existing deny result + existing reason
++```
++
++검증은 “티켓이 정확히 N개인가?”가 아니라 **현재 발견된 티켓마다 판정 결과가 있는가, 그리고 판정이 착수 조건과 일치하는가**만 확인한다. 기존에 이미 수행 중인 티켓 내용 검증은 유지하되 총개수 비교만 제거한다.
++
++## 실행 순서
++
++### 1. 외부 계약과 어제 장애를 최소 테스트로 고정
++
++- 리졸버의 실제 호출부에서 공개 입력, 출력, 종료 코드를 확인해 유지할 계약을 적는다.
++- 어제 통과해야 했지만 거부된 티켓 하나를 최소 fixture로 만들고 `조건 충족 -> 허용` 회귀 테스트를 먼저 추가한다.
++- 표에는 모든 조건을 만족하는 허용 행 하나와, 각 조건을 하나씩만 깨뜨린 거부 행 하나씩만 둔다. 조건 조합의 전수열거·스냅샷·생성 테스트는 만들지 않는다.
++- 기존 테스트가 문서화된 착수 조건과 충돌하면 거대한 테스트의 현재 출력이 아니라 공개 계약과 실제 게이트 규칙을 기준으로 기대값을 정한다.
++
++### 2. 리졸버를 현재 파일 안의 단일 판정 루프로 축소
++
++- 티켓 원본을 한 번 읽고, 발견된 각 티켓에 기존 착수 predicate를 정확히 한 번 적용한다.
++- 조건을 만족하면 기존 allow 결과를, 만족하지 않으면 기존 deny 결과와 사유를 반환한다. 어제의 all-deny 원인을 만든 반전 조건, 조기 종료, 집계 의존성은 이 흐름으로 교체한다.
++- census 값, 전체 티켓 수, 전체 파일 수가 개별 티켓의 착수 여부에 영향을 주는 분기를 삭제한다.
++- 단일 순회와 같은 결정을 중복 수행하는 기존 분기와 그 전용 코드를 삭제한다. 단, 실제 착수 조건 자체는 바꾸지 않는다.
++
++### 3. census pin을 끝까지 제거
++
++- 저장된 파일 수·티켓 수, pin 생성기/재측정 명령, CI의 정확한 개수 비교, pin 갱신 전용 테스트를 삭제한다.
++- 티켓 발견과 기존 내용 검증은 그대로 실행한다. 새 파일이나 새 티켓이 추가되면 별도 기준값 갱신 없이 같은 검증 대상에 자동 포함되게 한다.
++- README, 기여 문서, CI 메시지에서 pin 갱신 절차만 제거한다. 대체 운영 절차는 추가하지 않는다.
++
++### 4. 계약 테스트를 행위 중심 표로 교체하고 구 구현 삭제
++
++- 테스트는 다음 네 행위만 남긴다: 조건을 모두 만족한 티켓 허용, 각 조건 위반의 거부 사유, 현재 발견된 모든 티켓에 정확히 한 결과, 파일·티켓 추가가 기존 결과를 무효화하지 않음.
++- 서로 다른 두 변경이 각각 유효 티켓을 하나씩 추가한 뒤 합쳐진 상태를 fixture로 검증한다. pin 수정 없이 두 티켓 모두 발견·판정되면 충분하다.
++- 새 테스트가 통과하면 기존 8,683줄 계약 테스트 중 같은 결과를 반복하거나 census 숫자를 고정하는 부분과 축소 전 리졸버 코드를 같은 변경에서 삭제한다.
++
++## 검증 및 완료 조건
++
++- 어제 장애를 재현한 적격 fixture가 허용되고, 조건 하나를 위반한 fixture들은 기존 사유로 거부된다.
++- 리졸버의 기존 CLI/API 소비자가 수정 없이 같은 형식의 결과를 받는다.
++- 레포에 관련 없는 파일 하나를 추가해도 검증 결과가 변하지 않는다.
++- 유효 티켓 두 개를 독립적으로 추가한 변경을 합친 상태에서 pin 재측정 없이 둘 다 통과한다.
++- 저장된 census 값, 정확한 총개수 assertion, pin 생성·갱신 명령 및 문서가 더 이상 남아 있지 않다.
++- 전체 테스트와 CI 게이트가 통과하며, 리졸버와 계약 테스트의 합계는 기준 14,428줄보다 순감소한다. 별도 줄 수 목표를 위해 코드를 재배치하지 않는다.
++- 이후 일반적인 파일·티켓 추가 PR에는 census 갱신 diff가 생기지 않는다.
++
++## 위험과 제어
++
++| 위험 | 제어 |
++|---|---|
++| 숨은 소비자가 리졸버의 내부 산출물에 의존 | 실제 호출부를 검색해 공개 입출력·종료 코드만 먼저 고정하고 그대로 유지한다. |
++| pin 제거로 티켓 누락을 못 찾음 | 고정 총개수 대신 canonical source에서 현재 발견된 모든 티켓이 한 번씩 판정되는 테스트로 확인한다. |
++| 단순화 과정에서 착수 의미가 변함 | 어제의 적격 사례와 조건별 양방향 표를 먼저 만들고, 구현 전후 동일 계약을 실행한다. |
++
++## 명시적 비목표
++
++- 게이트 비활성화 또는 fail-open
++- census pin 자동 갱신 봇이나 충돌 해결 도구
++- 범용 규칙 엔진, 플러그인 시스템, 새 검증 프레임워크
++- 제품 코드 리팩터링
++- 리졸버 공개 계약 변경
+
+tokens used
+75,928
+[plan.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-oneline-en-symmetric/plan.md)에 저장했습니다.
+
+핵심은 다음 세 가지입니다.
+
+- 변동 개수에 대한 `census pin`과 재측정 경로 완전 삭제
+- 기존 공개 계약을 유지하면서 리졸버를 단일 티켓 순회로 축소
+- 8,683줄 계약 테스트를 최소 행위 기반 표 테스트로 교체
+
+실제 제품 레포가 없어 파일 경로는 계획에서 확정하지 않았습니다. Plannotator 검토 UI는 로컬 서버 포트 바인딩 오류로 열리지 않았으며, Markdown 구조와 코드 블록은 별도로 검증했습니다.

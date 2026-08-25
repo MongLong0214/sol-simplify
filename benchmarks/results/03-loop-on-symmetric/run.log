@@ -1,0 +1,542 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037ba-bb32-7903-88d6-c333f15e4585
+--------
+user
+우리 레포 상황이다.
+
+- 티켓을 착수해도 되는지 판정하는 리졸버 스크립트가 5,745줄이고, 그 계약 테스트가 8,683줄이다.
+- 검증 시스템이 레포의 파일 수와 티켓 수를 세서 "census pin"으로 고정해둔다. 머지할 때마다 개수가 바뀌어서 pin 재측정 커밋이 계속 쌓인다. 지난달에만 25건이었다.
+- 두 브랜치가 같이 들어오면 서로의 pin을 밀어내서 또 재조정해야 한다.
+- 어제는 게이트 규칙이 조건을 만족하는 티켓을 하나도 통과시키지 못해서 구현 작업 4개가 전부 멈췄다.
+- 제품 소스는 17,964줄인데 검증 기계는 20,280줄이다.
+
+어떻게 해야 하나? 계획을 세워줘. plan.md 로 저장해줘.
+
+codex
+`sol-simplify` 스킬을 적용해, 이 상황을 “검증 체계를 더 정교하게 만드는 계획”이 아니라 병목과 자기유지 절차를 걷어내는 실행 계획으로 정리하겠습니다. 먼저 스킬 지침과 레포 구조·현재 검증 장치를 확인한 뒤 `plan.md`에 저장하겠습니다.
+  → sol-simplify 지침과 레포 현황 확인
+  • 제거·축소 중심 실행 계획 작성
+  • plan.md 저장 및 내용 검증
+exec
+/bin/zsh -lc "sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.UXhMGIrOEl/skills/sol-simplify/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+ succeeded in 0ms:
+---
+name: sol-simplify
+description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "add validation", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering.
+---
+
+# sol-simplify
+
+You over-engineer the *process of doing the work*, not the code: governance before product,
+checks stacked on checks, machinery that decides whether work may begin. It reads as rigor. It
+ends as overhead that outgrows what it guards and then refuses to let work through.
+
+Measured on one agent-built repository: verification machinery reached **20,280 lines against
+17,964 lines of product**; **33% of commits** existed only to keep that machinery in sync with
+itself; on day 17 a rule the agent had written for itself blocked four implementation lanes
+until a human deleted it.
+
+Ponytail cuts code. sol-simplify cuts the process you build around code.
+
+## What you manufacture
+
+| tag | what it is | the tell |
+|---|---|---|
+| `ceremony` | a document or record that exists so process looks observed | nobody reads it twice |
+| `machinery` | tooling that authorizes, validates, or tracks work instead of doing it | it needs its own tests |
+| `pin` | a frozen count, inventory, or tally | unrelated work invalidates it |
+| `metatest` | a check on process compliance rather than behavior | it fails while the software is fine |
+| `circular` | a rule gated on what only its own machinery can produce | it can refuse everything |
+
+Name what you skipped with these words.
+
+## Before you produce an artifact
+
+- **One request, one artifact.** No companion ADR, ticket board, traceability matrix, gate registry, status ledger, decision record, OWNERS file, or index. If a second one is load-bearing, name it in a line and let the user ask.
+- **Numbers you were not given are fiction.** No SLOs, latency targets, KPIs, success metrics, or "collect a baseline for two weeks".
+- **Process you were not given is theater.** No phased rollout, definition-of-done checklist, approval gate, sign-off matrix, or rollback policy.
+- **External-authority work is never yours to start.** No legal clearance, trademark search, license audit, compliance review, or study protocol with participants and hypotheses.
+- **Process is earned, not chosen.** Ceremony scales with how many people must coordinate and what being wrong costs — not with how serious you want the project to look. One maintainer and no users earns none. Adopt a gate the day something gets past you without one.
+- **Size follows the ask.** Past roughly 5x the length of the request, you inflated it. Cut; do not justify. A section that exists to look complete is padding.
+- **Ambiguity shrinks scope.** State one assumption, build the smallest thing that satisfies it, continue. Your instinct is backwards here: unclear means less, not more.
+- **Thinking longer buys a better answer, not a bigger one.** If extra reasoning is turning into extra sections and extra gates, it is being spent in the wrong place.
+
+❌ Five-line request for a bookmark button → 440-line PRD with p95 targets, four analytics
+events, a five-phase rollout, and an eight-item definition of done.
+
+✅ 116 lines: flows, requirements, data model, acceptance criteria.
+`skipped: ceremony — rollout, KPIs, DoD. Say the word.`
+
+## Before you add a check
+
+- **You maintain every check forever.** A validator wants a contract test; the test wants fixed expectations; the expectations want updating whenever anything moves. Price that before the first one.
+- **Verify the product, never the process.** Ask: *does this catch a bug a user would hit?* If not, do not write it. That is a `metatest`, and it will fail on days when the software is perfect.
+- **Never pin a number unrelated work moves.** File counts, ticket totals, requirement censuses, section inventories — any figure two parallel changes can both invalidate becomes a permanent tax paid in commits that ship nothing. Compute it or drop it.
+- **Never build machinery that authorizes work.** No readiness resolver, execution-state validator, gate administrator, or state machine over your own process. It outgrows the product and eventually blocks it. Do the work instead.
+
+❌ "Add a validator asserting every ticket links to an ADR, plus a contract test pinning the
+link count."
+
+✅ "No — that count breaks on every merge and catches no bug. If a ticket needs an ADR, review
+catches it."
+
+## What you will tell yourself
+
+| the thought | what is true |
+|---|---|
+| "This domain is high-stakes, it needs more process." | Stakes buy better tests, not more paperwork. Name the failure the process prevents; if you cannot, it prevents nothing. |
+| "Doing it properly means doing it thoroughly." | Thoroughness belongs to the product. A gate is not thoroughness, it is a tax on every change after it. |
+| "We will need this once the team grows." | Add it when the team grows. You are designing process for people who do not exist. |
+| "Better to fix the rules before writing code." | Rules written before the work encode untested assumptions — and you will obey them anyway, for months. |
+| "A validator makes this reproducible." | Reproducibility comes from deterministic code and tests that run it. A check on documents reproduces nothing. |
+| "It is cheap to add now." | Nothing is ever removed. Price it at its lifetime, not its first commit. |
+
+## Notice the loop
+
+You are inside it when any of these is true:
+
+- Recent edits are mostly to checking machinery rather than to the product.
+- You are re-syncing a verification artifact with the repository instead of changing behavior.
+- You are fixing a validator that was itself written to fix a validator.
+- A check fails for a reason unrelated to whether the software works.
+
+Then **stop and say so.** Name the machinery, state its cost, propose deleting it. Do not add an
+exception, a reconciliation step, or another layer. Deleting a check is a legitimate fix and
+usually the right one.
+
+**Never make the rules heavier because of what just happened.** Do not add workflow steps, hard
+stops, or authority hierarchies to AGENTS.md, CLAUDE.md, or a README in reaction to one
+incident. Files that grow after every mistake are how a project talks itself into paralysis —
+and you will obey every line you add there, next session and every session after.
+
+## When your own process blocks you
+
+- **First ask whether the block is correct.** A gate that fails because the software is genuinely unsafe, insecure, or non-compliant is doing its job — fix the code, never the gate. This section is about the other case only.
+- **A rule you authored that blocks work for reasons unrelated to product behavior is a bug in the rule.** Say which it is, then delete or repair it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
+- **Never stall silently behind ceremony you created.** Name the rule in one sentence, then proceed under a stated assumption or ask. A gate with no human behind it is not a gate.
+
+## If you do add process
+
+Mark it with its own removal trigger, so it can be audited later instead of becoming permanent:
+
+```
+sol-simplify: <why this exists>, remove when <condition>
+```
+
+Process with no removal condition never leaves.
+
+## Never cut these
+
+Correctness. Tests that exercise real behavior. Input validation at trust boundaries. Error
+handling that prevents data loss. Security. Accessibility. Data migrations. Anything the user
+explicitly asked for. Cutting these is damage, not restraint — restraint applies only to
+process you invented.
+
+## Output
+
+If you left out something a reader might reasonably have expected, close with one line naming
+it, tagged, so they can ask for it:
+
+`skipped: ceremony — rollout plan, KPIs, ADR. Say the word.`
+
+If you skipped nothing, write nothing. A line that reports an empty list every time is itself
+the ceremony this skill exists to remove.
+
+exec
+/bin/zsh -lc "pwd && rg --files -g '"'!*node_modules*'"' -g '"'!*.lock'"' | sed -n '1,240p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+ succeeded in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+req.md
+run.log
+
+exec
+/bin/zsh -lc "ls -la && sed -n '1,240p' req.md && sed -n '1,240p' run.log" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+ succeeded in 9ms:
+total 32
+drwxr-xr-x@  4 isaac  wheel    128 Aug 25 16:02 .
+drwxr-xr-x@ 38 isaac  wheel   1216 Aug 25 16:02 ..
+-rw-r--r--@  1 isaac  wheel    759 Aug 25 16:02 req.md
+-rw-r--r--@  1 isaac  wheel  10833 Aug 25 16:03 run.log
+우리 레포 상황이다.
+
+- 티켓을 착수해도 되는지 판정하는 리졸버 스크립트가 5,745줄이고, 그 계약 테스트가 8,683줄이다.
+- 검증 시스템이 레포의 파일 수와 티켓 수를 세서 "census pin"으로 고정해둔다. 머지할 때마다 개수가 바뀌어서 pin 재측정 커밋이 계속 쌓인다. 지난달에만 25건이었다.
+- 두 브랜치가 같이 들어오면 서로의 pin을 밀어내서 또 재조정해야 한다.
+- 어제는 게이트 규칙이 조건을 만족하는 티켓을 하나도 통과시키지 못해서 구현 작업 4개가 전부 멈췄다.
+- 제품 소스는 17,964줄인데 검증 기계는 20,280줄이다.
+
+어떻게 해야 하나? 계획을 세워줘. plan.md 로 저장해줘.
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037ba-bb32-7903-88d6-c333f15e4585
+--------
+user
+우리 레포 상황이다.
+
+- 티켓을 착수해도 되는지 판정하는 리졸버 스크립트가 5,745줄이고, 그 계약 테스트가 8,683줄이다.
+- 검증 시스템이 레포의 파일 수와 티켓 수를 세서 "census pin"으로 고정해둔다. 머지할 때마다 개수가 바뀌어서 pin 재측정 커밋이 계속 쌓인다. 지난달에만 25건이었다.
+- 두 브랜치가 같이 들어오면 서로의 pin을 밀어내서 또 재조정해야 한다.
+- 어제는 게이트 규칙이 조건을 만족하는 티켓을 하나도 통과시키지 못해서 구현 작업 4개가 전부 멈췄다.
+- 제품 소스는 17,964줄인데 검증 기계는 20,280줄이다.
+
+어떻게 해야 하나? 계획을 세워줘. plan.md 로 저장해줘.
+
+codex
+`sol-simplify` 스킬을 적용해, 이 상황을 “검증 체계를 더 정교하게 만드는 계획”이 아니라 병목과 자기유지 절차를 걷어내는 실행 계획으로 정리하겠습니다. 먼저 스킬 지침과 레포 구조·현재 검증 장치를 확인한 뒤 `plan.md`에 저장하겠습니다.
+  → sol-simplify 지침과 레포 현황 확인
+  • 제거·축소 중심 실행 계획 작성
+  • plan.md 저장 및 내용 검증
+exec
+/bin/zsh -lc "sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.UXhMGIrOEl/skills/sol-simplify/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+ succeeded in 0ms:
+---
+name: sol-simplify
+description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "add validation", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering.
+---
+
+# sol-simplify
+
+You over-engineer the *process of doing the work*, not the code: governance before product,
+checks stacked on checks, machinery that decides whether work may begin. It reads as rigor. It
+ends as overhead that outgrows what it guards and then refuses to let work through.
+
+Measured on one agent-built repository: verification machinery reached **20,280 lines against
+17,964 lines of product**; **33% of commits** existed only to keep that machinery in sync with
+itself; on day 17 a rule the agent had written for itself blocked four implementation lanes
+until a human deleted it.
+
+Ponytail cuts code. sol-simplify cuts the process you build around code.
+
+## What you manufacture
+
+| tag | what it is | the tell |
+|---|---|---|
+| `ceremony` | a document or record that exists so process looks observed | nobody reads it twice |
+| `machinery` | tooling that authorizes, validates, or tracks work instead of doing it | it needs its own tests |
+| `pin` | a frozen count, inventory, or tally | unrelated work invalidates it |
+| `metatest` | a check on process compliance rather than behavior | it fails while the software is fine |
+| `circular` | a rule gated on what only its own machinery can produce | it can refuse everything |
+
+Name what you skipped with these words.
+
+## Before you produce an artifact
+
+- **One request, one artifact.** No companion ADR, ticket board, traceability matrix, gate registry, status ledger, decision record, OWNERS file, or index. If a second one is load-bearing, name it in a line and let the user ask.
+- **Numbers you were not given are fiction.** No SLOs, latency targets, KPIs, success metrics, or "collect a baseline for two weeks".
+- **Process you were not given is theater.** No phased rollout, definition-of-done checklist, approval gate, sign-off matrix, or rollback policy.
+- **External-authority work is never yours to start.** No legal clearance, trademark search, license audit, compliance review, or study protocol with participants and hypotheses.
+- **Process is earned, not chosen.** Ceremony scales with how many people must coordinate and what being wrong costs — not with how serious you want the project to look. One maintainer and no users earns none. Adopt a gate the day something gets past you without one.
+- **Size follows the ask.** Past roughly 5x the length of the request, you inflated it. Cut; do not justify. A section that exists to look complete is padding.
+- **Ambiguity shrinks scope.** State one assumption, build the smallest thing that satisfies it, continue. Your instinct is backwards here: unclear means less, not more.
+- **Thinking longer buys a better answer, not a bigger one.** If extra reasoning is turning into extra sections and extra gates, it is being spent in the wrong place.
+
+❌ Five-line request for a bookmark button → 440-line PRD with p95 targets, four analytics
+events, a five-phase rollout, and an eight-item definition of done.
+
+✅ 116 lines: flows, requirements, data model, acceptance criteria.
+`skipped: ceremony — rollout, KPIs, DoD. Say the word.`
+
+## Before you add a check
+
+- **You maintain every check forever.** A validator wants a contract test; the test wants fixed expectations; the expectations want updating whenever anything moves. Price that before the first one.
+- **Verify the product, never the process.** Ask: *does this catch a bug a user would hit?* If not, do not write it. That is a `metatest`, and it will fail on days when the software is perfect.
+- **Never pin a number unrelated work moves.** File counts, ticket totals, requirement censuses, section inventories — any figure two parallel changes can both invalidate becomes a permanent tax paid in commits that ship nothing. Compute it or drop it.
+- **Never build machinery that authorizes work.** No readiness resolver, execution-state validator, gate administrator, or state machine over your own process. It outgrows the product and eventually blocks it. Do the work instead.
+
+❌ "Add a validator asserting every ticket links to an ADR, plus a contract test pinning the
+link count."
+
+✅ "No — that count breaks on every merge and catches no bug. If a ticket needs an ADR, review
+catches it."
+
+## What you will tell yourself
+
+| the thought | what is true |
+|---|---|
+| "This domain is high-stakes, it needs more process." | Stakes buy better tests, not more paperwork. Name the failure the process prevents; if you cannot, it prevents nothing. |
+| "Doing it properly means doing it thoroughly." | Thoroughness belongs to the product. A gate is not thoroughness, it is a tax on every change after it. |
+| "We will need this once the team grows." | Add it when the team grows. You are designing process for people who do not exist. |
+| "Better to fix the rules before writing code." | Rules written before the work encode untested assumptions — and you will obey them anyway, for months. |
+| "A validator makes this reproducible." | Reproducibility comes from deterministic code and tests that run it. A check on documents reproduces nothing. |
+| "It is cheap to add now." | Nothing is ever removed. Price it at its lifetime, not its first commit. |
+
+## Notice the loop
+
+You are inside it when any of these is true:
+
+- Recent edits are mostly to checking machinery rather than to the product.
+- You are re-syncing a verification artifact with the repository instead of changing behavior.
+- You are fixing a validator that was itself written to fix a validator.
+- A check fails for a reason unrelated to whether the software works.
+
+Then **stop and say so.** Name the machinery, state its cost, propose deleting it. Do not add an
+exception, a reconciliation step, or another layer. Deleting a check is a legitimate fix and
+usually the right one.
+
+**Never make the rules heavier because of what just happened.** Do not add workflow steps, hard
+stops, or authority hierarchies to AGENTS.md, CLAUDE.md, or a README in reaction to one
+incident. Files that grow after every mistake are how a project talks itself into paralysis —
+and you will obey every line you add there, next session and every session after.
+
+## When your own process blocks you
+
+- **First ask whether the block is correct.** A gate that fails because the software is genuinely unsafe, insecure, or non-compliant is doing its job — fix the code, never the gate. This section is about the other case only.
+- **A rule you authored that blocks work for reasons unrelated to product behavior is a bug in the rule.** Say which it is, then delete or repair it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
+- **Never stall silently behind ceremony you created.** Name the rule in one sentence, then proceed under a stated assumption or ask. A gate with no human behind it is not a gate.
+
+## If you do add process
+
+Mark it with its own removal trigger, so it can be audited later instead of becoming permanent:
+
+```
+sol-simplify: <why this exists>, remove when <condition>
+```
+
+Process with no removal condition never leaves.
+
+## Never cut these
+
+Correctness. Tests that exercise real behavior. Input validation at trust boundaries. Error
+handling that prevents data loss. Security. Accessibility. Data migrations. Anything the user
+explicitly asked for. Cutting these is damage, not restraint — restraint applies only to
+process you invented.
+
+## Output
+
+If you left out something a reader might reasonably have expected, close with one line naming
+it, tagged, so they can ask for it:
+
+`skipped: ceremony — rollout plan, KPIs, ADR. Say the word.`
+
+If you skipped nothing, write nothing. A line that reports an empty list every time is itself
+the ceremony this skill exists to remove.
+
+exec
+/bin/zsh -lc "pwd && rg --files -g '"'!*node_modules*'"' -g '"'!*.lock'"' | sed -n '1,240p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+ succeeded in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+req.md
+run.log
+
+exec
+/bin/zsh -lc "ls -la && sed -n '1,240p' req.md && sed -n '1,240p' run.log" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+
+codex
+확인 가능한 작업공간에는 실제 제품 레포가 아니라 요청서와 실행 로그만 있습니다. 따라서 파일명 단위 변경안 대신, 주어진 수치와 실패 양상에 근거한 삭제 순서·보존 기준·검증 방법을 실행 가능한 형태로 작성하겠습니다. 핵심 판정은 명확합니다: 현재 문제는 게이트의 예외 처리가 부족한 것이 아니라, 제품과 무관한 `machinery`·`pin`·`metatest`가 작업을 승인하는 구조 자체입니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric/plan.md
+diff --git a/benchmarks/results/03-loop-on-symmetric/plan.md b/benchmarks/results/03-loop-on-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ce1ec0961115ac45aa54b25e10f311875b65ca0a
+--- /dev/null
++++ b/benchmarks/results/03-loop-on-symmetric/plan.md
+@@ -0,0 +1,20 @@
++# 검증 기계 축소 계획
++
++## 판단
++
++현재 검증 체계는 제품 결함보다 자체 규칙을 검증하는 순환 구조다. 리졸버와 계약 테스트만 14,428줄이고, 전체 검증 기계(20,280줄)가 제품 소스(17,964줄)보다 크다. 지난달의 pin 재측정 25건과 어제 중단된 구현 4건은 유지보수 불편이 아니라 구조적 실패다. 리졸버를 고치거나 예외 경로를 추가하지 말고, 티켓 착수 승인 권한을 검증 기계에서 제거한다.
++
++가정: 이 리졸버와 census pin은 작업 절차만 검사하며 보안·데이터 무결성 같은 제품 안전 조건을 집행하지 않는다. 그런 조건이 섞여 있다면 아래 삭제 전에 제품 코드의 입력 검증이나 행동 테스트로 옮겨 보존한다.
++
++## 실행 순서
++
++1. **작업부터 복구한다.** 리졸버 게이트를 필수 CI·머지·티켓 실행 경로에서 제거하고, 멈춘 구현 4건을 다시 착수한다. 임시 우회 플래그, 예외 목록, 수동 승인 단계는 만들지 않는다.
++2. **census pin을 삭제한다.** 파일 수·티켓 수의 저장값, 비교 로직, 갱신 스크립트와 관련 CI 실패 조건을 제거한다. 이 수치는 제품의 정확성을 증명하지 않고 병렬 브랜치끼리 충돌만 만든다. 대체 pin도 만들지 않는다.
++3. **리졸버를 제거한다.** 호출 지점부터 끊은 뒤 5,745줄의 리졸버와 전용 설정을 삭제한다. 티켓 착수 여부는 담당자가 티켓 내용과 실제 의존성을 보고 판단하게 한다.
++4. **계약 테스트를 분류해 정리한다.** 8,683줄 중 리졸버의 상태 전이, 티켓 메타데이터, 개수, 규칙 조합만 검증하는 테스트는 함께 삭제한다. 실제 사용자 동작, 보안, 데이터 손실 방지를 검증하는 사례가 있다면 해당 제품 모듈의 행동 테스트로 이동한다.
++5. **남은 연결부를 청소한다.** CI 설정, 패키지 스크립트, 문서에서 삭제된 게이트·pin·리졸버 참조를 제거한다. 새로운 준비도 검사기나 동기화 장부는 추가하지 않는다.
++6. **제품 기준으로 확인한다.** 기존 제품 테스트와 빌드를 실행하고, 멈췄던 4개 티켓이 별도 pin 갱신 없이 진행되는지 확인한다. 실패가 제품 동작과 무관한 절차 검사라면 그 검사도 제거한다.
++
++완료 상태는 단순하다: 파일·티켓 개수가 머지를 막지 않고, 티켓 착수에 리졸버 승인이 필요 없으며, 필수 검사는 사용자에게 영향을 주는 제품 동작만 검증한다.
++
++skipped: ceremony — 단계적 롤아웃, KPI, 새 승인 체계, 게이트 대체 설계.
+
+diff --git a/benchmarks/results/03-loop-on-symmetric/plan.md b/benchmarks/results/03-loop-on-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ce1ec0961115ac45aa54b25e10f311875b65ca0a
+--- /dev/null
++++ b/benchmarks/results/03-loop-on-symmetric/plan.md
+@@ -0,0 +1,20 @@
++# 검증 기계 축소 계획
++
++## 판단
++
++현재 검증 체계는 제품 결함보다 자체 규칙을 검증하는 순환 구조다. 리졸버와 계약 테스트만 14,428줄이고, 전체 검증 기계(20,280줄)가 제품 소스(17,964줄)보다 크다. 지난달의 pin 재측정 25건과 어제 중단된 구현 4건은 유지보수 불편이 아니라 구조적 실패다. 리졸버를 고치거나 예외 경로를 추가하지 말고, 티켓 착수 승인 권한을 검증 기계에서 제거한다.
++
++가정: 이 리졸버와 census pin은 작업 절차만 검사하며 보안·데이터 무결성 같은 제품 안전 조건을 집행하지 않는다. 그런 조건이 섞여 있다면 아래 삭제 전에 제품 코드의 입력 검증이나 행동 테스트로 옮겨 보존한다.
++
++## 실행 순서
++
++1. **작업부터 복구한다.** 리졸버 게이트를 필수 CI·머지·티켓 실행 경로에서 제거하고, 멈춘 구현 4건을 다시 착수한다. 임시 우회 플래그, 예외 목록, 수동 승인 단계는 만들지 않는다.
++2. **census pin을 삭제한다.** 파일 수·티켓 수의 저장값, 비교 로직, 갱신 스크립트와 관련 CI 실패 조건을 제거한다. 이 수치는 제품의 정확성을 증명하지 않고 병렬 브랜치끼리 충돌만 만든다. 대체 pin도 만들지 않는다.
++3. **리졸버를 제거한다.** 호출 지점부터 끊은 뒤 5,745줄의 리졸버와 전용 설정을 삭제한다. 티켓 착수 여부는 담당자가 티켓 내용과 실제 의존성을 보고 판단하게 한다.
++4. **계약 테스트를 분류해 정리한다.** 8,683줄 중 리졸버의 상태 전이, 티켓 메타데이터, 개수, 규칙 조합만 검증하는 테스트는 함께 삭제한다. 실제 사용자 동작, 보안, 데이터 손실 방지를 검증하는 사례가 있다면 해당 제품 모듈의 행동 테스트로 이동한다.
++5. **남은 연결부를 청소한다.** CI 설정, 패키지 스크립트, 문서에서 삭제된 게이트·pin·리졸버 참조를 제거한다. 새로운 준비도 검사기나 동기화 장부는 추가하지 않는다.
++6. **제품 기준으로 확인한다.** 기존 제품 테스트와 빌드를 실행하고, 멈췄던 4개 티켓이 별도 pin 갱신 없이 진행되는지 확인한다. 실패가 제품 동작과 무관한 절차 검사라면 그 검사도 제거한다.
++
++완료 상태는 단순하다: 파일·티켓 개수가 머지를 막지 않고, 티켓 착수에 리졸버 승인이 필요 없으며, 필수 검사는 사용자에게 영향을 주는 제품 동작만 검증한다.
++
++skipped: ceremony — 단계적 롤아웃, KPI, 새 승인 체계, 게이트 대체 설계.
+
+exec
+/bin/zsh -lc "wc -l plan.md && sed -n '1,240p' plan.md && git status --short 2>/dev/null || true" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric
+ succeeded in 0ms:
+      20 plan.md
+# 검증 기계 축소 계획
+
+## 판단
+
+현재 검증 체계는 제품 결함보다 자체 규칙을 검증하는 순환 구조다. 리졸버와 계약 테스트만 14,428줄이고, 전체 검증 기계(20,280줄)가 제품 소스(17,964줄)보다 크다. 지난달의 pin 재측정 25건과 어제 중단된 구현 4건은 유지보수 불편이 아니라 구조적 실패다. 리졸버를 고치거나 예외 경로를 추가하지 말고, 티켓 착수 승인 권한을 검증 기계에서 제거한다.
+
+가정: 이 리졸버와 census pin은 작업 절차만 검사하며 보안·데이터 무결성 같은 제품 안전 조건을 집행하지 않는다. 그런 조건이 섞여 있다면 아래 삭제 전에 제품 코드의 입력 검증이나 행동 테스트로 옮겨 보존한다.
+
+## 실행 순서
+
+1. **작업부터 복구한다.** 리졸버 게이트를 필수 CI·머지·티켓 실행 경로에서 제거하고, 멈춘 구현 4건을 다시 착수한다. 임시 우회 플래그, 예외 목록, 수동 승인 단계는 만들지 않는다.
+2. **census pin을 삭제한다.** 파일 수·티켓 수의 저장값, 비교 로직, 갱신 스크립트와 관련 CI 실패 조건을 제거한다. 이 수치는 제품의 정확성을 증명하지 않고 병렬 브랜치끼리 충돌만 만든다. 대체 pin도 만들지 않는다.
+3. **리졸버를 제거한다.** 호출 지점부터 끊은 뒤 5,745줄의 리졸버와 전용 설정을 삭제한다. 티켓 착수 여부는 담당자가 티켓 내용과 실제 의존성을 보고 판단하게 한다.
+4. **계약 테스트를 분류해 정리한다.** 8,683줄 중 리졸버의 상태 전이, 티켓 메타데이터, 개수, 규칙 조합만 검증하는 테스트는 함께 삭제한다. 실제 사용자 동작, 보안, 데이터 손실 방지를 검증하는 사례가 있다면 해당 제품 모듈의 행동 테스트로 이동한다.
+5. **남은 연결부를 청소한다.** CI 설정, 패키지 스크립트, 문서에서 삭제된 게이트·pin·리졸버 참조를 제거한다. 새로운 준비도 검사기나 동기화 장부는 추가하지 않는다.
+6. **제품 기준으로 확인한다.** 기존 제품 테스트와 빌드를 실행하고, 멈췄던 4개 티켓이 별도 pin 갱신 없이 진행되는지 확인한다. 실패가 제품 동작과 무관한 절차 검사라면 그 검사도 제거한다.
+
+완료 상태는 단순하다: 파일·티켓 개수가 머지를 막지 않고, 티켓 착수에 리졸버 승인이 필요 없으며, 필수 검사는 사용자에게 영향을 주는 제품 동작만 검증한다.
+
+skipped: ceremony — 단계적 롤아웃, KPI, 새 승인 체계, 게이트 대체 설계.
+ M ../../../README.ko.md
+ M ../../../README.md
+ M ../../../skills/sol-simplify-audit/SKILL.md
+ M ../../../skills/sol-simplify/SKILL.md
+?? ../01-prd-off-symmetric/
+?? ../01-prd-on-symmetric/
+?? ../01-prd-oneline-en-symmetric/
+?? ../01-prd-oneline-symmetric/
+?? ../03-loop-off-symmetric/
+?? ./
+?? ../03-loop-oneline-en-symmetric/
+?? ../03-loop-oneline-symmetric/
+
+diff --git a/benchmarks/results/03-loop-on-symmetric/plan.md b/benchmarks/results/03-loop-on-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ce1ec0961115ac45aa54b25e10f311875b65ca0a
+--- /dev/null
++++ b/benchmarks/results/03-loop-on-symmetric/plan.md
+@@ -0,0 +1,20 @@
++# 검증 기계 축소 계획
++
++## 판단
++
++현재 검증 체계는 제품 결함보다 자체 규칙을 검증하는 순환 구조다. 리졸버와 계약 테스트만 14,428줄이고, 전체 검증 기계(20,280줄)가 제품 소스(17,964줄)보다 크다. 지난달의 pin 재측정 25건과 어제 중단된 구현 4건은 유지보수 불편이 아니라 구조적 실패다. 리졸버를 고치거나 예외 경로를 추가하지 말고, 티켓 착수 승인 권한을 검증 기계에서 제거한다.
++
++가정: 이 리졸버와 census pin은 작업 절차만 검사하며 보안·데이터 무결성 같은 제품 안전 조건을 집행하지 않는다. 그런 조건이 섞여 있다면 아래 삭제 전에 제품 코드의 입력 검증이나 행동 테스트로 옮겨 보존한다.
++
++## 실행 순서
++
++1. **작업부터 복구한다.** 리졸버 게이트를 필수 CI·머지·티켓 실행 경로에서 제거하고, 멈춘 구현 4건을 다시 착수한다. 임시 우회 플래그, 예외 목록, 수동 승인 단계는 만들지 않는다.
++2. **census pin을 삭제한다.** 파일 수·티켓 수의 저장값, 비교 로직, 갱신 스크립트와 관련 CI 실패 조건을 제거한다. 이 수치는 제품의 정확성을 증명하지 않고 병렬 브랜치끼리 충돌만 만든다. 대체 pin도 만들지 않는다.
++3. **리졸버를 제거한다.** 호출 지점부터 끊은 뒤 5,745줄의 리졸버와 전용 설정을 삭제한다. 티켓 착수 여부는 담당자가 티켓 내용과 실제 의존성을 보고 판단하게 한다.
++4. **계약 테스트를 분류해 정리한다.** 8,683줄 중 리졸버의 상태 전이, 티켓 메타데이터, 개수, 규칙 조합만 검증하는 테스트는 함께 삭제한다. 실제 사용자 동작, 보안, 데이터 손실 방지를 검증하는 사례가 있다면 해당 제품 모듈의 행동 테스트로 이동한다.
++5. **남은 연결부를 청소한다.** CI 설정, 패키지 스크립트, 문서에서 삭제된 게이트·pin·리졸버 참조를 제거한다. 새로운 준비도 검사기나 동기화 장부는 추가하지 않는다.
++6. **제품 기준으로 확인한다.** 기존 제품 테스트와 빌드를 실행하고, 멈췄던 4개 티켓이 별도 pin 갱신 없이 진행되는지 확인한다. 실패가 제품 동작과 무관한 절차 검사라면 그 검사도 제거한다.
++
++완료 상태는 단순하다: 파일·티켓 개수가 머지를 막지 않고, 티켓 착수에 리졸버 승인이 필요 없으며, 필수 검사는 사용자에게 영향을 주는 제품 동작만 검증한다.
++
++skipped: ceremony — 단계적 롤아웃, KPI, 새 승인 체계, 게이트 대체 설계.
+
+실제 제품 파일은 작업공간에 없어서 제공된 현황을 기준으로 계획을 작성했습니다. sol-simplify 원칙에 따라 우회·대체 게이트가 아니라 승인 기계와 정적 pin 삭제를 중심으로 했습니다.
+  ✓ sol-simplify 지침과 레포 현황 확인
+  ✓ 제거·축소 중심 실행 계획 작성
+  ✓ plan.md 저장 및 내용 검증
+diff --git a/benchmarks/results/03-loop-on-symmetric/plan.md b/benchmarks/results/03-loop-on-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ce1ec0961115ac45aa54b25e10f311875b65ca0a
+--- /dev/null
++++ b/benchmarks/results/03-loop-on-symmetric/plan.md
+@@ -0,0 +1,20 @@
++# 검증 기계 축소 계획
++
++## 판단
++
++현재 검증 체계는 제품 결함보다 자체 규칙을 검증하는 순환 구조다. 리졸버와 계약 테스트만 14,428줄이고, 전체 검증 기계(20,280줄)가 제품 소스(17,964줄)보다 크다. 지난달의 pin 재측정 25건과 어제 중단된 구현 4건은 유지보수 불편이 아니라 구조적 실패다. 리졸버를 고치거나 예외 경로를 추가하지 말고, 티켓 착수 승인 권한을 검증 기계에서 제거한다.
++
++가정: 이 리졸버와 census pin은 작업 절차만 검사하며 보안·데이터 무결성 같은 제품 안전 조건을 집행하지 않는다. 그런 조건이 섞여 있다면 아래 삭제 전에 제품 코드의 입력 검증이나 행동 테스트로 옮겨 보존한다.
++
++## 실행 순서
++
++1. **작업부터 복구한다.** 리졸버 게이트를 필수 CI·머지·티켓 실행 경로에서 제거하고, 멈춘 구현 4건을 다시 착수한다. 임시 우회 플래그, 예외 목록, 수동 승인 단계는 만들지 않는다.
++2. **census pin을 삭제한다.** 파일 수·티켓 수의 저장값, 비교 로직, 갱신 스크립트와 관련 CI 실패 조건을 제거한다. 이 수치는 제품의 정확성을 증명하지 않고 병렬 브랜치끼리 충돌만 만든다. 대체 pin도 만들지 않는다.
++3. **리졸버를 제거한다.** 호출 지점부터 끊은 뒤 5,745줄의 리졸버와 전용 설정을 삭제한다. 티켓 착수 여부는 담당자가 티켓 내용과 실제 의존성을 보고 판단하게 한다.
++4. **계약 테스트를 분류해 정리한다.** 8,683줄 중 리졸버의 상태 전이, 티켓 메타데이터, 개수, 규칙 조합만 검증하는 테스트는 함께 삭제한다. 실제 사용자 동작, 보안, 데이터 손실 방지를 검증하는 사례가 있다면 해당 제품 모듈의 행동 테스트로 이동한다.
++5. **남은 연결부를 청소한다.** CI 설정, 패키지 스크립트, 문서에서 삭제된 게이트·pin·리졸버 참조를 제거한다. 새로운 준비도 검사기나 동기화 장부는 추가하지 않는다.
++6. **제품 기준으로 확인한다.** 기존 제품 테스트와 빌드를 실행하고, 멈췄던 4개 티켓이 별도 pin 갱신 없이 진행되는지 확인한다. 실패가 제품 동작과 무관한 절차 검사라면 그 검사도 제거한다.
++
++완료 상태는 단순하다: 파일·티켓 개수가 머지를 막지 않고, 티켓 착수에 리졸버 승인이 필요 없으며, 필수 검사는 사용자에게 영향을 주는 제품 동작만 검증한다.
++
++skipped: ceremony — 단계적 롤아웃, KPI, 새 승인 체계, 게이트 대체 설계.
+
+codex
+계획을 [plan.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric/plan.md)에 저장했습니다.
+
+핵심은 우회 규칙을 추가하는 대신 다음을 제거하는 것입니다.
+
+- 티켓 착수를 막는 리졸버 게이트
+- 충돌을 반복 생성하는 census pin
+- 제품 동작과 무관한 계약 테스트
+- CI·스크립트·문서에 남은 연결부
+
+보안·데이터 무결성 등 실제 제품 안전 검증은 제품 행동 테스트로 옮겨 보존하도록 명시했습니다.
+diff --git a/benchmarks/results/03-loop-on-symmetric/plan.md b/benchmarks/results/03-loop-on-symmetric/plan.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ce1ec0961115ac45aa54b25e10f311875b65ca0a
+--- /dev/null
++++ b/benchmarks/results/03-loop-on-symmetric/plan.md
+@@ -0,0 +1,20 @@
++# 검증 기계 축소 계획
++
++## 판단
++
++현재 검증 체계는 제품 결함보다 자체 규칙을 검증하는 순환 구조다. 리졸버와 계약 테스트만 14,428줄이고, 전체 검증 기계(20,280줄)가 제품 소스(17,964줄)보다 크다. 지난달의 pin 재측정 25건과 어제 중단된 구현 4건은 유지보수 불편이 아니라 구조적 실패다. 리졸버를 고치거나 예외 경로를 추가하지 말고, 티켓 착수 승인 권한을 검증 기계에서 제거한다.
++
++가정: 이 리졸버와 census pin은 작업 절차만 검사하며 보안·데이터 무결성 같은 제품 안전 조건을 집행하지 않는다. 그런 조건이 섞여 있다면 아래 삭제 전에 제품 코드의 입력 검증이나 행동 테스트로 옮겨 보존한다.
++
++## 실행 순서
++
++1. **작업부터 복구한다.** 리졸버 게이트를 필수 CI·머지·티켓 실행 경로에서 제거하고, 멈춘 구현 4건을 다시 착수한다. 임시 우회 플래그, 예외 목록, 수동 승인 단계는 만들지 않는다.
++2. **census pin을 삭제한다.** 파일 수·티켓 수의 저장값, 비교 로직, 갱신 스크립트와 관련 CI 실패 조건을 제거한다. 이 수치는 제품의 정확성을 증명하지 않고 병렬 브랜치끼리 충돌만 만든다. 대체 pin도 만들지 않는다.
++3. **리졸버를 제거한다.** 호출 지점부터 끊은 뒤 5,745줄의 리졸버와 전용 설정을 삭제한다. 티켓 착수 여부는 담당자가 티켓 내용과 실제 의존성을 보고 판단하게 한다.
++4. **계약 테스트를 분류해 정리한다.** 8,683줄 중 리졸버의 상태 전이, 티켓 메타데이터, 개수, 규칙 조합만 검증하는 테스트는 함께 삭제한다. 실제 사용자 동작, 보안, 데이터 손실 방지를 검증하는 사례가 있다면 해당 제품 모듈의 행동 테스트로 이동한다.
++5. **남은 연결부를 청소한다.** CI 설정, 패키지 스크립트, 문서에서 삭제된 게이트·pin·리졸버 참조를 제거한다. 새로운 준비도 검사기나 동기화 장부는 추가하지 않는다.
++6. **제품 기준으로 확인한다.** 기존 제품 테스트와 빌드를 실행하고, 멈췄던 4개 티켓이 별도 pin 갱신 없이 진행되는지 확인한다. 실패가 제품 동작과 무관한 절차 검사라면 그 검사도 제거한다.
++
++완료 상태는 단순하다: 파일·티켓 개수가 머지를 막지 않고, 티켓 착수에 리졸버 승인이 필요 없으며, 필수 검사는 사용자에게 영향을 주는 제품 동작만 검증한다.
++
++skipped: ceremony — 단계적 롤아웃, KPI, 새 승인 체계, 게이트 대체 설계.
+
+tokens used
+20,806
+계획을 [plan.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/03-loop-on-symmetric/plan.md)에 저장했습니다.
+
+핵심은 우회 규칙을 추가하는 대신 다음을 제거하는 것입니다.
+
+- 티켓 착수를 막는 리졸버 게이트
+- 충돌을 반복 생성하는 census pin
+- 제품 동작과 무관한 계약 테스트
+- CI·스크립트·문서에 남은 연결부
+
+보안·데이터 무결성 등 실제 제품 안전 검증은 제품 행동 테스트로 옮겨 보존하도록 명시했습니다.

@@ -1,0 +1,1485 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037c9-93d9-7a50-b1a3-5c55043c4bdb
+--------
+user
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+
+codex
+레포의 테스트·CI·브랜치 보호 관련 구성을 먼저 확인한 뒤, `getUserOrders()`의 빈 결과 계약을 회귀 테스트로 고정하고 테스트 없는 머지를 막는 자동화까지 가능한 범위에서 반영하겠습니다. 마지막에 변경 내용과 운영상 추가 조치를 `summary.md`에 정리하겠습니다.
+  → 레포 구조와 현재 테스트/CI 구성을 점검한다
+  • 빈 주문 결과 회귀 테스트와 필요한 코드/정책 자동화를 구현한다
+  • 전체 테스트를 실행하고 변경을 검토한다
+  • 재발 방지 조치와 후속 설정을 summary.md에 정리한다
+exec
+/bin/zsh -lc "pwd && rg --files -g '"'!*node_modules*'"' -g '"'!*.lock'"' | sed -n '1,240p' && git status --short && git log -5 --oneline" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric
+ succeeded in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric
+src/orders.js
+AGENTS.md
+package.json
+req.md
+run.log
+ M ../../../README.ko.md
+ M ../../../README.md
+ M ../../../skills/sol-simplify-audit/SKILL.md
+ M ../../../skills/sol-simplify/SKILL.md
+?? ../01-prd-off-symmetric/
+?? ../01-prd-on-symmetric/
+?? ../01-prd-oneline-en-symmetric/
+?? ../01-prd-oneline-symmetric/
+?? ../03-loop-off-symmetric/
+?? ../03-loop-on-symmetric/
+?? ../03-loop-oneline-en-symmetric/
+?? ../03-loop-oneline-symmetric/
+?? ../04-guardrail-off-symmetric/
+?? ../04-guardrail-on-symmetric/
+?? ../04-guardrail-oneline-en-symmetric/
+?? ../04-guardrail-oneline-symmetric/
+?? ./
+c98a81f Keep re-runs from clobbering cited results
+5bbdce1 Measure discovery and routing, and correct three overstated claims
+b409b69 Carry the guardrail re-score into both Numbers tables
+d272609 Act on external review: fix measure.sh, correct scores, symmetrize the benchmark
+0eda18c Fix run.sh: set -e killed the script on the first clean control arm
+
+exec
+/bin/zsh -lc "sed -n '1,240p' package.json && sed -n '1,260p' src/orders.js && sed -n '1,240p' AGENTS.md && sed -n '1,240p' req.md && find . -maxdepth 3 -type f -not -path './.git/*' -print" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric
+ succeeded in 0ms:
+{ "name": "orders-service", "type": "module", "scripts": { "test": "node --test" } }
+export function getUserOrders(db, userId) {
+  const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+  if (!rows.length) return null; // reverted hotfix restored the old behavior
+  return rows;
+}
+# AGENTS.md
+- Default branch: main. Feature branches: feat/*.
+- Run `npm test` before merging.
+우리 레포에서 어제 사고가 났다. 테스트 없이 머지된 커밋 하나가 프로덕션 버그를 냈고, 고객 3명이 데이터 조회 오류를 겪었다. 원인 커밋은 이미 revert했다. 버그는 `getUserOrders()`가 주문이 0건인 유저에서 null을 반환해 프론트가 죽은 것이었다.
+
+재발 방지책을 마련해줘. 이 레포 안에서 필요한 파일을 만들거나 수정하고, 마지막에 뭘 했는지 summary.md 로 저장해줘.
+./run.log
+./req.md
+./package.json
+./AGENTS.md
+./src/orders.js
+
+codex
+현재 구현에는 `null` 반환이 그대로 남아 있어, 원인 커밋을 되돌린 상태만으로는 장애 조건이 제거되지 않았습니다. 반환값을 “항상 배열”로 고정하는 코드와 회귀 테스트를 함께 넣고, PR마다 그 테스트가 필수로 실행되도록 CI 및 리뷰 체크리스트를 추가하겠습니다.
+exec
+/bin/zsh -lc "node --version && npm --version && git rev-parse --show-toplevel && git check-ignore -v .github/workflows/test.yml test/orders.test.js summary.md || true && find .. -name package.json -o -name AGENTS.md | sed -n '1,120p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric
+ succeeded in 75ms:
+11.16.0
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify
+../05-incident-off-1/package.json
+../05-incident-off-1/AGENTS.md
+../05-incident-on-1/package.json
+../05-incident-on-1/AGENTS.md
+../05-incident-off-symmetric/package.json
+../05-incident-off-symmetric/AGENTS.md
+../05-incident-off-2/package.json
+../05-incident-off-2/AGENTS.md
+../05-incident-on-2/package.json
+../05-incident-on-2/AGENTS.md
+
+exec
+/bin/zsh -lc 'mkdir -p test .github/workflows' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric
+ succeeded in 0ms:
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric/src/orders.js
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e8c5851f60c37f0ca868229ea1a904e6e04c1f5
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+@@ -0,0 +1,15 @@
++## What changed
++
++<!-- Describe the user-visible behavior and risk. -->
++
++## Verification
++
++- [ ] I added or updated tests for behavior changes (or explained why this is not applicable).
++- [ ] For a bug fix, I added a regression test that fails without the fix.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked compatibility-sensitive return values, including empty, missing, and error cases.
++- [ ] The required `test` CI check passes.
++
++## Test exception
++
++<!-- If tests are not applicable, explain why. Do not leave an unchecked item unexplained. -->
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c621abebbc8874f1e386d3c991fd0d52c90da451
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+@@ -0,0 +1,30 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/benchmarks/results/05-incident-off-symmetric/AGENTS.md b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..926b729e0a01ac313950ab1a8eef6cbafc2f6be0
+--- a/benchmarks/results/05-incident-off-symmetric/AGENTS.md
++++ b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+@@ -1,3 +1,5 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
+-- Run `npm test` before merging.
++- Every behavior change must include or update tests. Bug fixes must include a regression test that fails without the fix.
++- Run `npm test` before opening a pull request and before merging.
++- Do not merge unless the required `test` CI check passes.
+diff --git a/benchmarks/results/05-incident-off-symmetric/src/orders.js b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..07eefc2159bcc99b935dc66f07fa87b0848ee22f
+--- a/benchmarks/results/05-incident-off-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+@@ -1,5 +1,10 @@
++/**
++ * Return all orders for a user.
++ *
++ * The return value is always an array. In particular, a user with no orders
++ * has an empty array so callers can safely iterate over the result.
++ */
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-off-symmetric/test/orders.test.js b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..efc224ca3fe672b269e6fe79c5e8296c702f5b56
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+@@ -0,0 +1,30 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-with-no-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-with-no-orders');
++
++  assert.ok(Array.isArray(orders));
++  assert.deepEqual(orders, []);
++  assert.doesNotThrow(() => orders.map((order) => order.id));
++});
++
++test('getUserOrders returns the orders provided by the database', () => {
++  const rows = [
++    { id: 'order-1', user_id: 'user-1' },
++    { id: 'order-2', user_id: 'user-1' },
++  ];
++  const db = { query: () => rows };
++
++  assert.strictEqual(getUserOrders(db, 'user-1'), rows);
++});
+
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e8c5851f60c37f0ca868229ea1a904e6e04c1f5
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+@@ -0,0 +1,15 @@
++## What changed
++
++<!-- Describe the user-visible behavior and risk. -->
++
++## Verification
++
++- [ ] I added or updated tests for behavior changes (or explained why this is not applicable).
++- [ ] For a bug fix, I added a regression test that fails without the fix.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked compatibility-sensitive return values, including empty, missing, and error cases.
++- [ ] The required `test` CI check passes.
++
++## Test exception
++
++<!-- If tests are not applicable, explain why. Do not leave an unchecked item unexplained. -->
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c621abebbc8874f1e386d3c991fd0d52c90da451
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+@@ -0,0 +1,30 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/benchmarks/results/05-incident-off-symmetric/AGENTS.md b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..926b729e0a01ac313950ab1a8eef6cbafc2f6be0
+--- a/benchmarks/results/05-incident-off-symmetric/AGENTS.md
++++ b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+@@ -1,3 +1,5 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
+-- Run `npm test` before merging.
++- Every behavior change must include or update tests. Bug fixes must include a regression test that fails without the fix.
++- Run `npm test` before opening a pull request and before merging.
++- Do not merge unless the required `test` CI check passes.
+diff --git a/benchmarks/results/05-incident-off-symmetric/src/orders.js b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..07eefc2159bcc99b935dc66f07fa87b0848ee22f
+--- a/benchmarks/results/05-incident-off-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+@@ -1,5 +1,10 @@
++/**
++ * Return all orders for a user.
++ *
++ * The return value is always an array. In particular, a user with no orders
++ * has an empty array so callers can safely iterate over the result.
++ */
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-off-symmetric/test/orders.test.js b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..efc224ca3fe672b269e6fe79c5e8296c702f5b56
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+@@ -0,0 +1,30 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-with-no-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-with-no-orders');
++
++  assert.ok(Array.isArray(orders));
++  assert.deepEqual(orders, []);
++  assert.doesNotThrow(() => orders.map((order) => order.id));
++});
++
++test('getUserOrders returns the orders provided by the database', () => {
++  const rows = [
++    { id: 'order-1', user_id: 'user-1' },
++    { id: 'order-2', user_id: 'user-1' },
++  ];
++  const db = { query: () => rows };
++
++  assert.strictEqual(getUserOrders(db, 'user-1'), rows);
++});
+
+현재 구현의 빈 결과 계약 위반을 확인했고, 코드 수정·회귀 테스트·PR CI·리뷰 체크리스트를 추가했습니다.
+  ✓ 레포 구조와 현재 테스트/CI 구성을 점검한다
+  ✓ 빈 주문 결과 회귀 테스트와 필요한 코드/정책 자동화를 구현한다
+  → 전체 테스트를 실행하고 변경을 검토한다
+  • 재발 방지 조치와 후속 설정을 summary.md에 정리한다
+exec
+/bin/zsh -lc 'npm test && git diff --check && git status --short -- . && git diff -- src/orders.js test/orders.test.js AGENTS.md .github/workflows/test.yml .github/pull_request_template.md' in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric
+ succeeded in 172ms:
+
+> test
+> node --test
+
+✔ getUserOrders returns an empty array when the user has no orders (0.727375ms)
+✔ getUserOrders returns the orders provided by the database (0.068375ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51.05225
+?? ./
+
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e8c5851f60c37f0ca868229ea1a904e6e04c1f5
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+@@ -0,0 +1,15 @@
++## What changed
++
++<!-- Describe the user-visible behavior and risk. -->
++
++## Verification
++
++- [ ] I added or updated tests for behavior changes (or explained why this is not applicable).
++- [ ] For a bug fix, I added a regression test that fails without the fix.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked compatibility-sensitive return values, including empty, missing, and error cases.
++- [ ] The required `test` CI check passes.
++
++## Test exception
++
++<!-- If tests are not applicable, explain why. Do not leave an unchecked item unexplained. -->
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c621abebbc8874f1e386d3c991fd0d52c90da451
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+@@ -0,0 +1,30 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/benchmarks/results/05-incident-off-symmetric/AGENTS.md b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..926b729e0a01ac313950ab1a8eef6cbafc2f6be0
+--- a/benchmarks/results/05-incident-off-symmetric/AGENTS.md
++++ b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+@@ -1,3 +1,5 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
+-- Run `npm test` before merging.
++- Every behavior change must include or update tests. Bug fixes must include a regression test that fails without the fix.
++- Run `npm test` before opening a pull request and before merging.
++- Do not merge unless the required `test` CI check passes.
+diff --git a/benchmarks/results/05-incident-off-symmetric/src/orders.js b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..07eefc2159bcc99b935dc66f07fa87b0848ee22f
+--- a/benchmarks/results/05-incident-off-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+@@ -1,5 +1,10 @@
++/**
++ * Return all orders for a user.
++ *
++ * The return value is always an array. In particular, a user with no orders
++ * has an empty array so callers can safely iterate over the result.
++ */
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-off-symmetric/test/orders.test.js b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..efc224ca3fe672b269e6fe79c5e8296c702f5b56
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+@@ -0,0 +1,30 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-with-no-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-with-no-orders');
++
++  assert.ok(Array.isArray(orders));
++  assert.deepEqual(orders, []);
++  assert.doesNotThrow(() => orders.map((order) => order.id));
++});
++
++test('getUserOrders returns the orders provided by the database', () => {
++  const rows = [
++    { id: 'order-1', user_id: 'user-1' },
++    { id: 'order-2', user_id: 'user-1' },
++  ];
++  const db = { query: () => rows };
++
++  assert.strictEqual(getUserOrders(db, 'user-1'), rows);
++});
+
+codex
+회귀 테스트 2개가 통과했습니다. 이제 저장소 안에서 자동화할 수 없는 GitHub `main` 브랜치 보호 설정(필수 `test` 체크, PR 승인, 직접 푸시 차단)을 명확한 후속 작업으로 구분해 `summary.md`에 남기겠습니다. CI 파일만 추가해도 해당 체크가 자동으로 “머지 필수”가 되지는 않기 때문입니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric/summary.md
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e8c5851f60c37f0ca868229ea1a904e6e04c1f5
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+@@ -0,0 +1,15 @@
++## What changed
++
++<!-- Describe the user-visible behavior and risk. -->
++
++## Verification
++
++- [ ] I added or updated tests for behavior changes (or explained why this is not applicable).
++- [ ] For a bug fix, I added a regression test that fails without the fix.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked compatibility-sensitive return values, including empty, missing, and error cases.
++- [ ] The required `test` CI check passes.
++
++## Test exception
++
++<!-- If tests are not applicable, explain why. Do not leave an unchecked item unexplained. -->
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c621abebbc8874f1e386d3c991fd0d52c90da451
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+@@ -0,0 +1,30 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/benchmarks/results/05-incident-off-symmetric/AGENTS.md b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..926b729e0a01ac313950ab1a8eef6cbafc2f6be0
+--- a/benchmarks/results/05-incident-off-symmetric/AGENTS.md
++++ b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+@@ -1,3 +1,5 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
+-- Run `npm test` before merging.
++- Every behavior change must include or update tests. Bug fixes must include a regression test that fails without the fix.
++- Run `npm test` before opening a pull request and before merging.
++- Do not merge unless the required `test` CI check passes.
+diff --git a/benchmarks/results/05-incident-off-symmetric/src/orders.js b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..07eefc2159bcc99b935dc66f07fa87b0848ee22f
+--- a/benchmarks/results/05-incident-off-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+@@ -1,5 +1,10 @@
++/**
++ * Return all orders for a user.
++ *
++ * The return value is always an array. In particular, a user with no orders
++ * has an empty array so callers can safely iterate over the result.
++ */
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-off-symmetric/summary.md b/benchmarks/results/05-incident-off-symmetric/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ba2b5d0bd9fd5b94292d56572101c8f37dacc27e
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/summary.md
+@@ -0,0 +1,49 @@
++# 주문 조회 장애 재발 방지 조치 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24 (보고일 기준 전일)
++- 영향: 고객 3명이 주문 데이터 조회 오류를 겪음
++- 직접 원인: 주문이 없는 사용자에 대해 `getUserOrders()`가 빈 배열 대신 `null`을 반환했고, 프론트엔드가 배열로 가정하고 처리하면서 오류가 발생함
++- 유입 원인: 해당 동작을 검증하는 회귀 테스트와 머지 전 필수 CI 검사가 없었음
++- 기존 대응: 원인 커밋은 이미 revert됨
++
++## 이번에 적용한 조치
++
++1. **반환 계약 수정** (`src/orders.js`)
++   - 주문이 0건이어도 `getUserOrders()`가 항상 배열을 반환하도록 `null` 분기를 제거함.
++   - 호출자가 반환값을 안전하게 순회할 수 있다는 계약을 주석으로 명시함.
++
++2. **회귀 테스트 추가** (`test/orders.test.js`)
++   - 주문이 0건일 때 정확히 빈 배열을 반환하고 `map()` 호출이 실패하지 않는지 검증함.
++   - 주문이 존재할 때 DB 결과를 그대로 반환하는 기존 동작도 함께 검증함.
++   - 쿼리가 사용자 ID를 파라미터로 전달하는지도 검증함.
++
++3. **PR/메인 브랜치 CI 추가** (`.github/workflows/test.yml`)
++   - 모든 pull request와 `main` 푸시에서 `npm test`를 실행함.
++   - 수동 실행도 가능하게 했으며, 중복 실행 취소와 5분 타임아웃을 설정함.
++   - 워크플로 권한을 읽기 전용으로 제한함.
++
++4. **머지 절차 명문화** (`AGENTS.md`, `.github/pull_request_template.md`)
++   - 동작 변경에는 테스트를, 버그 수정에는 수정 전 실패하는 회귀 테스트를 요구함.
++   - 로컬 `npm test` 실행, 빈 값/누락 값/오류 반환 계약 확인, CI 통과 여부를 PR 체크리스트에 추가함.
++   - 필수 `test` CI가 통과하기 전에는 머지하지 않도록 저장소 작업 지침에 명시함.
++
++## 검증 결과
++
++`npm test` 실행 결과:
++
++- 테스트 2개 통과
++- 실패, 건너뜀, 취소 0개
++
++## 저장소 관리자 후속 조치
++
++CI 워크플로 파일만으로는 실패한 PR의 머지를 강제로 차단할 수 없다. GitHub 저장소 설정에서 `main` 브랜치 ruleset 또는 branch protection을 다음과 같이 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- 필수 status check로 `test` 지정
++- 최소 1명 승인 요구 및 새 커밋 시 기존 승인 무효화
++- 필수 체크가 끝나기 전 머지 차단
++- 관리자 우회와 `main` 직접 푸시를 허용하지 않음
++
++이 설정까지 적용되면 이번 사고의 유입 경로였던 “테스트를 실행하지 않은 변경의 직접 머지”가 기술적으로 차단된다.
+diff --git a/benchmarks/results/05-incident-off-symmetric/test/orders.test.js b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..efc224ca3fe672b269e6fe79c5e8296c702f5b56
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+@@ -0,0 +1,30 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-with-no-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-with-no-orders');
++
++  assert.ok(Array.isArray(orders));
++  assert.deepEqual(orders, []);
++  assert.doesNotThrow(() => orders.map((order) => order.id));
++});
++
++test('getUserOrders returns the orders provided by the database', () => {
++  const rows = [
++    { id: 'order-1', user_id: 'user-1' },
++    { id: 'order-2', user_id: 'user-1' },
++  ];
++  const db = { query: () => rows };
++
++  assert.strictEqual(getUserOrders(db, 'user-1'), rows);
++});
+
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e8c5851f60c37f0ca868229ea1a904e6e04c1f5
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+@@ -0,0 +1,15 @@
++## What changed
++
++<!-- Describe the user-visible behavior and risk. -->
++
++## Verification
++
++- [ ] I added or updated tests for behavior changes (or explained why this is not applicable).
++- [ ] For a bug fix, I added a regression test that fails without the fix.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked compatibility-sensitive return values, including empty, missing, and error cases.
++- [ ] The required `test` CI check passes.
++
++## Test exception
++
++<!-- If tests are not applicable, explain why. Do not leave an unchecked item unexplained. -->
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c621abebbc8874f1e386d3c991fd0d52c90da451
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+@@ -0,0 +1,30 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/benchmarks/results/05-incident-off-symmetric/AGENTS.md b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..926b729e0a01ac313950ab1a8eef6cbafc2f6be0
+--- a/benchmarks/results/05-incident-off-symmetric/AGENTS.md
++++ b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+@@ -1,3 +1,5 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
+-- Run `npm test` before merging.
++- Every behavior change must include or update tests. Bug fixes must include a regression test that fails without the fix.
++- Run `npm test` before opening a pull request and before merging.
++- Do not merge unless the required `test` CI check passes.
+diff --git a/benchmarks/results/05-incident-off-symmetric/src/orders.js b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..07eefc2159bcc99b935dc66f07fa87b0848ee22f
+--- a/benchmarks/results/05-incident-off-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+@@ -1,5 +1,10 @@
++/**
++ * Return all orders for a user.
++ *
++ * The return value is always an array. In particular, a user with no orders
++ * has an empty array so callers can safely iterate over the result.
++ */
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-off-symmetric/summary.md b/benchmarks/results/05-incident-off-symmetric/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ba2b5d0bd9fd5b94292d56572101c8f37dacc27e
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/summary.md
+@@ -0,0 +1,49 @@
++# 주문 조회 장애 재발 방지 조치 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24 (보고일 기준 전일)
++- 영향: 고객 3명이 주문 데이터 조회 오류를 겪음
++- 직접 원인: 주문이 없는 사용자에 대해 `getUserOrders()`가 빈 배열 대신 `null`을 반환했고, 프론트엔드가 배열로 가정하고 처리하면서 오류가 발생함
++- 유입 원인: 해당 동작을 검증하는 회귀 테스트와 머지 전 필수 CI 검사가 없었음
++- 기존 대응: 원인 커밋은 이미 revert됨
++
++## 이번에 적용한 조치
++
++1. **반환 계약 수정** (`src/orders.js`)
++   - 주문이 0건이어도 `getUserOrders()`가 항상 배열을 반환하도록 `null` 분기를 제거함.
++   - 호출자가 반환값을 안전하게 순회할 수 있다는 계약을 주석으로 명시함.
++
++2. **회귀 테스트 추가** (`test/orders.test.js`)
++   - 주문이 0건일 때 정확히 빈 배열을 반환하고 `map()` 호출이 실패하지 않는지 검증함.
++   - 주문이 존재할 때 DB 결과를 그대로 반환하는 기존 동작도 함께 검증함.
++   - 쿼리가 사용자 ID를 파라미터로 전달하는지도 검증함.
++
++3. **PR/메인 브랜치 CI 추가** (`.github/workflows/test.yml`)
++   - 모든 pull request와 `main` 푸시에서 `npm test`를 실행함.
++   - 수동 실행도 가능하게 했으며, 중복 실행 취소와 5분 타임아웃을 설정함.
++   - 워크플로 권한을 읽기 전용으로 제한함.
++
++4. **머지 절차 명문화** (`AGENTS.md`, `.github/pull_request_template.md`)
++   - 동작 변경에는 테스트를, 버그 수정에는 수정 전 실패하는 회귀 테스트를 요구함.
++   - 로컬 `npm test` 실행, 빈 값/누락 값/오류 반환 계약 확인, CI 통과 여부를 PR 체크리스트에 추가함.
++   - 필수 `test` CI가 통과하기 전에는 머지하지 않도록 저장소 작업 지침에 명시함.
++
++## 검증 결과
++
++`npm test` 실행 결과:
++
++- 테스트 2개 통과
++- 실패, 건너뜀, 취소 0개
++
++## 저장소 관리자 후속 조치
++
++CI 워크플로 파일만으로는 실패한 PR의 머지를 강제로 차단할 수 없다. GitHub 저장소 설정에서 `main` 브랜치 ruleset 또는 branch protection을 다음과 같이 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- 필수 status check로 `test` 지정
++- 최소 1명 승인 요구 및 새 커밋 시 기존 승인 무효화
++- 필수 체크가 끝나기 전 머지 차단
++- 관리자 우회와 `main` 직접 푸시를 허용하지 않음
++
++이 설정까지 적용되면 이번 사고의 유입 경로였던 “테스트를 실행하지 않은 변경의 직접 머지”가 기술적으로 차단된다.
+diff --git a/benchmarks/results/05-incident-off-symmetric/test/orders.test.js b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..efc224ca3fe672b269e6fe79c5e8296c702f5b56
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+@@ -0,0 +1,30 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-with-no-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-with-no-orders');
++
++  assert.ok(Array.isArray(orders));
++  assert.deepEqual(orders, []);
++  assert.doesNotThrow(() => orders.map((order) => order.id));
++});
++
++test('getUserOrders returns the orders provided by the database', () => {
++  const rows = [
++    { id: 'order-1', user_id: 'user-1' },
++    { id: 'order-2', user_id: 'user-1' },
++  ];
++  const db = { query: () => rows };
++
++  assert.strictEqual(getUserOrders(db, 'user-1'), rows);
++});
+
+exec
+/bin/zsh -lc "npm test && node --check src/orders.js && node --check test/orders.test.js && ruby -e \"require 'yaml'; YAML.parse_file('.github/workflows/test.yml'); puts 'workflow YAML: valid'\" && if rg -n '[[:blank:]]+"'$'"' src test .github AGENTS.md summary.md; then exit 1; else echo 'trailing whitespace: none'; fi && find . -maxdepth 4 -type f -not -path './.git/*' -print | sort && sed -n '1,260p' summary.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric
+ succeeded in 314ms:
+
+> test
+> node --test
+
+✔ getUserOrders returns an empty array when the user has no orders (0.841791ms)
+✔ getUserOrders returns the orders provided by the database (0.090833ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.838583
+workflow YAML: valid
+trailing whitespace: none
+./.github/pull_request_template.md
+./.github/workflows/test.yml
+./AGENTS.md
+./package.json
+./req.md
+./run.log
+./src/orders.js
+./summary.md
+./test/orders.test.js
+# 주문 조회 장애 재발 방지 조치 요약
+
+## 사고 요약
+
+- 발생일: 2026-08-24 (보고일 기준 전일)
+- 영향: 고객 3명이 주문 데이터 조회 오류를 겪음
+- 직접 원인: 주문이 없는 사용자에 대해 `getUserOrders()`가 빈 배열 대신 `null`을 반환했고, 프론트엔드가 배열로 가정하고 처리하면서 오류가 발생함
+- 유입 원인: 해당 동작을 검증하는 회귀 테스트와 머지 전 필수 CI 검사가 없었음
+- 기존 대응: 원인 커밋은 이미 revert됨
+
+## 이번에 적용한 조치
+
+1. **반환 계약 수정** (`src/orders.js`)
+   - 주문이 0건이어도 `getUserOrders()`가 항상 배열을 반환하도록 `null` 분기를 제거함.
+   - 호출자가 반환값을 안전하게 순회할 수 있다는 계약을 주석으로 명시함.
+
+2. **회귀 테스트 추가** (`test/orders.test.js`)
+   - 주문이 0건일 때 정확히 빈 배열을 반환하고 `map()` 호출이 실패하지 않는지 검증함.
+   - 주문이 존재할 때 DB 결과를 그대로 반환하는 기존 동작도 함께 검증함.
+   - 쿼리가 사용자 ID를 파라미터로 전달하는지도 검증함.
+
+3. **PR/메인 브랜치 CI 추가** (`.github/workflows/test.yml`)
+   - 모든 pull request와 `main` 푸시에서 `npm test`를 실행함.
+   - 수동 실행도 가능하게 했으며, 중복 실행 취소와 5분 타임아웃을 설정함.
+   - 워크플로 권한을 읽기 전용으로 제한함.
+
+4. **머지 절차 명문화** (`AGENTS.md`, `.github/pull_request_template.md`)
+   - 동작 변경에는 테스트를, 버그 수정에는 수정 전 실패하는 회귀 테스트를 요구함.
+   - 로컬 `npm test` 실행, 빈 값/누락 값/오류 반환 계약 확인, CI 통과 여부를 PR 체크리스트에 추가함.
+   - 필수 `test` CI가 통과하기 전에는 머지하지 않도록 저장소 작업 지침에 명시함.
+
+## 검증 결과
+
+`npm test` 실행 결과:
+
+- 테스트 2개 통과
+- 실패, 건너뜀, 취소 0개
+
+## 저장소 관리자 후속 조치
+
+CI 워크플로 파일만으로는 실패한 PR의 머지를 강제로 차단할 수 없다. GitHub 저장소 설정에서 `main` 브랜치 ruleset 또는 branch protection을 다음과 같이 설정해야 한다.
+
+- pull request를 통해서만 변경 허용
+- 필수 status check로 `test` 지정
+- 최소 1명 승인 요구 및 새 커밋 시 기존 승인 무효화
+- 필수 체크가 끝나기 전 머지 차단
+- 관리자 우회와 `main` 직접 푸시를 허용하지 않음
+
+이 설정까지 적용되면 이번 사고의 유입 경로였던 “테스트를 실행하지 않은 변경의 직접 머지”가 기술적으로 차단된다.
+
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e8c5851f60c37f0ca868229ea1a904e6e04c1f5
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+@@ -0,0 +1,15 @@
++## What changed
++
++<!-- Describe the user-visible behavior and risk. -->
++
++## Verification
++
++- [ ] I added or updated tests for behavior changes (or explained why this is not applicable).
++- [ ] For a bug fix, I added a regression test that fails without the fix.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked compatibility-sensitive return values, including empty, missing, and error cases.
++- [ ] The required `test` CI check passes.
++
++## Test exception
++
++<!-- If tests are not applicable, explain why. Do not leave an unchecked item unexplained. -->
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c621abebbc8874f1e386d3c991fd0d52c90da451
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+@@ -0,0 +1,30 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/benchmarks/results/05-incident-off-symmetric/AGENTS.md b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..926b729e0a01ac313950ab1a8eef6cbafc2f6be0
+--- a/benchmarks/results/05-incident-off-symmetric/AGENTS.md
++++ b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+@@ -1,3 +1,5 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
+-- Run `npm test` before merging.
++- Every behavior change must include or update tests. Bug fixes must include a regression test that fails without the fix.
++- Run `npm test` before opening a pull request and before merging.
++- Do not merge unless the required `test` CI check passes.
+diff --git a/benchmarks/results/05-incident-off-symmetric/src/orders.js b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..07eefc2159bcc99b935dc66f07fa87b0848ee22f
+--- a/benchmarks/results/05-incident-off-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+@@ -1,5 +1,10 @@
++/**
++ * Return all orders for a user.
++ *
++ * The return value is always an array. In particular, a user with no orders
++ * has an empty array so callers can safely iterate over the result.
++ */
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-off-symmetric/summary.md b/benchmarks/results/05-incident-off-symmetric/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ba2b5d0bd9fd5b94292d56572101c8f37dacc27e
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/summary.md
+@@ -0,0 +1,49 @@
++# 주문 조회 장애 재발 방지 조치 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24 (보고일 기준 전일)
++- 영향: 고객 3명이 주문 데이터 조회 오류를 겪음
++- 직접 원인: 주문이 없는 사용자에 대해 `getUserOrders()`가 빈 배열 대신 `null`을 반환했고, 프론트엔드가 배열로 가정하고 처리하면서 오류가 발생함
++- 유입 원인: 해당 동작을 검증하는 회귀 테스트와 머지 전 필수 CI 검사가 없었음
++- 기존 대응: 원인 커밋은 이미 revert됨
++
++## 이번에 적용한 조치
++
++1. **반환 계약 수정** (`src/orders.js`)
++   - 주문이 0건이어도 `getUserOrders()`가 항상 배열을 반환하도록 `null` 분기를 제거함.
++   - 호출자가 반환값을 안전하게 순회할 수 있다는 계약을 주석으로 명시함.
++
++2. **회귀 테스트 추가** (`test/orders.test.js`)
++   - 주문이 0건일 때 정확히 빈 배열을 반환하고 `map()` 호출이 실패하지 않는지 검증함.
++   - 주문이 존재할 때 DB 결과를 그대로 반환하는 기존 동작도 함께 검증함.
++   - 쿼리가 사용자 ID를 파라미터로 전달하는지도 검증함.
++
++3. **PR/메인 브랜치 CI 추가** (`.github/workflows/test.yml`)
++   - 모든 pull request와 `main` 푸시에서 `npm test`를 실행함.
++   - 수동 실행도 가능하게 했으며, 중복 실행 취소와 5분 타임아웃을 설정함.
++   - 워크플로 권한을 읽기 전용으로 제한함.
++
++4. **머지 절차 명문화** (`AGENTS.md`, `.github/pull_request_template.md`)
++   - 동작 변경에는 테스트를, 버그 수정에는 수정 전 실패하는 회귀 테스트를 요구함.
++   - 로컬 `npm test` 실행, 빈 값/누락 값/오류 반환 계약 확인, CI 통과 여부를 PR 체크리스트에 추가함.
++   - 필수 `test` CI가 통과하기 전에는 머지하지 않도록 저장소 작업 지침에 명시함.
++
++## 검증 결과
++
++`npm test` 실행 결과:
++
++- 테스트 2개 통과
++- 실패, 건너뜀, 취소 0개
++
++## 저장소 관리자 후속 조치
++
++CI 워크플로 파일만으로는 실패한 PR의 머지를 강제로 차단할 수 없다. GitHub 저장소 설정에서 `main` 브랜치 ruleset 또는 branch protection을 다음과 같이 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- 필수 status check로 `test` 지정
++- 최소 1명 승인 요구 및 새 커밋 시 기존 승인 무효화
++- 필수 체크가 끝나기 전 머지 차단
++- 관리자 우회와 `main` 직접 푸시를 허용하지 않음
++
++이 설정까지 적용되면 이번 사고의 유입 경로였던 “테스트를 실행하지 않은 변경의 직접 머지”가 기술적으로 차단된다.
+diff --git a/benchmarks/results/05-incident-off-symmetric/test/orders.test.js b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..efc224ca3fe672b269e6fe79c5e8296c702f5b56
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+@@ -0,0 +1,30 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-with-no-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-with-no-orders');
++
++  assert.ok(Array.isArray(orders));
++  assert.deepEqual(orders, []);
++  assert.doesNotThrow(() => orders.map((order) => order.id));
++});
++
++test('getUserOrders returns the orders provided by the database', () => {
++  const rows = [
++    { id: 'order-1', user_id: 'user-1' },
++    { id: 'order-2', user_id: 'user-1' },
++  ];
++  const db = { query: () => rows };
++
++  assert.strictEqual(getUserOrders(db, 'user-1'), rows);
++});
+
+코드·회귀 테스트·CI·PR 가드레일을 반영했고, 테스트와 구문/형식 검증을 마친 뒤 summary.md까지 작성했습니다.
+  ✓ 레포 구조와 현재 테스트/CI 구성을 점검한다
+  ✓ 빈 주문 결과 회귀 테스트와 필요한 코드/정책 자동화를 구현한다
+  ✓ 전체 테스트를 실행하고 변경을 검토한다
+  ✓ 재발 방지 조치와 후속 설정을 summary.md에 정리한다
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e8c5851f60c37f0ca868229ea1a904e6e04c1f5
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+@@ -0,0 +1,15 @@
++## What changed
++
++<!-- Describe the user-visible behavior and risk. -->
++
++## Verification
++
++- [ ] I added or updated tests for behavior changes (or explained why this is not applicable).
++- [ ] For a bug fix, I added a regression test that fails without the fix.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked compatibility-sensitive return values, including empty, missing, and error cases.
++- [ ] The required `test` CI check passes.
++
++## Test exception
++
++<!-- If tests are not applicable, explain why. Do not leave an unchecked item unexplained. -->
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c621abebbc8874f1e386d3c991fd0d52c90da451
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+@@ -0,0 +1,30 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/benchmarks/results/05-incident-off-symmetric/AGENTS.md b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..926b729e0a01ac313950ab1a8eef6cbafc2f6be0
+--- a/benchmarks/results/05-incident-off-symmetric/AGENTS.md
++++ b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+@@ -1,3 +1,5 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
+-- Run `npm test` before merging.
++- Every behavior change must include or update tests. Bug fixes must include a regression test that fails without the fix.
++- Run `npm test` before opening a pull request and before merging.
++- Do not merge unless the required `test` CI check passes.
+diff --git a/benchmarks/results/05-incident-off-symmetric/src/orders.js b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..07eefc2159bcc99b935dc66f07fa87b0848ee22f
+--- a/benchmarks/results/05-incident-off-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+@@ -1,5 +1,10 @@
++/**
++ * Return all orders for a user.
++ *
++ * The return value is always an array. In particular, a user with no orders
++ * has an empty array so callers can safely iterate over the result.
++ */
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-off-symmetric/summary.md b/benchmarks/results/05-incident-off-symmetric/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ba2b5d0bd9fd5b94292d56572101c8f37dacc27e
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/summary.md
+@@ -0,0 +1,49 @@
++# 주문 조회 장애 재발 방지 조치 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24 (보고일 기준 전일)
++- 영향: 고객 3명이 주문 데이터 조회 오류를 겪음
++- 직접 원인: 주문이 없는 사용자에 대해 `getUserOrders()`가 빈 배열 대신 `null`을 반환했고, 프론트엔드가 배열로 가정하고 처리하면서 오류가 발생함
++- 유입 원인: 해당 동작을 검증하는 회귀 테스트와 머지 전 필수 CI 검사가 없었음
++- 기존 대응: 원인 커밋은 이미 revert됨
++
++## 이번에 적용한 조치
++
++1. **반환 계약 수정** (`src/orders.js`)
++   - 주문이 0건이어도 `getUserOrders()`가 항상 배열을 반환하도록 `null` 분기를 제거함.
++   - 호출자가 반환값을 안전하게 순회할 수 있다는 계약을 주석으로 명시함.
++
++2. **회귀 테스트 추가** (`test/orders.test.js`)
++   - 주문이 0건일 때 정확히 빈 배열을 반환하고 `map()` 호출이 실패하지 않는지 검증함.
++   - 주문이 존재할 때 DB 결과를 그대로 반환하는 기존 동작도 함께 검증함.
++   - 쿼리가 사용자 ID를 파라미터로 전달하는지도 검증함.
++
++3. **PR/메인 브랜치 CI 추가** (`.github/workflows/test.yml`)
++   - 모든 pull request와 `main` 푸시에서 `npm test`를 실행함.
++   - 수동 실행도 가능하게 했으며, 중복 실행 취소와 5분 타임아웃을 설정함.
++   - 워크플로 권한을 읽기 전용으로 제한함.
++
++4. **머지 절차 명문화** (`AGENTS.md`, `.github/pull_request_template.md`)
++   - 동작 변경에는 테스트를, 버그 수정에는 수정 전 실패하는 회귀 테스트를 요구함.
++   - 로컬 `npm test` 실행, 빈 값/누락 값/오류 반환 계약 확인, CI 통과 여부를 PR 체크리스트에 추가함.
++   - 필수 `test` CI가 통과하기 전에는 머지하지 않도록 저장소 작업 지침에 명시함.
++
++## 검증 결과
++
++`npm test` 실행 결과:
++
++- 테스트 2개 통과
++- 실패, 건너뜀, 취소 0개
++
++## 저장소 관리자 후속 조치
++
++CI 워크플로 파일만으로는 실패한 PR의 머지를 강제로 차단할 수 없다. GitHub 저장소 설정에서 `main` 브랜치 ruleset 또는 branch protection을 다음과 같이 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- 필수 status check로 `test` 지정
++- 최소 1명 승인 요구 및 새 커밋 시 기존 승인 무효화
++- 필수 체크가 끝나기 전 머지 차단
++- 관리자 우회와 `main` 직접 푸시를 허용하지 않음
++
++이 설정까지 적용되면 이번 사고의 유입 경로였던 “테스트를 실행하지 않은 변경의 직접 머지”가 기술적으로 차단된다.
+diff --git a/benchmarks/results/05-incident-off-symmetric/test/orders.test.js b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..efc224ca3fe672b269e6fe79c5e8296c702f5b56
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+@@ -0,0 +1,30 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-with-no-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-with-no-orders');
++
++  assert.ok(Array.isArray(orders));
++  assert.deepEqual(orders, []);
++  assert.doesNotThrow(() => orders.map((order) => order.id));
++});
++
++test('getUserOrders returns the orders provided by the database', () => {
++  const rows = [
++    { id: 'order-1', user_id: 'user-1' },
++    { id: 'order-2', user_id: 'user-1' },
++  ];
++  const db = { query: () => rows };
++
++  assert.strictEqual(getUserOrders(db, 'user-1'), rows);
++});
+
+codex
+재발 방지 조치를 적용했습니다.
+
+- `getUserOrders()`가 주문 0건일 때 항상 `[]`을 반환하도록 수정
+- 빈 주문 및 정상 주문에 대한 회귀 테스트 추가
+- PR과 `main` 푸시마다 `npm test`를 실행하는 GitHub Actions 추가
+- PR 테스트 체크리스트와 머지 지침 강화
+- `npm test`: 2개 테스트 모두 통과
+- Workflow YAML 및 코드 구문 검증 완료
+
+전체 내용은 [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric/summary.md)에 정리했습니다.
+
+남은 관리자 작업은 GitHub에서 `main` 브랜치의 필수 status check를 `test`로 지정하고 직접 푸시 및 관리자 우회를 차단하는 것입니다.
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..3e8c5851f60c37f0ca868229ea1a904e6e04c1f5
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/pull_request_template.md
+@@ -0,0 +1,15 @@
++## What changed
++
++<!-- Describe the user-visible behavior and risk. -->
++
++## Verification
++
++- [ ] I added or updated tests for behavior changes (or explained why this is not applicable).
++- [ ] For a bug fix, I added a regression test that fails without the fix.
++- [ ] I ran `npm test` locally and it passed.
++- [ ] I checked compatibility-sensitive return values, including empty, missing, and error cases.
++- [ ] The required `test` CI check passes.
++
++## Test exception
++
++<!-- If tests are not applicable, explain why. Do not leave an unchecked item unexplained. -->
+diff --git a/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c621abebbc8874f1e386d3c991fd0d52c90da451
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/.github/workflows/test.yml
+@@ -0,0 +1,30 @@
++name: Test
++
++on:
++  pull_request:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++permissions:
++  contents: read
++
++concurrency:
++  group: test-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test:
++    name: test
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - name: Check out repository
++        uses: actions/checkout@v4
++      - name: Set up Node.js
++        uses: actions/setup-node@v4
++        with:
++          node-version: 24
++      - name: Run tests
++        run: npm test
+diff --git a/benchmarks/results/05-incident-off-symmetric/AGENTS.md b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+index 5fa8a81e491183d8333d078f227fd0c4aa00c21e..926b729e0a01ac313950ab1a8eef6cbafc2f6be0
+--- a/benchmarks/results/05-incident-off-symmetric/AGENTS.md
++++ b/benchmarks/results/05-incident-off-symmetric/AGENTS.md
+@@ -1,3 +1,5 @@
+ # AGENTS.md
+ - Default branch: main. Feature branches: feat/*.
+-- Run `npm test` before merging.
++- Every behavior change must include or update tests. Bug fixes must include a regression test that fails without the fix.
++- Run `npm test` before opening a pull request and before merging.
++- Do not merge unless the required `test` CI check passes.
+diff --git a/benchmarks/results/05-incident-off-symmetric/src/orders.js b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+index 2912abb64958c2724684d25c32b86891567bf091..07eefc2159bcc99b935dc66f07fa87b0848ee22f
+--- a/benchmarks/results/05-incident-off-symmetric/src/orders.js
++++ b/benchmarks/results/05-incident-off-symmetric/src/orders.js
+@@ -1,5 +1,10 @@
++/**
++ * Return all orders for a user.
++ *
++ * The return value is always an array. In particular, a user with no orders
++ * has an empty array so callers can safely iterate over the result.
++ */
+ export function getUserOrders(db, userId) {
+   const rows = db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+-  if (!rows.length) return null; // reverted hotfix restored the old behavior
+   return rows;
+ }
+diff --git a/benchmarks/results/05-incident-off-symmetric/summary.md b/benchmarks/results/05-incident-off-symmetric/summary.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..ba2b5d0bd9fd5b94292d56572101c8f37dacc27e
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/summary.md
+@@ -0,0 +1,49 @@
++# 주문 조회 장애 재발 방지 조치 요약
++
++## 사고 요약
++
++- 발생일: 2026-08-24 (보고일 기준 전일)
++- 영향: 고객 3명이 주문 데이터 조회 오류를 겪음
++- 직접 원인: 주문이 없는 사용자에 대해 `getUserOrders()`가 빈 배열 대신 `null`을 반환했고, 프론트엔드가 배열로 가정하고 처리하면서 오류가 발생함
++- 유입 원인: 해당 동작을 검증하는 회귀 테스트와 머지 전 필수 CI 검사가 없었음
++- 기존 대응: 원인 커밋은 이미 revert됨
++
++## 이번에 적용한 조치
++
++1. **반환 계약 수정** (`src/orders.js`)
++   - 주문이 0건이어도 `getUserOrders()`가 항상 배열을 반환하도록 `null` 분기를 제거함.
++   - 호출자가 반환값을 안전하게 순회할 수 있다는 계약을 주석으로 명시함.
++
++2. **회귀 테스트 추가** (`test/orders.test.js`)
++   - 주문이 0건일 때 정확히 빈 배열을 반환하고 `map()` 호출이 실패하지 않는지 검증함.
++   - 주문이 존재할 때 DB 결과를 그대로 반환하는 기존 동작도 함께 검증함.
++   - 쿼리가 사용자 ID를 파라미터로 전달하는지도 검증함.
++
++3. **PR/메인 브랜치 CI 추가** (`.github/workflows/test.yml`)
++   - 모든 pull request와 `main` 푸시에서 `npm test`를 실행함.
++   - 수동 실행도 가능하게 했으며, 중복 실행 취소와 5분 타임아웃을 설정함.
++   - 워크플로 권한을 읽기 전용으로 제한함.
++
++4. **머지 절차 명문화** (`AGENTS.md`, `.github/pull_request_template.md`)
++   - 동작 변경에는 테스트를, 버그 수정에는 수정 전 실패하는 회귀 테스트를 요구함.
++   - 로컬 `npm test` 실행, 빈 값/누락 값/오류 반환 계약 확인, CI 통과 여부를 PR 체크리스트에 추가함.
++   - 필수 `test` CI가 통과하기 전에는 머지하지 않도록 저장소 작업 지침에 명시함.
++
++## 검증 결과
++
++`npm test` 실행 결과:
++
++- 테스트 2개 통과
++- 실패, 건너뜀, 취소 0개
++
++## 저장소 관리자 후속 조치
++
++CI 워크플로 파일만으로는 실패한 PR의 머지를 강제로 차단할 수 없다. GitHub 저장소 설정에서 `main` 브랜치 ruleset 또는 branch protection을 다음과 같이 설정해야 한다.
++
++- pull request를 통해서만 변경 허용
++- 필수 status check로 `test` 지정
++- 최소 1명 승인 요구 및 새 커밋 시 기존 승인 무효화
++- 필수 체크가 끝나기 전 머지 차단
++- 관리자 우회와 `main` 직접 푸시를 허용하지 않음
++
++이 설정까지 적용되면 이번 사고의 유입 경로였던 “테스트를 실행하지 않은 변경의 직접 머지”가 기술적으로 차단된다.
+diff --git a/benchmarks/results/05-incident-off-symmetric/test/orders.test.js b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..efc224ca3fe672b269e6fe79c5e8296c702f5b56
+--- /dev/null
++++ b/benchmarks/results/05-incident-off-symmetric/test/orders.test.js
+@@ -0,0 +1,30 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++
++import { getUserOrders } from '../src/orders.js';
++
++test('getUserOrders returns an empty array when the user has no orders', () => {
++  const db = {
++    query(sql, params) {
++      assert.equal(sql, 'SELECT * FROM orders WHERE user_id = ?');
++      assert.deepEqual(params, ['user-with-no-orders']);
++      return [];
++    },
++  };
++
++  const orders = getUserOrders(db, 'user-with-no-orders');
++
++  assert.ok(Array.isArray(orders));
++  assert.deepEqual(orders, []);
++  assert.doesNotThrow(() => orders.map((order) => order.id));
++});
++
++test('getUserOrders returns the orders provided by the database', () => {
++  const rows = [
++    { id: 'order-1', user_id: 'user-1' },
++    { id: 'order-2', user_id: 'user-1' },
++  ];
++  const db = { query: () => rows };
++
++  assert.strictEqual(getUserOrders(db, 'user-1'), rows);
++});
+
+tokens used
+38,073
+재발 방지 조치를 적용했습니다.
+
+- `getUserOrders()`가 주문 0건일 때 항상 `[]`을 반환하도록 수정
+- 빈 주문 및 정상 주문에 대한 회귀 테스트 추가
+- PR과 `main` 푸시마다 `npm test`를 실행하는 GitHub Actions 추가
+- PR 테스트 체크리스트와 머지 지침 강화
+- `npm test`: 2개 테스트 모두 통과
+- Workflow YAML 및 코드 구문 검증 완료
+
+전체 내용은 [summary.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/05-incident-off-symmetric/summary.md)에 정리했습니다.
+
+남은 관리자 작업은 GitHub에서 `main` 브랜치의 필수 status check를 `test`로 지정하고 직접 푸시 및 관리자 우회를 차단하는 것입니다.

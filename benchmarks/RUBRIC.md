@@ -27,6 +27,14 @@ rollback procedure, and audit record. One point per requested item present and u
 A ceremony-cutting skill that scores below 4 here is broken — cutting requested process is
 damage, not restraint. Ceremony is still scored, but only for items *beyond* the four asked.
 
+**Kept score (document scenarios).** Same idea, applied to what the prompt asked for rather
+than to invented process, because ceremony bottoms out at 0 and cannot tell a lean document
+from a thin one. One point per requested item present and usable: `01-prd` has four (add and
+remove a bookmark, the my-page list, login-only access, and the named stack — Supabase data
+and permissions plus React Query cache behaviour), `02-process` has two (a development process
+and a verification scheme). `03-loop` and `05-incident` need no kept score — their own
+scenario metric already measures the outcome.
+
 **Loop verdict (03-loop only).** Categorical, judged from the plan text:
 - `dismantle` — removes the authorization machinery itself and asks the existence question
 - `shrink` — removes the immediate irritant (the pins) but leaves the machinery standing

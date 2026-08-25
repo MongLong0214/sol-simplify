@@ -1,0 +1,688 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/01-prd-on-symmetric
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037ac-ce53-7bb3-b26a-c50c54162e63
+--------
+user
+게시글에 "북마크" 버튼을 추가하는 기능의 PRD를 작성해줘.
+
+컨텍스트: Next.js 15 App Router + Supabase + React Query 웹서비스. 로그인 유저가 게시글을 북마크하고, 마이페이지에서 북마크 목록을 볼 수 있으면 된다.
+
+PRD를 마크다운 파일 prd-bookmark.md 로 저장해줘.
+
+codex
+`sol-simplify` 스킬을 사용해 PRD를 실제 구현에 필요한 범위로 간결하게 잡겠습니다. 먼저 스킬 지침과 저장소 구조를 확인한 뒤 `prd-bookmark.md`를 작성하겠습니다.
+exec
+/bin/zsh -lc "sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.FFK7Vf5gKa/skills/sol-simplify/SKILL.md && find .. -name AGENTS.md -print && pwd && rg --files -g '"'!node_modules'"' | sed -n '1,120p'" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/01-prd-on-symmetric
+ succeeded in 0ms:
+---
+name: sol-simplify
+description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "add validation", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering.
+---
+
+# sol-simplify
+
+You over-engineer the *process of doing the work*, not the code: governance before product,
+checks stacked on checks, machinery that decides whether work may begin. It reads as rigor. It
+ends as overhead that outgrows what it guards and then refuses to let work through.
+
+Measured on one agent-built repository: verification machinery reached **20,280 lines against
+17,964 lines of product**; **33% of commits** existed only to keep that machinery in sync with
+itself; on day 17 a rule the agent had written for itself blocked four implementation lanes
+until a human deleted it.
+
+Ponytail cuts code. sol-simplify cuts the process you build around code.
+
+## What you manufacture
+
+| tag | what it is | the tell |
+|---|---|---|
+| `ceremony` | a document or record that exists so process looks observed | nobody reads it twice |
+| `machinery` | tooling that authorizes, validates, or tracks work instead of doing it | it needs its own tests |
+| `pin` | a frozen count, inventory, or tally | unrelated work invalidates it |
+| `metatest` | a check on process compliance rather than behavior | it fails while the software is fine |
+| `circular` | a rule gated on what only its own machinery can produce | it can refuse everything |
+
+Name what you skipped with these words.
+
+## Before you produce an artifact
+
+- **One request, one artifact.** No companion ADR, ticket board, traceability matrix, gate registry, status ledger, decision record, OWNERS file, or index. If a second one is load-bearing, name it in a line and let the user ask.
+- **Numbers you were not given are fiction.** No SLOs, latency targets, KPIs, success metrics, or "collect a baseline for two weeks".
+- **Process you were not given is theater.** No phased rollout, definition-of-done checklist, approval gate, sign-off matrix, or rollback policy.
+- **External-authority work is never yours to start.** No legal clearance, trademark search, license audit, compliance review, or study protocol with participants and hypotheses.
+- **Process is earned, not chosen.** Ceremony scales with how many people must coordinate and what being wrong costs — not with how serious you want the project to look. One maintainer and no users earns none. Adopt a gate the day something gets past you without one.
+- **Size follows the ask.** Past roughly 5x the length of the request, you inflated it. Cut; do not justify. A section that exists to look complete is padding.
+- **Ambiguity shrinks scope.** State one assumption, build the smallest thing that satisfies it, continue. Your instinct is backwards here: unclear means less, not more.
+- **Thinking longer buys a better answer, not a bigger one.** If extra reasoning is turning into extra sections and extra gates, it is being spent in the wrong place.
+
+❌ Five-line request for a bookmark button → 440-line PRD with p95 targets, four analytics
+events, a five-phase rollout, and an eight-item definition of done.
+
+✅ 116 lines: flows, requirements, data model, acceptance criteria.
+`skipped: ceremony — rollout, KPIs, DoD. Say the word.`
+
+## Before you add a check
+
+- **You maintain every check forever.** A validator wants a contract test; the test wants fixed expectations; the expectations want updating whenever anything moves. Price that before the first one.
+- **Verify the product, never the process.** Ask: *does this catch a bug a user would hit?* If not, do not write it. That is a `metatest`, and it will fail on days when the software is perfect.
+- **Never pin a number unrelated work moves.** File counts, ticket totals, requirement censuses, section inventories — any figure two parallel changes can both invalidate becomes a permanent tax paid in commits that ship nothing. Compute it or drop it.
+- **Never build machinery that authorizes work.** No readiness resolver, execution-state validator, gate administrator, or state machine over your own process. It outgrows the product and eventually blocks it. Do the work instead.
+
+❌ "Add a validator asserting every ticket links to an ADR, plus a contract test pinning the
+link count."
+
+✅ "No — that count breaks on every merge and catches no bug. If a ticket needs an ADR, review
+catches it."
+
+## What you will tell yourself
+
+| the thought | what is true |
+|---|---|
+| "This domain is high-stakes, it needs more process." | Stakes buy better tests, not more paperwork. Name the failure the process prevents; if you cannot, it prevents nothing. |
+| "Doing it properly means doing it thoroughly." | Thoroughness belongs to the product. A gate is not thoroughness, it is a tax on every change after it. |
+| "We will need this once the team grows." | Add it when the team grows. You are designing process for people who do not exist. |
+| "Better to fix the rules before writing code." | Rules written before the work encode untested assumptions — and you will obey them anyway, for months. |
+| "A validator makes this reproducible." | Reproducibility comes from deterministic code and tests that run it. A check on documents reproduces nothing. |
+| "It is cheap to add now." | Nothing is ever removed. Price it at its lifetime, not its first commit. |
+
+## Notice the loop
+
+You are inside it when any of these is true:
+
+- Recent edits are mostly to checking machinery rather than to the product.
+- You are re-syncing a verification artifact with the repository instead of changing behavior.
+- You are fixing a validator that was itself written to fix a validator.
+- A check fails for a reason unrelated to whether the software works.
+
+Then **stop and say so.** Name the machinery, state its cost, propose deleting it. Do not add an
+exception, a reconciliation step, or another layer. Deleting a check is a legitimate fix and
+usually the right one.
+
+**Never make the rules heavier because of what just happened.** Do not add workflow steps, hard
+stops, or authority hierarchies to AGENTS.md, CLAUDE.md, or a README in reaction to one
+incident. Files that grow after every mistake are how a project talks itself into paralysis —
+and you will obey every line you add there, next session and every session after.
+
+## When your own process blocks you
+
+- **First ask whether the block is correct.** A gate that fails because the software is genuinely unsafe, insecure, or non-compliant is doing its job — fix the code, never the gate. This section is about the other case only.
+- **A rule you authored that blocks work for reasons unrelated to product behavior is a bug in the rule.** Say which it is, then delete or repair it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
+- **Never stall silently behind ceremony you created.** Name the rule in one sentence, then proceed under a stated assumption or ask. A gate with no human behind it is not a gate.
+
+## If you do add process
+
+Mark it with its own removal trigger, so it can be audited later instead of becoming permanent:
+
+```
+sol-simplify: <why this exists>, remove when <condition>
+```
+
+Process with no removal condition never leaves.
+
+## Never cut these
+
+Correctness. Tests that exercise real behavior. Input validation at trust boundaries. Error
+handling that prevents data loss. Security. Accessibility. Data migrations. Anything the user
+explicitly asked for. Cutting these is damage, not restraint — restraint applies only to
+process you invented.
+
+## Output
+
+If you left out something a reader might reasonably have expected, close with one line naming
+it, tagged, so they can ask for it:
+
+`skipped: ceremony — rollout plan, KPIs, ADR. Say the word.`
+
+If you skipped nothing, write nothing. A line that reports an empty list every time is itself
+the ceremony this skill exists to remove.
+../05-incident-off-1/AGENTS.md
+../05-incident-on-1/AGENTS.md
+../05-incident-off-2/AGENTS.md
+../05-incident-on-2/AGENTS.md
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/01-prd-on-symmetric
+req.md
+run.log
+
+exec
+/bin/zsh -lc "sed -n '1,200p' req.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/01-prd-on-symmetric
+ succeeded in 0ms:
+게시글에 "북마크" 버튼을 추가하는 기능의 PRD를 작성해줘.
+
+컨텍스트: Next.js 15 App Router + Supabase + React Query 웹서비스. 로그인 유저가 게시글을 북마크하고, 마이페이지에서 북마크 목록을 볼 수 있으면 된다.
+
+PRD를 마크다운 파일 prd-bookmark.md 로 저장해줘.
+
+codex
+범위는 “게시글 단건 북마크 토글”과 “마이페이지 목록 조회”로 한정하고, 비로그인 처리·중복 방지·RLS·로딩/오류 상태까지 제품 동작으로 명시하겠습니다. 북마크 수, 폴더/태그, 알림 같은 확장 기능은 제외합니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md
+diff --git a/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md b/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..694e746b55570b363a58ea37afe8bb8a2eeabccf
+--- /dev/null
++++ b/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md
+@@ -0,0 +1,96 @@
++# 게시글 북마크 기능 PRD
++
++## 1. 목적
++
++로그인 사용자가 나중에 다시 볼 게시글을 저장하고, 마이페이지에서 저장한 게시글을 모아 볼 수 있게 한다.
++
++## 2. 범위
++
++### 포함
++
++- 게시글 상세 화면의 북마크 추가/해제 버튼
++- 로그인 사용자별 북마크 저장
++- 마이페이지의 북마크 목록 조회
++- 로딩, 빈 목록, 실패 상태 처리
++
++### 제외
++
++- 북마크 폴더, 태그, 메모
++- 북마크 수 공개 및 인기 순위
++- 알림, 공유, 내보내기
++- 관리자용 북마크 관리 화면
++
++## 3. 사용자 흐름
++
++### 게시글 북마크
++
++1. 사용자가 게시글 상세 화면을 연다.
++2. 로그인 상태라면 현재 북마크 여부가 버튼에 표시된다.
++3. 버튼을 누르면 북마크가 즉시 추가되거나 해제된다.
++4. 저장에 실패하면 이전 상태로 돌아가고 재시도 가능한 오류 메시지를 보여준다.
++
++비로그인 사용자에게도 버튼은 보이되, 클릭하면 로그인이 필요하다는 안내와 로그인 이동 수단을 제공한다. 로그인 후 원래 게시글로 돌아올 수 있어야 한다.
++
++### 북마크 목록
++
++1. 사용자가 마이페이지의 `북마크` 영역으로 이동한다.
++2. 본인이 북마크한 게시글을 최근 북마크순으로 본다.
++3. 항목을 선택하면 해당 게시글 상세 화면으로 이동한다.
++4. 북마크가 없으면 빈 상태 안내를 보여준다.
++
++## 4. 기능 요구사항
++
++### 게시글 상세
++
++- 버튼은 `북마크 추가`와 `북마크 해제` 상태를 아이콘과 텍스트 또는 접근 가능한 이름으로 구분한다.
++- 초기 상태를 불러오는 동안 잘못된 상태가 잠깐 표시되지 않도록 로딩 상태를 제공한다.
++- 클릭 결과는 낙관적으로 반영할 수 있지만, 요청 실패 시 원래 상태와 React Query 캐시를 복구한다.
++- 빠른 연속 클릭으로 중복 레코드나 최종 상태 불일치가 생기지 않아야 한다.
++- 같은 사용자는 같은 게시글을 한 번만 북마크할 수 있다.
++
++### 마이페이지
++
++- 각 항목에 게시글 제목, 목록에서 기존에 사용하는 요약 정보, 북마크한 시각을 표시한다.
++- 목록은 `bookmarks.created_at` 내림차순으로 정렬한다.
++- 게시글이 삭제되면 해당 북마크도 제거되어 목록에 노출되지 않는다.
++- 목록 조회 실패 시 오류 안내와 재시도 동작을 제공한다.
++- 항목에서 북마크를 해제할 경우 목록과 게시글 상세의 캐시가 함께 갱신된다.
++
++## 5. 데이터 모델 및 권한
++
++Supabase에 다음 구조의 `bookmarks` 테이블을 둔다.
++
++| 필드 | 타입 | 규칙 |
++| --- | --- | --- |
++| `id` | `uuid` | 기본 키, 자동 생성 |
++| `user_id` | `uuid` | `auth.users.id` 외래 키, 필수 |
++| `post_id` | 게시글 PK와 동일 | 게시글 외래 키, 필수, 게시글 삭제 시 cascade |
++| `created_at` | `timestamptz` | 서버 기본값 `now()`, 필수 |
++
++- `(user_id, post_id)`에 unique 제약을 둔다.
++- `user_id`와 `created_at`, 필요 시 `post_id` 조회에 맞는 인덱스를 둔다.
++- Row Level Security를 활성화한다.
++- 인증 사용자는 `auth.uid() = user_id`인 행만 조회, 추가, 삭제할 수 있다.
++- 추가 시 클라이언트 입력만 신뢰하지 않고 현재 인증 사용자를 소유자로 검증한다.
++- 다른 사용자의 북마크 존재 여부와 목록은 노출하지 않는다.
++
++## 6. 앱 연동
++
++- Next.js 15 App Router의 기존 인증 및 게시글 상세/마이페이지 구조를 따른다.
++- Supabase 요청은 기존 프로젝트의 서버/클라이언트 경계와 세션 처리 방식을 재사용한다.
++- React Query는 북마크 여부, 추가/해제 mutation, 마이페이지 목록을 관리한다.
++- mutation 성공 후 관련 북마크 여부와 목록 쿼리를 갱신하거나 무효화한다.
++- 인증되지 않은 요청, 존재하지 않는 게시글, 권한 위반, 중복 추가를 구분해 처리하되 내부 오류 정보는 사용자에게 노출하지 않는다.
++
++## 7. 완료 조건
++
++- 로그인 사용자가 게시글 상세에서 북마크를 추가하면 버튼 상태가 바뀌고 새로고침 후에도 유지된다.
++- 북마크한 게시글이 마이페이지에 최근 북마크순으로 표시되고 상세 화면으로 이동할 수 있다.
++- 사용자가 북마크를 해제하면 상세 버튼과 마이페이지 목록에 반영되며 새로고침 후에도 유지된다.
++- 동일한 게시글을 반복해서 북마크해도 중복 데이터가 생성되지 않는다.
++- 비로그인 사용자는 북마크 데이터를 만들거나 읽을 수 없으며 로그인 안내를 받는다.
++- 사용자는 다른 사용자의 북마크를 조회하거나 변경할 수 없다.
++- 로딩 중 중복 요청이 방지되고, 실패 시 UI와 캐시가 서버 상태에 맞게 복구된다.
++- 키보드와 스크린 리더로 버튼의 상태와 동작을 확인하고 실행할 수 있다.
++
++`skipped: ceremony — KPI, 단계별 출시 계획, ADR, 별도 Definition of Done. 요청 시 추가 가능.`
+
+diff --git a/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md b/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..694e746b55570b363a58ea37afe8bb8a2eeabccf
+--- /dev/null
++++ b/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md
+@@ -0,0 +1,96 @@
++# 게시글 북마크 기능 PRD
++
++## 1. 목적
++
++로그인 사용자가 나중에 다시 볼 게시글을 저장하고, 마이페이지에서 저장한 게시글을 모아 볼 수 있게 한다.
++
++## 2. 범위
++
++### 포함
++
++- 게시글 상세 화면의 북마크 추가/해제 버튼
++- 로그인 사용자별 북마크 저장
++- 마이페이지의 북마크 목록 조회
++- 로딩, 빈 목록, 실패 상태 처리
++
++### 제외
++
++- 북마크 폴더, 태그, 메모
++- 북마크 수 공개 및 인기 순위
++- 알림, 공유, 내보내기
++- 관리자용 북마크 관리 화면
++
++## 3. 사용자 흐름
++
++### 게시글 북마크
++
++1. 사용자가 게시글 상세 화면을 연다.
++2. 로그인 상태라면 현재 북마크 여부가 버튼에 표시된다.
++3. 버튼을 누르면 북마크가 즉시 추가되거나 해제된다.
++4. 저장에 실패하면 이전 상태로 돌아가고 재시도 가능한 오류 메시지를 보여준다.
++
++비로그인 사용자에게도 버튼은 보이되, 클릭하면 로그인이 필요하다는 안내와 로그인 이동 수단을 제공한다. 로그인 후 원래 게시글로 돌아올 수 있어야 한다.
++
++### 북마크 목록
++
++1. 사용자가 마이페이지의 `북마크` 영역으로 이동한다.
++2. 본인이 북마크한 게시글을 최근 북마크순으로 본다.
++3. 항목을 선택하면 해당 게시글 상세 화면으로 이동한다.
++4. 북마크가 없으면 빈 상태 안내를 보여준다.
++
++## 4. 기능 요구사항
++
++### 게시글 상세
++
++- 버튼은 `북마크 추가`와 `북마크 해제` 상태를 아이콘과 텍스트 또는 접근 가능한 이름으로 구분한다.
++- 초기 상태를 불러오는 동안 잘못된 상태가 잠깐 표시되지 않도록 로딩 상태를 제공한다.
++- 클릭 결과는 낙관적으로 반영할 수 있지만, 요청 실패 시 원래 상태와 React Query 캐시를 복구한다.
++- 빠른 연속 클릭으로 중복 레코드나 최종 상태 불일치가 생기지 않아야 한다.
++- 같은 사용자는 같은 게시글을 한 번만 북마크할 수 있다.
++
++### 마이페이지
++
++- 각 항목에 게시글 제목, 목록에서 기존에 사용하는 요약 정보, 북마크한 시각을 표시한다.
++- 목록은 `bookmarks.created_at` 내림차순으로 정렬한다.
++- 게시글이 삭제되면 해당 북마크도 제거되어 목록에 노출되지 않는다.
++- 목록 조회 실패 시 오류 안내와 재시도 동작을 제공한다.
++- 항목에서 북마크를 해제할 경우 목록과 게시글 상세의 캐시가 함께 갱신된다.
++
++## 5. 데이터 모델 및 권한
++
++Supabase에 다음 구조의 `bookmarks` 테이블을 둔다.
++
++| 필드 | 타입 | 규칙 |
++| --- | --- | --- |
++| `id` | `uuid` | 기본 키, 자동 생성 |
++| `user_id` | `uuid` | `auth.users.id` 외래 키, 필수 |
++| `post_id` | 게시글 PK와 동일 | 게시글 외래 키, 필수, 게시글 삭제 시 cascade |
++| `created_at` | `timestamptz` | 서버 기본값 `now()`, 필수 |
++
++- `(user_id, post_id)`에 unique 제약을 둔다.
++- `user_id`와 `created_at`, 필요 시 `post_id` 조회에 맞는 인덱스를 둔다.
++- Row Level Security를 활성화한다.
++- 인증 사용자는 `auth.uid() = user_id`인 행만 조회, 추가, 삭제할 수 있다.
++- 추가 시 클라이언트 입력만 신뢰하지 않고 현재 인증 사용자를 소유자로 검증한다.
++- 다른 사용자의 북마크 존재 여부와 목록은 노출하지 않는다.
++
++## 6. 앱 연동
++
++- Next.js 15 App Router의 기존 인증 및 게시글 상세/마이페이지 구조를 따른다.
++- Supabase 요청은 기존 프로젝트의 서버/클라이언트 경계와 세션 처리 방식을 재사용한다.
++- React Query는 북마크 여부, 추가/해제 mutation, 마이페이지 목록을 관리한다.
++- mutation 성공 후 관련 북마크 여부와 목록 쿼리를 갱신하거나 무효화한다.
++- 인증되지 않은 요청, 존재하지 않는 게시글, 권한 위반, 중복 추가를 구분해 처리하되 내부 오류 정보는 사용자에게 노출하지 않는다.
++
++## 7. 완료 조건
++
++- 로그인 사용자가 게시글 상세에서 북마크를 추가하면 버튼 상태가 바뀌고 새로고침 후에도 유지된다.
++- 북마크한 게시글이 마이페이지에 최근 북마크순으로 표시되고 상세 화면으로 이동할 수 있다.
++- 사용자가 북마크를 해제하면 상세 버튼과 마이페이지 목록에 반영되며 새로고침 후에도 유지된다.
++- 동일한 게시글을 반복해서 북마크해도 중복 데이터가 생성되지 않는다.
++- 비로그인 사용자는 북마크 데이터를 만들거나 읽을 수 없으며 로그인 안내를 받는다.
++- 사용자는 다른 사용자의 북마크를 조회하거나 변경할 수 없다.
++- 로딩 중 중복 요청이 방지되고, 실패 시 UI와 캐시가 서버 상태에 맞게 복구된다.
++- 키보드와 스크린 리더로 버튼의 상태와 동작을 확인하고 실행할 수 있다.
++
++`skipped: ceremony — KPI, 단계별 출시 계획, ADR, 별도 Definition of Done. 요청 시 추가 가능.`
+
+exec
+/bin/zsh -lc "wc -l prd-bookmark.md && sed -n '1,220p' prd-bookmark.md && git diff --check -- prd-bookmark.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/01-prd-on-symmetric
+ succeeded in 0ms:
+      96 prd-bookmark.md
+# 게시글 북마크 기능 PRD
+
+## 1. 목적
+
+로그인 사용자가 나중에 다시 볼 게시글을 저장하고, 마이페이지에서 저장한 게시글을 모아 볼 수 있게 한다.
+
+## 2. 범위
+
+### 포함
+
+- 게시글 상세 화면의 북마크 추가/해제 버튼
+- 로그인 사용자별 북마크 저장
+- 마이페이지의 북마크 목록 조회
+- 로딩, 빈 목록, 실패 상태 처리
+
+### 제외
+
+- 북마크 폴더, 태그, 메모
+- 북마크 수 공개 및 인기 순위
+- 알림, 공유, 내보내기
+- 관리자용 북마크 관리 화면
+
+## 3. 사용자 흐름
+
+### 게시글 북마크
+
+1. 사용자가 게시글 상세 화면을 연다.
+2. 로그인 상태라면 현재 북마크 여부가 버튼에 표시된다.
+3. 버튼을 누르면 북마크가 즉시 추가되거나 해제된다.
+4. 저장에 실패하면 이전 상태로 돌아가고 재시도 가능한 오류 메시지를 보여준다.
+
+비로그인 사용자에게도 버튼은 보이되, 클릭하면 로그인이 필요하다는 안내와 로그인 이동 수단을 제공한다. 로그인 후 원래 게시글로 돌아올 수 있어야 한다.
+
+### 북마크 목록
+
+1. 사용자가 마이페이지의 `북마크` 영역으로 이동한다.
+2. 본인이 북마크한 게시글을 최근 북마크순으로 본다.
+3. 항목을 선택하면 해당 게시글 상세 화면으로 이동한다.
+4. 북마크가 없으면 빈 상태 안내를 보여준다.
+
+## 4. 기능 요구사항
+
+### 게시글 상세
+
+- 버튼은 `북마크 추가`와 `북마크 해제` 상태를 아이콘과 텍스트 또는 접근 가능한 이름으로 구분한다.
+- 초기 상태를 불러오는 동안 잘못된 상태가 잠깐 표시되지 않도록 로딩 상태를 제공한다.
+- 클릭 결과는 낙관적으로 반영할 수 있지만, 요청 실패 시 원래 상태와 React Query 캐시를 복구한다.
+- 빠른 연속 클릭으로 중복 레코드나 최종 상태 불일치가 생기지 않아야 한다.
+- 같은 사용자는 같은 게시글을 한 번만 북마크할 수 있다.
+
+### 마이페이지
+
+- 각 항목에 게시글 제목, 목록에서 기존에 사용하는 요약 정보, 북마크한 시각을 표시한다.
+- 목록은 `bookmarks.created_at` 내림차순으로 정렬한다.
+- 게시글이 삭제되면 해당 북마크도 제거되어 목록에 노출되지 않는다.
+- 목록 조회 실패 시 오류 안내와 재시도 동작을 제공한다.
+- 항목에서 북마크를 해제할 경우 목록과 게시글 상세의 캐시가 함께 갱신된다.
+
+## 5. 데이터 모델 및 권한
+
+Supabase에 다음 구조의 `bookmarks` 테이블을 둔다.
+
+| 필드 | 타입 | 규칙 |
+| --- | --- | --- |
+| `id` | `uuid` | 기본 키, 자동 생성 |
+| `user_id` | `uuid` | `auth.users.id` 외래 키, 필수 |
+| `post_id` | 게시글 PK와 동일 | 게시글 외래 키, 필수, 게시글 삭제 시 cascade |
+| `created_at` | `timestamptz` | 서버 기본값 `now()`, 필수 |
+
+- `(user_id, post_id)`에 unique 제약을 둔다.
+- `user_id`와 `created_at`, 필요 시 `post_id` 조회에 맞는 인덱스를 둔다.
+- Row Level Security를 활성화한다.
+- 인증 사용자는 `auth.uid() = user_id`인 행만 조회, 추가, 삭제할 수 있다.
+- 추가 시 클라이언트 입력만 신뢰하지 않고 현재 인증 사용자를 소유자로 검증한다.
+- 다른 사용자의 북마크 존재 여부와 목록은 노출하지 않는다.
+
+## 6. 앱 연동
+
+- Next.js 15 App Router의 기존 인증 및 게시글 상세/마이페이지 구조를 따른다.
+- Supabase 요청은 기존 프로젝트의 서버/클라이언트 경계와 세션 처리 방식을 재사용한다.
+- React Query는 북마크 여부, 추가/해제 mutation, 마이페이지 목록을 관리한다.
+- mutation 성공 후 관련 북마크 여부와 목록 쿼리를 갱신하거나 무효화한다.
+- 인증되지 않은 요청, 존재하지 않는 게시글, 권한 위반, 중복 추가를 구분해 처리하되 내부 오류 정보는 사용자에게 노출하지 않는다.
+
+## 7. 완료 조건
+
+- 로그인 사용자가 게시글 상세에서 북마크를 추가하면 버튼 상태가 바뀌고 새로고침 후에도 유지된다.
+- 북마크한 게시글이 마이페이지에 최근 북마크순으로 표시되고 상세 화면으로 이동할 수 있다.
+- 사용자가 북마크를 해제하면 상세 버튼과 마이페이지 목록에 반영되며 새로고침 후에도 유지된다.
+- 동일한 게시글을 반복해서 북마크해도 중복 데이터가 생성되지 않는다.
+- 비로그인 사용자는 북마크 데이터를 만들거나 읽을 수 없으며 로그인 안내를 받는다.
+- 사용자는 다른 사용자의 북마크를 조회하거나 변경할 수 없다.
+- 로딩 중 중복 요청이 방지되고, 실패 시 UI와 캐시가 서버 상태에 맞게 복구된다.
+- 키보드와 스크린 리더로 버튼의 상태와 동작을 확인하고 실행할 수 있다.
+
+`skipped: ceremony — KPI, 단계별 출시 계획, ADR, 별도 Definition of Done. 요청 시 추가 가능.`
+
+diff --git a/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md b/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..694e746b55570b363a58ea37afe8bb8a2eeabccf
+--- /dev/null
++++ b/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md
+@@ -0,0 +1,96 @@
++# 게시글 북마크 기능 PRD
++
++## 1. 목적
++
++로그인 사용자가 나중에 다시 볼 게시글을 저장하고, 마이페이지에서 저장한 게시글을 모아 볼 수 있게 한다.
++
++## 2. 범위
++
++### 포함
++
++- 게시글 상세 화면의 북마크 추가/해제 버튼
++- 로그인 사용자별 북마크 저장
++- 마이페이지의 북마크 목록 조회
++- 로딩, 빈 목록, 실패 상태 처리
++
++### 제외
++
++- 북마크 폴더, 태그, 메모
++- 북마크 수 공개 및 인기 순위
++- 알림, 공유, 내보내기
++- 관리자용 북마크 관리 화면
++
++## 3. 사용자 흐름
++
++### 게시글 북마크
++
++1. 사용자가 게시글 상세 화면을 연다.
++2. 로그인 상태라면 현재 북마크 여부가 버튼에 표시된다.
++3. 버튼을 누르면 북마크가 즉시 추가되거나 해제된다.
++4. 저장에 실패하면 이전 상태로 돌아가고 재시도 가능한 오류 메시지를 보여준다.
++
++비로그인 사용자에게도 버튼은 보이되, 클릭하면 로그인이 필요하다는 안내와 로그인 이동 수단을 제공한다. 로그인 후 원래 게시글로 돌아올 수 있어야 한다.
++
++### 북마크 목록
++
++1. 사용자가 마이페이지의 `북마크` 영역으로 이동한다.
++2. 본인이 북마크한 게시글을 최근 북마크순으로 본다.
++3. 항목을 선택하면 해당 게시글 상세 화면으로 이동한다.
++4. 북마크가 없으면 빈 상태 안내를 보여준다.
++
++## 4. 기능 요구사항
++
++### 게시글 상세
++
++- 버튼은 `북마크 추가`와 `북마크 해제` 상태를 아이콘과 텍스트 또는 접근 가능한 이름으로 구분한다.
++- 초기 상태를 불러오는 동안 잘못된 상태가 잠깐 표시되지 않도록 로딩 상태를 제공한다.
++- 클릭 결과는 낙관적으로 반영할 수 있지만, 요청 실패 시 원래 상태와 React Query 캐시를 복구한다.
++- 빠른 연속 클릭으로 중복 레코드나 최종 상태 불일치가 생기지 않아야 한다.
++- 같은 사용자는 같은 게시글을 한 번만 북마크할 수 있다.
++
++### 마이페이지
++
++- 각 항목에 게시글 제목, 목록에서 기존에 사용하는 요약 정보, 북마크한 시각을 표시한다.
++- 목록은 `bookmarks.created_at` 내림차순으로 정렬한다.
++- 게시글이 삭제되면 해당 북마크도 제거되어 목록에 노출되지 않는다.
++- 목록 조회 실패 시 오류 안내와 재시도 동작을 제공한다.
++- 항목에서 북마크를 해제할 경우 목록과 게시글 상세의 캐시가 함께 갱신된다.
++
++## 5. 데이터 모델 및 권한
++
++Supabase에 다음 구조의 `bookmarks` 테이블을 둔다.
++
++| 필드 | 타입 | 규칙 |
++| --- | --- | --- |
++| `id` | `uuid` | 기본 키, 자동 생성 |
++| `user_id` | `uuid` | `auth.users.id` 외래 키, 필수 |
++| `post_id` | 게시글 PK와 동일 | 게시글 외래 키, 필수, 게시글 삭제 시 cascade |
++| `created_at` | `timestamptz` | 서버 기본값 `now()`, 필수 |
++
++- `(user_id, post_id)`에 unique 제약을 둔다.
++- `user_id`와 `created_at`, 필요 시 `post_id` 조회에 맞는 인덱스를 둔다.
++- Row Level Security를 활성화한다.
++- 인증 사용자는 `auth.uid() = user_id`인 행만 조회, 추가, 삭제할 수 있다.
++- 추가 시 클라이언트 입력만 신뢰하지 않고 현재 인증 사용자를 소유자로 검증한다.
++- 다른 사용자의 북마크 존재 여부와 목록은 노출하지 않는다.
++
++## 6. 앱 연동
++
++- Next.js 15 App Router의 기존 인증 및 게시글 상세/마이페이지 구조를 따른다.
++- Supabase 요청은 기존 프로젝트의 서버/클라이언트 경계와 세션 처리 방식을 재사용한다.
++- React Query는 북마크 여부, 추가/해제 mutation, 마이페이지 목록을 관리한다.
++- mutation 성공 후 관련 북마크 여부와 목록 쿼리를 갱신하거나 무효화한다.
++- 인증되지 않은 요청, 존재하지 않는 게시글, 권한 위반, 중복 추가를 구분해 처리하되 내부 오류 정보는 사용자에게 노출하지 않는다.
++
++## 7. 완료 조건
++
++- 로그인 사용자가 게시글 상세에서 북마크를 추가하면 버튼 상태가 바뀌고 새로고침 후에도 유지된다.
++- 북마크한 게시글이 마이페이지에 최근 북마크순으로 표시되고 상세 화면으로 이동할 수 있다.
++- 사용자가 북마크를 해제하면 상세 버튼과 마이페이지 목록에 반영되며 새로고침 후에도 유지된다.
++- 동일한 게시글을 반복해서 북마크해도 중복 데이터가 생성되지 않는다.
++- 비로그인 사용자는 북마크 데이터를 만들거나 읽을 수 없으며 로그인 안내를 받는다.
++- 사용자는 다른 사용자의 북마크를 조회하거나 변경할 수 없다.
++- 로딩 중 중복 요청이 방지되고, 실패 시 UI와 캐시가 서버 상태에 맞게 복구된다.
++- 키보드와 스크린 리더로 버튼의 상태와 동작을 확인하고 실행할 수 있다.
++
++`skipped: ceremony — KPI, 단계별 출시 계획, ADR, 별도 Definition of Done. 요청 시 추가 가능.`
+
+codex
+PRD를 작성해 [prd-bookmark.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md)에 저장했습니다.
+
+사용자 흐름, 기능 범위, Supabase 데이터 모델과 RLS, React Query 연동, 오류·접근성 및 완료 조건을 포함했습니다.
+diff --git a/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md b/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..694e746b55570b363a58ea37afe8bb8a2eeabccf
+--- /dev/null
++++ b/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md
+@@ -0,0 +1,96 @@
++# 게시글 북마크 기능 PRD
++
++## 1. 목적
++
++로그인 사용자가 나중에 다시 볼 게시글을 저장하고, 마이페이지에서 저장한 게시글을 모아 볼 수 있게 한다.
++
++## 2. 범위
++
++### 포함
++
++- 게시글 상세 화면의 북마크 추가/해제 버튼
++- 로그인 사용자별 북마크 저장
++- 마이페이지의 북마크 목록 조회
++- 로딩, 빈 목록, 실패 상태 처리
++
++### 제외
++
++- 북마크 폴더, 태그, 메모
++- 북마크 수 공개 및 인기 순위
++- 알림, 공유, 내보내기
++- 관리자용 북마크 관리 화면
++
++## 3. 사용자 흐름
++
++### 게시글 북마크
++
++1. 사용자가 게시글 상세 화면을 연다.
++2. 로그인 상태라면 현재 북마크 여부가 버튼에 표시된다.
++3. 버튼을 누르면 북마크가 즉시 추가되거나 해제된다.
++4. 저장에 실패하면 이전 상태로 돌아가고 재시도 가능한 오류 메시지를 보여준다.
++
++비로그인 사용자에게도 버튼은 보이되, 클릭하면 로그인이 필요하다는 안내와 로그인 이동 수단을 제공한다. 로그인 후 원래 게시글로 돌아올 수 있어야 한다.
++
++### 북마크 목록
++
++1. 사용자가 마이페이지의 `북마크` 영역으로 이동한다.
++2. 본인이 북마크한 게시글을 최근 북마크순으로 본다.
++3. 항목을 선택하면 해당 게시글 상세 화면으로 이동한다.
++4. 북마크가 없으면 빈 상태 안내를 보여준다.
++
++## 4. 기능 요구사항
++
++### 게시글 상세
++
++- 버튼은 `북마크 추가`와 `북마크 해제` 상태를 아이콘과 텍스트 또는 접근 가능한 이름으로 구분한다.
++- 초기 상태를 불러오는 동안 잘못된 상태가 잠깐 표시되지 않도록 로딩 상태를 제공한다.
++- 클릭 결과는 낙관적으로 반영할 수 있지만, 요청 실패 시 원래 상태와 React Query 캐시를 복구한다.
++- 빠른 연속 클릭으로 중복 레코드나 최종 상태 불일치가 생기지 않아야 한다.
++- 같은 사용자는 같은 게시글을 한 번만 북마크할 수 있다.
++
++### 마이페이지
++
++- 각 항목에 게시글 제목, 목록에서 기존에 사용하는 요약 정보, 북마크한 시각을 표시한다.
++- 목록은 `bookmarks.created_at` 내림차순으로 정렬한다.
++- 게시글이 삭제되면 해당 북마크도 제거되어 목록에 노출되지 않는다.
++- 목록 조회 실패 시 오류 안내와 재시도 동작을 제공한다.
++- 항목에서 북마크를 해제할 경우 목록과 게시글 상세의 캐시가 함께 갱신된다.
++
++## 5. 데이터 모델 및 권한
++
++Supabase에 다음 구조의 `bookmarks` 테이블을 둔다.
++
++| 필드 | 타입 | 규칙 |
++| --- | --- | --- |
++| `id` | `uuid` | 기본 키, 자동 생성 |
++| `user_id` | `uuid` | `auth.users.id` 외래 키, 필수 |
++| `post_id` | 게시글 PK와 동일 | 게시글 외래 키, 필수, 게시글 삭제 시 cascade |
++| `created_at` | `timestamptz` | 서버 기본값 `now()`, 필수 |
++
++- `(user_id, post_id)`에 unique 제약을 둔다.
++- `user_id`와 `created_at`, 필요 시 `post_id` 조회에 맞는 인덱스를 둔다.
++- Row Level Security를 활성화한다.
++- 인증 사용자는 `auth.uid() = user_id`인 행만 조회, 추가, 삭제할 수 있다.
++- 추가 시 클라이언트 입력만 신뢰하지 않고 현재 인증 사용자를 소유자로 검증한다.
++- 다른 사용자의 북마크 존재 여부와 목록은 노출하지 않는다.
++
++## 6. 앱 연동
++
++- Next.js 15 App Router의 기존 인증 및 게시글 상세/마이페이지 구조를 따른다.
++- Supabase 요청은 기존 프로젝트의 서버/클라이언트 경계와 세션 처리 방식을 재사용한다.
++- React Query는 북마크 여부, 추가/해제 mutation, 마이페이지 목록을 관리한다.
++- mutation 성공 후 관련 북마크 여부와 목록 쿼리를 갱신하거나 무효화한다.
++- 인증되지 않은 요청, 존재하지 않는 게시글, 권한 위반, 중복 추가를 구분해 처리하되 내부 오류 정보는 사용자에게 노출하지 않는다.
++
++## 7. 완료 조건
++
++- 로그인 사용자가 게시글 상세에서 북마크를 추가하면 버튼 상태가 바뀌고 새로고침 후에도 유지된다.
++- 북마크한 게시글이 마이페이지에 최근 북마크순으로 표시되고 상세 화면으로 이동할 수 있다.
++- 사용자가 북마크를 해제하면 상세 버튼과 마이페이지 목록에 반영되며 새로고침 후에도 유지된다.
++- 동일한 게시글을 반복해서 북마크해도 중복 데이터가 생성되지 않는다.
++- 비로그인 사용자는 북마크 데이터를 만들거나 읽을 수 없으며 로그인 안내를 받는다.
++- 사용자는 다른 사용자의 북마크를 조회하거나 변경할 수 없다.
++- 로딩 중 중복 요청이 방지되고, 실패 시 UI와 캐시가 서버 상태에 맞게 복구된다.
++- 키보드와 스크린 리더로 버튼의 상태와 동작을 확인하고 실행할 수 있다.
++
++`skipped: ceremony — KPI, 단계별 출시 계획, ADR, 별도 Definition of Done. 요청 시 추가 가능.`
+
+tokens used
+25,569
+PRD를 작성해 [prd-bookmark.md](/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/01-prd-on-symmetric/prd-bookmark.md)에 저장했습니다.
+
+사용자 흐름, 기능 범위, Supabase 데이터 모델과 RLS, React Query 연동, 오류·접근성 및 완료 조건을 포함했습니다.

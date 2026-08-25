@@ -18,7 +18,7 @@
 
 <p align="center">
   <strong>스킬 런 11개 중 10개에서 ceremony 0 &middot; 발명된 437줄 &rarr; 58줄 &middot; 마크다운 파일 1개</strong><br>
-  <sub><code>gpt-5.6-sol</code>, effort <code>xhigh</code>에서 고정 10-카테고리 루브릭으로 측정, 모든 점수는 해당 라인 인용, 원본 산출물 전부 커밋됨. 베이스라인은 같은 루브릭에서 4–6점. 0이 아닌 런 1개는 채점표에 실명으로 적어뒀다. 채점자 1인 — 독립 재채점 환영. 널리 알려진 한 줄짜리 프롬프트를 대조군으로 함께 실행 — 문서는 짧아지지만 게이트 면제 절차를 만들었고 14,000줄짜리 승인 기계는 그대로 뒀다. 단일 모델, 셀당 n=1–3. <a href="benchmarks/results/SCORES.md">채점표</a> &middot; <a href="benchmarks/">재현하기</a>.</sub>
+  <sub><code>gpt-5.6-sol</code>, effort <code>xhigh</code>에서 고정 10-카테고리 루브릭으로 측정 — 모든 점수는 발견한 라인을 인용하고, 원본 산출물은 전부 커밋되며, 한 줄짜리 프롬프트를 대조군으로 함께 돌려 스킬이 그걸 이겨야 하게 만들었다. 방법·채점·알려진 한계: <a href="benchmarks/results/SCORES.md">채점표</a> &middot; <a href="benchmarks/">재현하기</a>.</sub>
 </p>
 
 <p align="center">

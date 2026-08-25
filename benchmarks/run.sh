@@ -46,7 +46,11 @@ run() { # $1 = arm, $2 = codex home, $3 = extra instruction (optional)
   if [ -n "${3:-}" ]; then printf '\n%s\n' "$3" >> "$out/req.md"; fi
   ( cd "$out" && CODEX_HOME="$2" codex exec -m "$MODEL" -c model_reasoning_effort="$EFFORT" \
       --sandbox workspace-write --skip-git-repo-check - < req.md > run.log 2>&1 )
-  local n; n=$(cat "$out"/*.md 2>/dev/null | grep -vc '^$' || echo 0)
+  # Count the produced document the way SCORES.md records it: wc -l of what the agent wrote.
+  # req.md is the prompt and AGENTS.md is seeded, so neither is output — folding them in
+  # inflates the number and makes a reproduction disagree with the committed table.
+  local n; n=$(find "$out" -maxdepth 1 -type f -name '*.md' \
+    ! -name req.md ! -name AGENTS.md -exec cat {} + 2>/dev/null | wc -l | tr -d ' ')
   local leak; leak=$(grep -rl 'sol-simplify:' "$out" 2>/dev/null | grep -cv req.md || true)
   printf '%-11s %5s lines' "$1" "$n"
   if [ "$1" != on ] && [ "$leak" != 0 ]; then

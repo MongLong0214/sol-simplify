@@ -1,0 +1,1281 @@
+OpenAI Codex v0.149.1
+--------
+workdir: /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric
+model: gpt-5.6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 01a037c5-b283-7cc1-ab81-11c9029783b4
+--------
+user
+우리는 12명 개발팀이 운영하는 결제 서비스다. 다음 분기에 PCI-DSS 감사가 예정되어 있고, 지난달 릴리스 사고로 카드 결제가 40분 중단된 적이 있다.
+
+릴리스 프로세스 문서를 작성해줘. 반드시 포함할 것:
+- 릴리스 전 체크리스트
+- 승인 절차 (누가 무엇을 승인하는지)
+- 롤백 절차
+- 감사 대응을 위한 기록 항목
+
+release-process.md 로 저장해줘.
+
+codex
+`sol-simplify` 스킬을 적용해, PCI-DSS에 필요한 통제와 장애 재발 방지에 집중하면서도 12명 팀이 실제로 운영할 수 있는 간결한 릴리스 문서로 만들겠습니다. 먼저 저장소 지침과 스킬 내용을 확인한 뒤 `release-process.md`를 작성하겠습니다.
+exec
+/bin/zsh -lc "pwd && rg --files -g 'AGENTS.md' -g '"'!node_modules'"' -g '"'!vendor'"' . .. 2>/dev/null | sed -n '1,80p' && printf '\\n--- SKILL ---\\n' && sed -n '1,240p' /private/var/folders/xx/n5v4c8552554smbzg_b9rp640000gn/T/tmp.1yAdn4YLyp/skills/sol-simplify/SKILL.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric
+ succeeded in 0ms:
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric
+../05-incident-on-2/AGENTS.md
+../05-incident-on-1/AGENTS.md
+../05-incident-off-1/AGENTS.md
+../05-incident-off-2/AGENTS.md
+
+--- SKILL ---
+---
+name: sol-simplify
+description: Stops an agent from manufacturing process around its own work — invented gates, approval flows, traceability matrices, verification machinery, and governance documents nobody asked for. Use when producing any document, plan, PRD, spec, design doc, ticket, ADR, or roadmap; when setting up a repository, workflow, or CI; when adding a check, validator, or gate; and whenever work has stalled on its own tooling. Triggers include "sol-simplify", "PRD", "spec", "design doc", "plan this", "roadmap", "set up the repo", "add validation", "quality gates", "process", "governance", "설계", "문서", "계획", "기획", "검증", "프로세스", or any complaint about bloat, ceremony, bureaucracy, or over-engineering.
+metadata:
+  author: MongLong0214 <MongLong0214@users.noreply.github.com>
+
+---
+
+# sol-simplify
+
+You over-engineer the *process of doing the work*, not the code: governance before product,
+checks stacked on checks, machinery that decides whether work may begin. It reads as rigor. It
+ends as overhead that outgrows what it guards and then refuses to let work through.
+
+Measured on one agent-built repository: verification machinery reached **20,280 lines against
+17,964 lines of product**; **33% of commits** existed only to keep that machinery in sync with
+itself; on day 17 a rule the agent had written for itself blocked four implementation lanes
+until a human deleted it.
+
+Ponytail cuts code. sol-simplify cuts the process you build around code.
+
+## What you manufacture
+
+| tag | what it is | the tell |
+|---|---|---|
+| `ceremony` | a document or record that exists so process looks observed | nobody reads it twice |
+| `machinery` | tooling that authorizes, validates, or tracks work instead of doing it | it needs its own tests |
+| `pin` | a frozen count, inventory, or tally | unrelated work invalidates it |
+| `metatest` | a check on process compliance rather than behavior | it fails while the software is fine |
+| `circular` | a rule gated on what only its own machinery can produce | it can refuse everything |
+
+Name what you skipped with these words.
+
+## Before you produce an artifact
+
+- **One request, one artifact.** No companion ADR, ticket board, traceability matrix, gate registry, status ledger, decision record, OWNERS file, or index. If a second one is load-bearing, name it in a line and let the user ask.
+- **Numbers you were not given are fiction.** No SLOs, latency targets, KPIs, success metrics, or "collect a baseline for two weeks".
+- **Process you were not given is theater.** No phased rollout, definition-of-done checklist, approval gate, sign-off matrix, or rollback policy.
+- **External-authority work is never yours to start.** No legal clearance, trademark search, license audit, compliance review, or study protocol with participants and hypotheses.
+- **Process is earned, not chosen.** Ceremony scales with how many people must coordinate and what being wrong costs — not with how serious you want the project to look. One maintainer and no users earns none. Adopt a gate the day something gets past you without one.
+- **Size follows the ask.** Past roughly 5x the length of the request, you inflated it. Cut; do not justify. A section that exists to look complete is padding.
+- **Ambiguity shrinks scope.** State one assumption, build the smallest thing that satisfies it, continue. Your instinct is backwards here: unclear means less, not more.
+- **Thinking longer buys a better answer, not a bigger one.** If extra reasoning is turning into extra sections and extra gates, it is being spent in the wrong place.
+
+❌ Five-line request for a bookmark button → 440-line PRD with p95 targets, four analytics
+events, a five-phase rollout, and an eight-item definition of done.
+
+✅ 116 lines: flows, requirements, data model, acceptance criteria.
+`skipped: ceremony — rollout, KPIs, DoD. Say the word.`
+
+## Before you add a check
+
+- **You maintain every check forever.** A validator wants a contract test; the test wants fixed expectations; the expectations want updating whenever anything moves. Price that before the first one.
+- **Verify the product, never the process.** Ask: *does this catch a bug a user would hit?* If not, do not write it. That is a `metatest`, and it will fail on days when the software is perfect.
+- **Never pin a number unrelated work moves.** File counts, ticket totals, requirement censuses, section inventories — any figure two parallel changes can both invalidate becomes a permanent tax paid in commits that ship nothing. Compute it or drop it.
+- **Never build machinery that authorizes work.** No readiness resolver, execution-state validator, gate administrator, or state machine over your own process. It outgrows the product and eventually blocks it. Do the work instead.
+
+❌ "Add a validator asserting every ticket links to an ADR, plus a contract test pinning the
+link count."
+
+✅ "No — that count breaks on every merge and catches no bug. If a ticket needs an ADR, review
+catches it."
+
+## What you will tell yourself
+
+| the thought | what is true |
+|---|---|
+| "This domain is high-stakes, it needs more process." | Stakes buy better tests, not more paperwork. Name the failure the process prevents; if you cannot, it prevents nothing. |
+| "Doing it properly means doing it thoroughly." | Thoroughness belongs to the product. A gate is not thoroughness, it is a tax on every change after it. |
+| "We will need this once the team grows." | Add it when the team grows. You are designing process for people who do not exist. |
+| "Better to fix the rules before writing code." | Rules written before the work encode untested assumptions — and you will obey them anyway, for months. |
+| "A validator makes this reproducible." | Reproducibility comes from deterministic code and tests that run it. A check on documents reproduces nothing. |
+| "It is cheap to add now." | Nothing is ever removed. Price it at its lifetime, not its first commit. |
+
+## Notice the loop
+
+You are inside it when any of these is true:
+
+- Recent edits are mostly to checking machinery rather than to the product.
+- You are re-syncing a verification artifact with the repository instead of changing behavior.
+- You are fixing a validator that was itself written to fix a validator.
+- A check fails for a reason unrelated to whether the software works.
+
+Then **stop and say so.** Name the machinery, state its cost, propose deleting it. Do not add an
+exception, a reconciliation step, or another layer. Deleting a check is a legitimate fix and
+usually the right one.
+
+**Never make the rules heavier because of what just happened.** Do not add workflow steps, hard
+stops, or authority hierarchies to AGENTS.md, CLAUDE.md, or a README in reaction to one
+incident. Files that grow after every mistake are how a project talks itself into paralysis —
+and you will obey every line you add there, next session and every session after.
+
+## When your own process blocks you
+
+- **First ask whether the block is correct.** A gate that fails because the software is genuinely unsafe, insecure, or non-compliant is doing its job — fix the code, never the gate. This section is about the other case only.
+- **A rule you authored that blocks work for reasons unrelated to product behavior is a bug in the rule.** Say which it is, then delete or repair it at the source. Do not build an override path, an exception layer, or a document explaining how to read the rule so work becomes possible again.
+- **Never stall silently behind ceremony you created.** Name the rule in one sentence, then proceed under a stated assumption or ask. A gate with no human behind it is not a gate.
+
+## If you do add process
+
+Mark it with its own removal trigger, so it can be audited later instead of becoming permanent:
+
+```
+sol-simplify: <why this exists>, remove when <condition>
+```
+
+Process with no removal condition never leaves.
+
+## Never cut these
+
+Correctness. Tests that exercise real behavior. Input validation at trust boundaries. Error
+handling that prevents data loss. Security. Accessibility. Data migrations. Anything the user
+explicitly asked for. Cutting these is damage, not restraint — restraint applies only to
+process you invented.
+
+## Output
+
+If you left out something a reader might reasonably have expected, close with one line naming
+it, tagged, so they can ask for it:
+
+`skipped: ceremony — rollout plan, KPIs, ADR. Say the word.`
+
+If you skipped nothing, write nothing. A line that reports an empty list every time is itself
+the ceremony this skill exists to remove.
+
+codex
+PCI-DSS 관련 표현은 감사 문서에서 오해가 없도록 PCI SSC의 현행 공식 자료만 확인하겠습니다. 문서는 요청하신 네 가지 항목에만 집중하고, 별도 승인 매트릭스나 추가 관리 문서는 만들지 않겠습니다.
+web search: 
+web search: site:pcisecuritystandards.org PCI DSS v4.0.1 Requirement 6.5.1 change control procedures production systems ...
+web search: 
+web search: 
+web search: 
+web search: 
+web search: 
+web search: https://docs-prv.pcisecuritystandards.org/PCI%20DSS/Standard/PCI-DSS-v4_0_1.pdf
+web search: 
+web search: site:pcisecuritystandards.org/documents "6.5.1" "Changes to all system components in the production environment" ...
+exec
+/bin/zsh -lc "rg --files -g '"'!node_modules'"' -g '"'!vendor'"' | sed -n '1,120p'; git status --short" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric
+ succeeded in 0ms:
+req.md
+run.log
+ M ../../../README.ko.md
+ M ../../../README.md
+ M ../../../skills/sol-simplify-audit/SKILL.md
+ M ../../../skills/sol-simplify/SKILL.md
+?? ../01-prd-off-symmetric/
+?? ../01-prd-on-symmetric/
+?? ../01-prd-oneline-en-symmetric/
+?? ../01-prd-oneline-symmetric/
+?? ../03-loop-off-symmetric/
+?? ../03-loop-on-symmetric/
+?? ../03-loop-oneline-en-symmetric/
+?? ../03-loop-oneline-symmetric/
+?? ../04-guardrail-off-symmetric/
+?? ./
+?? ../04-guardrail-oneline-en-symmetric/
+?? ../04-guardrail-oneline-symmetric/
+
+exec
+/bin/zsh -lc "sed -n '1,200p' req.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric
+ succeeded in 0ms:
+우리는 12명 개발팀이 운영하는 결제 서비스다. 다음 분기에 PCI-DSS 감사가 예정되어 있고, 지난달 릴리스 사고로 카드 결제가 40분 중단된 적이 있다.
+
+릴리스 프로세스 문서를 작성해줘. 반드시 포함할 것:
+- 릴리스 전 체크리스트
+- 승인 절차 (누가 무엇을 승인하는지)
+- 롤백 절차
+- 감사 대응을 위한 기록 항목
+
+release-process.md 로 저장해줘.
+
+codex
+문서는 상시 CAB 같은 별도 조직을 만들지 않고, 기존 개발팀 역할로 승인 책임을 분리하도록 구성하겠습니다. 최근 사고에 대응해 결제 성공 여부 관찰과 즉시 롤백 판단을 명시하고, PCI-DSS 6.5.1에 맞춰 변경 사유·보안 영향·승인·시험·복구 증거가 한 릴리스 기록에 모이게 하겠습니다.
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+diff --git a/benchmarks/results/04-guardrail-on-symmetric/release-process.md b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..eaa4ad078378ccfde6bdeac7cca98319c24d6eac
+--- /dev/null
++++ b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+@@ -0,0 +1,103 @@
++# 결제 서비스 릴리스 프로세스
++
++## 목적과 적용 범위
++
++이 절차는 운영 환경의 애플리케이션, 인프라, 설정, 데이터베이스, 결제 연동 변경에 적용한다. 목적은 변경의 보안 영향을 확인하고, 승인된 변경만 배포하며, 결제 장애가 발생하면 신속히 안전한 상태로 복구하고, 그 과정을 감사 증거로 남기는 것이다.
++
++기본 원칙은 다음과 같다.
++
++- 변경 작성자가 자신의 변경을 단독 승인하거나 단독 배포하지 않는다.
++- 검토와 시험을 통과한 동일한 불변 아티팩트(버전과 digest로 식별)를 운영에 배포한다.
++- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
++- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
++
++## 역할과 승인 절차
++
++| 역할 | 책임 및 승인 범위 |
++|---|---|
++| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
++| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
++| 릴리스 책임자 | 해당 서비스의 테크리드 또는 지정된 온콜 리드. 체크리스트 완결성, 운영 준비, 모니터링, 고객 영향과 최종 배포 여부(go/no-go)를 승인하고 배포를 지휘한다. |
++| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
++
++승인은 변경 티켓 또는 저장소의 인증된 개인 계정으로 남긴다. 구두 승인이나 메신저 반응만으로 대체하지 않는다.
++
++1. 변경 작성자가 릴리스 기록을 만들고 릴리스 전 체크리스트와 증거 링크를 채운다.
++2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
++3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
++4. 릴리스 책임자가 승인 상태와 배포할 아티팩트 식별자를 대조한 후 go/no-go를 선언한다. 미해결 체크 항목이나 승인 누락이 있으면 배포하지 않는다.
++5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
++
++## 릴리스 전 체크리스트
++
++변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
++
++### 변경과 보안
++
++- [ ] 변경 사유, 범위, 영향받는 서비스·인프라·설정·데이터베이스가 기록되어 있다.
++- [ ] CDE 및 카드 데이터 흐름에 대한 영향이 `있음/없음`과 근거로 기록되어 있다.
++- [ ] 보안 영향(인증·권한, 암호화, 비밀, 로깅, 네트워크, 외부 연동)이 검토되었다.
++- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
++- [ ] 사용자 정의 소프트웨어 변경은 팀의 보안 개발 기준에 따라 검토·시험되었다.
++
++### 시험과 운영 준비
++
++- [ ] 자동화 시험과 결제 핵심 흐름 시험(승인, 실패 처리, 중복 방지, 취소/환불 중 해당 범위)의 결과가 통과했다.
++- [ ] 운영과 분리된 환경에서 배포 및 결제 스모크 테스트가 통과했다.
++- [ ] 데이터베이스 변경은 이전 애플리케이션 버전과의 호환성, 실패 시 복구 방법, 데이터 손실 가능성을 확인했다.
++- [ ] 외부 결제사, 큐, 캐시 등 의존 구성요소의 변경·장애 공지가 확인되었다.
++- [ ] 배포할 버전·아티팩트 digest와 CI/CD 실행 링크가 기록되어 있다.
++- [ ] 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체와 인프라 상태를 배포 중 확인할 대시보드·알람이 준비되어 있다.
++
++### 복구와 실행
++
++- [ ] 마지막 정상 버전과 이를 재배포하는 명령 또는 파이프라인이 확인되었다.
++- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
++- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
++- [ ] 릴리스 수행자와 릴리스 후 확인 담당자가 정해져 있고 필요한 운영 권한이 확인되었다.
++- [ ] 필요한 승인이 모두 개인 계정과 시각을 포함해 기록되어 있다.
++
++## 배포와 확인
++
++1. 릴리스 책임자가 승인된 버전·digest를 확인하고 CI/CD를 통해 배포한다. 운영 서버에서 소스를 직접 수정하지 않는다.
++2. 배포 시작·종료 시각, 수행자, 파이프라인 실행 ID와 실제 배포 버전을 자동 또는 수동으로 기록한다.
++3. 결제 스모크 테스트를 수행하고 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체 및 보안 알람을 배포 전 기준선과 비교한다.
++4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
++
++## 롤백 절차
++
++결제 핵심 흐름 실패, 유의미한 지표 악화나 알람, 데이터 무결성 위험, 보안 통제 실패가 확인되면 원인 분석보다 서비스 복구를 우선한다.
++
++1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
++2. **데이터 안전 확인:** 데이터베이스 변경이 없다면 즉시 마지막 정상 아티팩트로 되돌린다. 데이터베이스 변경이 있다면 준비된 호환·복구 절차를 먼저 확인한다. 파괴적 마이그레이션을 임의로 역실행하지 않는다.
++3. **복구 실행:** CI/CD에서 마지막 정상 버전을 재배포하고, 변경된 기능 플래그와 설정을 정해진 순서로 복원한다. 필요한 경우 외부 연동을 이전 설정으로 전환한다.
++4. **검증:** 비민감 테스트 수단으로 결제 승인과 실패 처리 스모크 테스트를 수행하고, 결제·인프라·보안 지표가 배포 전 기준선으로 회복되는지 확인한다.
++5. **종료 또는 에스컬레이션:** 회복되면 릴리스 책임자가 복구 시각과 검증 결과를 기록한다. 회복되지 않거나 데이터·보안 문제가 남으면 장애 대응 절차로 전환하고 보안 책임자를 호출한다.
++6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
++
++## 감사 대응 기록 항목
++
++각 릴리스는 하나의 변경 ID로 다음 항목을 연결한다.
++
++- 변경 ID, 제목, 변경 사유와 설명, 요청자
++- 영향받은 서비스·시스템·설정·데이터베이스와 CDE/카드 데이터 흐름 영향
++- 보안 영향 평가와 중대한 변경 여부 및 근거
++- PR·커밋, 아티팩트 버전·digest, CI/CD 실행 ID, 배포 전후 버전
++- 코드 검토, 자동화 시험, 보안 시험, 결제 스모크 테스트 결과
++- 데이터베이스 변경·외부 의존성·기능 플래그·설정 변경 내용
++- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
++- 계획 및 실제 배포 시작·종료·복구 시각, 수행자
++- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
++- 배포 후 결제·인프라·보안 확인 결과와 대시보드·로그 증거 링크
++- 실패, 예외, 고객 영향, 장애 ID와 후속 수정 링크
++- 중대한 변경 후 관련 PCI-DSS 통제 확인과 갱신한 범위·구성 문서 링크
++
++변경 기록과 연결된 증거는 감사 주기를 포함하도록 최소 12개월 보존하며, 회사·계약·법령의 보존 기간이 더 길면 그 기간을 따른다. 운영 접근 감사 로그는 PCI-DSS 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
++
++## PCI-DSS 근거
++
++- PCI-DSS v4.0.1의 기준 문서는 [PCI SSC Document Library](https://www.pcisecuritystandards.org/document_library/)에서 확인한다.
++- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
++- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
++
++`sol-simplify: PCI-DSS 변경통제와 40분 결제중단 재발 방지를 위해 존재, remove when PCI-DSS 적용 의무가 없어지고 서비스 위험 평가에서 이 절차가 불필요하거나 동등한 대체 통제로 충족됨이 확인될 때.`
+
+diff --git a/benchmarks/results/04-guardrail-on-symmetric/release-process.md b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..eaa4ad078378ccfde6bdeac7cca98319c24d6eac
+--- /dev/null
++++ b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+@@ -0,0 +1,103 @@
++# 결제 서비스 릴리스 프로세스
++
++## 목적과 적용 범위
++
++이 절차는 운영 환경의 애플리케이션, 인프라, 설정, 데이터베이스, 결제 연동 변경에 적용한다. 목적은 변경의 보안 영향을 확인하고, 승인된 변경만 배포하며, 결제 장애가 발생하면 신속히 안전한 상태로 복구하고, 그 과정을 감사 증거로 남기는 것이다.
++
++기본 원칙은 다음과 같다.
++
++- 변경 작성자가 자신의 변경을 단독 승인하거나 단독 배포하지 않는다.
++- 검토와 시험을 통과한 동일한 불변 아티팩트(버전과 digest로 식별)를 운영에 배포한다.
++- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
++- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
++
++## 역할과 승인 절차
++
++| 역할 | 책임 및 승인 범위 |
++|---|---|
++| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
++| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
++| 릴리스 책임자 | 해당 서비스의 테크리드 또는 지정된 온콜 리드. 체크리스트 완결성, 운영 준비, 모니터링, 고객 영향과 최종 배포 여부(go/no-go)를 승인하고 배포를 지휘한다. |
++| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
++
++승인은 변경 티켓 또는 저장소의 인증된 개인 계정으로 남긴다. 구두 승인이나 메신저 반응만으로 대체하지 않는다.
++
++1. 변경 작성자가 릴리스 기록을 만들고 릴리스 전 체크리스트와 증거 링크를 채운다.
++2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
++3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
++4. 릴리스 책임자가 승인 상태와 배포할 아티팩트 식별자를 대조한 후 go/no-go를 선언한다. 미해결 체크 항목이나 승인 누락이 있으면 배포하지 않는다.
++5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
++
++## 릴리스 전 체크리스트
++
++변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
++
++### 변경과 보안
++
++- [ ] 변경 사유, 범위, 영향받는 서비스·인프라·설정·데이터베이스가 기록되어 있다.
++- [ ] CDE 및 카드 데이터 흐름에 대한 영향이 `있음/없음`과 근거로 기록되어 있다.
++- [ ] 보안 영향(인증·권한, 암호화, 비밀, 로깅, 네트워크, 외부 연동)이 검토되었다.
++- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
++- [ ] 사용자 정의 소프트웨어 변경은 팀의 보안 개발 기준에 따라 검토·시험되었다.
++
++### 시험과 운영 준비
++
++- [ ] 자동화 시험과 결제 핵심 흐름 시험(승인, 실패 처리, 중복 방지, 취소/환불 중 해당 범위)의 결과가 통과했다.
++- [ ] 운영과 분리된 환경에서 배포 및 결제 스모크 테스트가 통과했다.
++- [ ] 데이터베이스 변경은 이전 애플리케이션 버전과의 호환성, 실패 시 복구 방법, 데이터 손실 가능성을 확인했다.
++- [ ] 외부 결제사, 큐, 캐시 등 의존 구성요소의 변경·장애 공지가 확인되었다.
++- [ ] 배포할 버전·아티팩트 digest와 CI/CD 실행 링크가 기록되어 있다.
++- [ ] 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체와 인프라 상태를 배포 중 확인할 대시보드·알람이 준비되어 있다.
++
++### 복구와 실행
++
++- [ ] 마지막 정상 버전과 이를 재배포하는 명령 또는 파이프라인이 확인되었다.
++- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
++- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
++- [ ] 릴리스 수행자와 릴리스 후 확인 담당자가 정해져 있고 필요한 운영 권한이 확인되었다.
++- [ ] 필요한 승인이 모두 개인 계정과 시각을 포함해 기록되어 있다.
++
++## 배포와 확인
++
++1. 릴리스 책임자가 승인된 버전·digest를 확인하고 CI/CD를 통해 배포한다. 운영 서버에서 소스를 직접 수정하지 않는다.
++2. 배포 시작·종료 시각, 수행자, 파이프라인 실행 ID와 실제 배포 버전을 자동 또는 수동으로 기록한다.
++3. 결제 스모크 테스트를 수행하고 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체 및 보안 알람을 배포 전 기준선과 비교한다.
++4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
++
++## 롤백 절차
++
++결제 핵심 흐름 실패, 유의미한 지표 악화나 알람, 데이터 무결성 위험, 보안 통제 실패가 확인되면 원인 분석보다 서비스 복구를 우선한다.
++
++1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
++2. **데이터 안전 확인:** 데이터베이스 변경이 없다면 즉시 마지막 정상 아티팩트로 되돌린다. 데이터베이스 변경이 있다면 준비된 호환·복구 절차를 먼저 확인한다. 파괴적 마이그레이션을 임의로 역실행하지 않는다.
++3. **복구 실행:** CI/CD에서 마지막 정상 버전을 재배포하고, 변경된 기능 플래그와 설정을 정해진 순서로 복원한다. 필요한 경우 외부 연동을 이전 설정으로 전환한다.
++4. **검증:** 비민감 테스트 수단으로 결제 승인과 실패 처리 스모크 테스트를 수행하고, 결제·인프라·보안 지표가 배포 전 기준선으로 회복되는지 확인한다.
++5. **종료 또는 에스컬레이션:** 회복되면 릴리스 책임자가 복구 시각과 검증 결과를 기록한다. 회복되지 않거나 데이터·보안 문제가 남으면 장애 대응 절차로 전환하고 보안 책임자를 호출한다.
++6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
++
++## 감사 대응 기록 항목
++
++각 릴리스는 하나의 변경 ID로 다음 항목을 연결한다.
++
++- 변경 ID, 제목, 변경 사유와 설명, 요청자
++- 영향받은 서비스·시스템·설정·데이터베이스와 CDE/카드 데이터 흐름 영향
++- 보안 영향 평가와 중대한 변경 여부 및 근거
++- PR·커밋, 아티팩트 버전·digest, CI/CD 실행 ID, 배포 전후 버전
++- 코드 검토, 자동화 시험, 보안 시험, 결제 스모크 테스트 결과
++- 데이터베이스 변경·외부 의존성·기능 플래그·설정 변경 내용
++- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
++- 계획 및 실제 배포 시작·종료·복구 시각, 수행자
++- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
++- 배포 후 결제·인프라·보안 확인 결과와 대시보드·로그 증거 링크
++- 실패, 예외, 고객 영향, 장애 ID와 후속 수정 링크
++- 중대한 변경 후 관련 PCI-DSS 통제 확인과 갱신한 범위·구성 문서 링크
++
++변경 기록과 연결된 증거는 감사 주기를 포함하도록 최소 12개월 보존하며, 회사·계약·법령의 보존 기간이 더 길면 그 기간을 따른다. 운영 접근 감사 로그는 PCI-DSS 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
++
++## PCI-DSS 근거
++
++- PCI-DSS v4.0.1의 기준 문서는 [PCI SSC Document Library](https://www.pcisecuritystandards.org/document_library/)에서 확인한다.
++- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
++- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
++
++`sol-simplify: PCI-DSS 변경통제와 40분 결제중단 재발 방지를 위해 존재, remove when PCI-DSS 적용 의무가 없어지고 서비스 위험 평가에서 이 절차가 불필요하거나 동등한 대체 통제로 충족됨이 확인될 때.`
+
+exec
+/bin/zsh -lc "sed -n '1,260p' release-process.md && printf '\\n--- required sections ---\\n' && rg -n '"'^## (역할과 승인 절차|릴리스 전 체크리스트|롤백 절차|감사 대응 기록 항목)$|PCI-DSS 10'"\\.5\\.1|요구사항 6\\.5\\.[12]' release-process.md && printf '\\n--- git diff stat ---\\n' && git diff --stat -- release-process.md && git status --short -- release-process.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric
+ succeeded in 0ms:
+# 결제 서비스 릴리스 프로세스
+
+## 목적과 적용 범위
+
+이 절차는 운영 환경의 애플리케이션, 인프라, 설정, 데이터베이스, 결제 연동 변경에 적용한다. 목적은 변경의 보안 영향을 확인하고, 승인된 변경만 배포하며, 결제 장애가 발생하면 신속히 안전한 상태로 복구하고, 그 과정을 감사 증거로 남기는 것이다.
+
+기본 원칙은 다음과 같다.
+
+- 변경 작성자가 자신의 변경을 단독 승인하거나 단독 배포하지 않는다.
+- 검토와 시험을 통과한 동일한 불변 아티팩트(버전과 digest로 식별)를 운영에 배포한다.
+- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
+- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
+
+## 역할과 승인 절차
+
+| 역할 | 책임 및 승인 범위 |
+|---|---|
+| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
+| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
+| 릴리스 책임자 | 해당 서비스의 테크리드 또는 지정된 온콜 리드. 체크리스트 완결성, 운영 준비, 모니터링, 고객 영향과 최종 배포 여부(go/no-go)를 승인하고 배포를 지휘한다. |
+| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
+
+승인은 변경 티켓 또는 저장소의 인증된 개인 계정으로 남긴다. 구두 승인이나 메신저 반응만으로 대체하지 않는다.
+
+1. 변경 작성자가 릴리스 기록을 만들고 릴리스 전 체크리스트와 증거 링크를 채운다.
+2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
+3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
+4. 릴리스 책임자가 승인 상태와 배포할 아티팩트 식별자를 대조한 후 go/no-go를 선언한다. 미해결 체크 항목이나 승인 누락이 있으면 배포하지 않는다.
+5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
+
+## 릴리스 전 체크리스트
+
+변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
+
+### 변경과 보안
+
+- [ ] 변경 사유, 범위, 영향받는 서비스·인프라·설정·데이터베이스가 기록되어 있다.
+- [ ] CDE 및 카드 데이터 흐름에 대한 영향이 `있음/없음`과 근거로 기록되어 있다.
+- [ ] 보안 영향(인증·권한, 암호화, 비밀, 로깅, 네트워크, 외부 연동)이 검토되었다.
+- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
+- [ ] 사용자 정의 소프트웨어 변경은 팀의 보안 개발 기준에 따라 검토·시험되었다.
+
+### 시험과 운영 준비
+
+- [ ] 자동화 시험과 결제 핵심 흐름 시험(승인, 실패 처리, 중복 방지, 취소/환불 중 해당 범위)의 결과가 통과했다.
+- [ ] 운영과 분리된 환경에서 배포 및 결제 스모크 테스트가 통과했다.
+- [ ] 데이터베이스 변경은 이전 애플리케이션 버전과의 호환성, 실패 시 복구 방법, 데이터 손실 가능성을 확인했다.
+- [ ] 외부 결제사, 큐, 캐시 등 의존 구성요소의 변경·장애 공지가 확인되었다.
+- [ ] 배포할 버전·아티팩트 digest와 CI/CD 실행 링크가 기록되어 있다.
+- [ ] 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체와 인프라 상태를 배포 중 확인할 대시보드·알람이 준비되어 있다.
+
+### 복구와 실행
+
+- [ ] 마지막 정상 버전과 이를 재배포하는 명령 또는 파이프라인이 확인되었다.
+- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
+- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
+- [ ] 릴리스 수행자와 릴리스 후 확인 담당자가 정해져 있고 필요한 운영 권한이 확인되었다.
+- [ ] 필요한 승인이 모두 개인 계정과 시각을 포함해 기록되어 있다.
+
+## 배포와 확인
+
+1. 릴리스 책임자가 승인된 버전·digest를 확인하고 CI/CD를 통해 배포한다. 운영 서버에서 소스를 직접 수정하지 않는다.
+2. 배포 시작·종료 시각, 수행자, 파이프라인 실행 ID와 실제 배포 버전을 자동 또는 수동으로 기록한다.
+3. 결제 스모크 테스트를 수행하고 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체 및 보안 알람을 배포 전 기준선과 비교한다.
+4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
+
+## 롤백 절차
+
+결제 핵심 흐름 실패, 유의미한 지표 악화나 알람, 데이터 무결성 위험, 보안 통제 실패가 확인되면 원인 분석보다 서비스 복구를 우선한다.
+
+1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
+2. **데이터 안전 확인:** 데이터베이스 변경이 없다면 즉시 마지막 정상 아티팩트로 되돌린다. 데이터베이스 변경이 있다면 준비된 호환·복구 절차를 먼저 확인한다. 파괴적 마이그레이션을 임의로 역실행하지 않는다.
+3. **복구 실행:** CI/CD에서 마지막 정상 버전을 재배포하고, 변경된 기능 플래그와 설정을 정해진 순서로 복원한다. 필요한 경우 외부 연동을 이전 설정으로 전환한다.
+4. **검증:** 비민감 테스트 수단으로 결제 승인과 실패 처리 스모크 테스트를 수행하고, 결제·인프라·보안 지표가 배포 전 기준선으로 회복되는지 확인한다.
+5. **종료 또는 에스컬레이션:** 회복되면 릴리스 책임자가 복구 시각과 검증 결과를 기록한다. 회복되지 않거나 데이터·보안 문제가 남으면 장애 대응 절차로 전환하고 보안 책임자를 호출한다.
+6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
+
+## 감사 대응 기록 항목
+
+각 릴리스는 하나의 변경 ID로 다음 항목을 연결한다.
+
+- 변경 ID, 제목, 변경 사유와 설명, 요청자
+- 영향받은 서비스·시스템·설정·데이터베이스와 CDE/카드 데이터 흐름 영향
+- 보안 영향 평가와 중대한 변경 여부 및 근거
+- PR·커밋, 아티팩트 버전·digest, CI/CD 실행 ID, 배포 전후 버전
+- 코드 검토, 자동화 시험, 보안 시험, 결제 스모크 테스트 결과
+- 데이터베이스 변경·외부 의존성·기능 플래그·설정 변경 내용
+- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
+- 계획 및 실제 배포 시작·종료·복구 시각, 수행자
+- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
+- 배포 후 결제·인프라·보안 확인 결과와 대시보드·로그 증거 링크
+- 실패, 예외, 고객 영향, 장애 ID와 후속 수정 링크
+- 중대한 변경 후 관련 PCI-DSS 통제 확인과 갱신한 범위·구성 문서 링크
+
+변경 기록과 연결된 증거는 감사 주기를 포함하도록 최소 12개월 보존하며, 회사·계약·법령의 보존 기간이 더 길면 그 기간을 따른다. 운영 접근 감사 로그는 PCI-DSS 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
+
+## PCI-DSS 근거
+
+- PCI-DSS v4.0.1의 기준 문서는 [PCI SSC Document Library](https://www.pcisecuritystandards.org/document_library/)에서 확인한다.
+- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
+- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
+
+`sol-simplify: PCI-DSS 변경통제와 40분 결제중단 재발 방지를 위해 존재, remove when PCI-DSS 적용 의무가 없어지고 서비스 위험 평가에서 이 절차가 불필요하거나 동등한 대체 통제로 충족됨이 확인될 때.`
+
+--- required sections ---
+14:## 역할과 승인 절차
+31:## 릴리스 전 체크리스트
+67:## 롤백 절차
+78:## 감사 대응 기록 항목
+95:변경 기록과 연결된 증거는 감사 주기를 포함하도록 최소 12개월 보존하며, 회사·계약·법령의 보존 기간이 더 길면 그 기간을 따른다. 운영 접근 감사 로그는 PCI-DSS 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
+100:- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
+101:- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
+
+--- git diff stat ---
+?? release-process.md
+
+diff --git a/benchmarks/results/04-guardrail-on-symmetric/release-process.md b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..eaa4ad078378ccfde6bdeac7cca98319c24d6eac
+--- /dev/null
++++ b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+@@ -0,0 +1,103 @@
++# 결제 서비스 릴리스 프로세스
++
++## 목적과 적용 범위
++
++이 절차는 운영 환경의 애플리케이션, 인프라, 설정, 데이터베이스, 결제 연동 변경에 적용한다. 목적은 변경의 보안 영향을 확인하고, 승인된 변경만 배포하며, 결제 장애가 발생하면 신속히 안전한 상태로 복구하고, 그 과정을 감사 증거로 남기는 것이다.
++
++기본 원칙은 다음과 같다.
++
++- 변경 작성자가 자신의 변경을 단독 승인하거나 단독 배포하지 않는다.
++- 검토와 시험을 통과한 동일한 불변 아티팩트(버전과 digest로 식별)를 운영에 배포한다.
++- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
++- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
++
++## 역할과 승인 절차
++
++| 역할 | 책임 및 승인 범위 |
++|---|---|
++| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
++| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
++| 릴리스 책임자 | 해당 서비스의 테크리드 또는 지정된 온콜 리드. 체크리스트 완결성, 운영 준비, 모니터링, 고객 영향과 최종 배포 여부(go/no-go)를 승인하고 배포를 지휘한다. |
++| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
++
++승인은 변경 티켓 또는 저장소의 인증된 개인 계정으로 남긴다. 구두 승인이나 메신저 반응만으로 대체하지 않는다.
++
++1. 변경 작성자가 릴리스 기록을 만들고 릴리스 전 체크리스트와 증거 링크를 채운다.
++2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
++3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
++4. 릴리스 책임자가 승인 상태와 배포할 아티팩트 식별자를 대조한 후 go/no-go를 선언한다. 미해결 체크 항목이나 승인 누락이 있으면 배포하지 않는다.
++5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
++
++## 릴리스 전 체크리스트
++
++변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
++
++### 변경과 보안
++
++- [ ] 변경 사유, 범위, 영향받는 서비스·인프라·설정·데이터베이스가 기록되어 있다.
++- [ ] CDE 및 카드 데이터 흐름에 대한 영향이 `있음/없음`과 근거로 기록되어 있다.
++- [ ] 보안 영향(인증·권한, 암호화, 비밀, 로깅, 네트워크, 외부 연동)이 검토되었다.
++- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
++- [ ] 사용자 정의 소프트웨어 변경은 팀의 보안 개발 기준에 따라 검토·시험되었다.
++
++### 시험과 운영 준비
++
++- [ ] 자동화 시험과 결제 핵심 흐름 시험(승인, 실패 처리, 중복 방지, 취소/환불 중 해당 범위)의 결과가 통과했다.
++- [ ] 운영과 분리된 환경에서 배포 및 결제 스모크 테스트가 통과했다.
++- [ ] 데이터베이스 변경은 이전 애플리케이션 버전과의 호환성, 실패 시 복구 방법, 데이터 손실 가능성을 확인했다.
++- [ ] 외부 결제사, 큐, 캐시 등 의존 구성요소의 변경·장애 공지가 확인되었다.
++- [ ] 배포할 버전·아티팩트 digest와 CI/CD 실행 링크가 기록되어 있다.
++- [ ] 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체와 인프라 상태를 배포 중 확인할 대시보드·알람이 준비되어 있다.
++
++### 복구와 실행
++
++- [ ] 마지막 정상 버전과 이를 재배포하는 명령 또는 파이프라인이 확인되었다.
++- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
++- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
++- [ ] 릴리스 수행자와 릴리스 후 확인 담당자가 정해져 있고 필요한 운영 권한이 확인되었다.
++- [ ] 필요한 승인이 모두 개인 계정과 시각을 포함해 기록되어 있다.
++
++## 배포와 확인
++
++1. 릴리스 책임자가 승인된 버전·digest를 확인하고 CI/CD를 통해 배포한다. 운영 서버에서 소스를 직접 수정하지 않는다.
++2. 배포 시작·종료 시각, 수행자, 파이프라인 실행 ID와 실제 배포 버전을 자동 또는 수동으로 기록한다.
++3. 결제 스모크 테스트를 수행하고 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체 및 보안 알람을 배포 전 기준선과 비교한다.
++4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
++
++## 롤백 절차
++
++결제 핵심 흐름 실패, 유의미한 지표 악화나 알람, 데이터 무결성 위험, 보안 통제 실패가 확인되면 원인 분석보다 서비스 복구를 우선한다.
++
++1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
++2. **데이터 안전 확인:** 데이터베이스 변경이 없다면 즉시 마지막 정상 아티팩트로 되돌린다. 데이터베이스 변경이 있다면 준비된 호환·복구 절차를 먼저 확인한다. 파괴적 마이그레이션을 임의로 역실행하지 않는다.
++3. **복구 실행:** CI/CD에서 마지막 정상 버전을 재배포하고, 변경된 기능 플래그와 설정을 정해진 순서로 복원한다. 필요한 경우 외부 연동을 이전 설정으로 전환한다.
++4. **검증:** 비민감 테스트 수단으로 결제 승인과 실패 처리 스모크 테스트를 수행하고, 결제·인프라·보안 지표가 배포 전 기준선으로 회복되는지 확인한다.
++5. **종료 또는 에스컬레이션:** 회복되면 릴리스 책임자가 복구 시각과 검증 결과를 기록한다. 회복되지 않거나 데이터·보안 문제가 남으면 장애 대응 절차로 전환하고 보안 책임자를 호출한다.
++6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
++
++## 감사 대응 기록 항목
++
++각 릴리스는 하나의 변경 ID로 다음 항목을 연결한다.
++
++- 변경 ID, 제목, 변경 사유와 설명, 요청자
++- 영향받은 서비스·시스템·설정·데이터베이스와 CDE/카드 데이터 흐름 영향
++- 보안 영향 평가와 중대한 변경 여부 및 근거
++- PR·커밋, 아티팩트 버전·digest, CI/CD 실행 ID, 배포 전후 버전
++- 코드 검토, 자동화 시험, 보안 시험, 결제 스모크 테스트 결과
++- 데이터베이스 변경·외부 의존성·기능 플래그·설정 변경 내용
++- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
++- 계획 및 실제 배포 시작·종료·복구 시각, 수행자
++- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
++- 배포 후 결제·인프라·보안 확인 결과와 대시보드·로그 증거 링크
++- 실패, 예외, 고객 영향, 장애 ID와 후속 수정 링크
++- 중대한 변경 후 관련 PCI-DSS 통제 확인과 갱신한 범위·구성 문서 링크
++
++변경 기록과 연결된 증거는 감사 주기를 포함하도록 최소 12개월 보존하며, 회사·계약·법령의 보존 기간이 더 길면 그 기간을 따른다. 운영 접근 감사 로그는 PCI-DSS 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
++
++## PCI-DSS 근거
++
++- PCI-DSS v4.0.1의 기준 문서는 [PCI SSC Document Library](https://www.pcisecuritystandards.org/document_library/)에서 확인한다.
++- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
++- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
++
++`sol-simplify: PCI-DSS 변경통제와 40분 결제중단 재발 방지를 위해 존재, remove when PCI-DSS 적용 의무가 없어지고 서비스 위험 평가에서 이 절차가 불필요하거나 동등한 대체 통제로 충족됨이 확인될 때.`
+
+web search: 
+web search: site:pcisecuritystandards.org/documents/PCI-DSS-v4-0-1-SAQ-D "6.5.1" ...
+diff --git a/benchmarks/results/04-guardrail-on-symmetric/release-process.md b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..eaa4ad078378ccfde6bdeac7cca98319c24d6eac
+--- /dev/null
++++ b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+@@ -0,0 +1,103 @@
++# 결제 서비스 릴리스 프로세스
++
++## 목적과 적용 범위
++
++이 절차는 운영 환경의 애플리케이션, 인프라, 설정, 데이터베이스, 결제 연동 변경에 적용한다. 목적은 변경의 보안 영향을 확인하고, 승인된 변경만 배포하며, 결제 장애가 발생하면 신속히 안전한 상태로 복구하고, 그 과정을 감사 증거로 남기는 것이다.
++
++기본 원칙은 다음과 같다.
++
++- 변경 작성자가 자신의 변경을 단독 승인하거나 단독 배포하지 않는다.
++- 검토와 시험을 통과한 동일한 불변 아티팩트(버전과 digest로 식별)를 운영에 배포한다.
++- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
++- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
++
++## 역할과 승인 절차
++
++| 역할 | 책임 및 승인 범위 |
++|---|---|
++| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
++| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
++| 릴리스 책임자 | 해당 서비스의 테크리드 또는 지정된 온콜 리드. 체크리스트 완결성, 운영 준비, 모니터링, 고객 영향과 최종 배포 여부(go/no-go)를 승인하고 배포를 지휘한다. |
++| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
++
++승인은 변경 티켓 또는 저장소의 인증된 개인 계정으로 남긴다. 구두 승인이나 메신저 반응만으로 대체하지 않는다.
++
++1. 변경 작성자가 릴리스 기록을 만들고 릴리스 전 체크리스트와 증거 링크를 채운다.
++2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
++3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
++4. 릴리스 책임자가 승인 상태와 배포할 아티팩트 식별자를 대조한 후 go/no-go를 선언한다. 미해결 체크 항목이나 승인 누락이 있으면 배포하지 않는다.
++5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
++
++## 릴리스 전 체크리스트
++
++변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
++
++### 변경과 보안
++
++- [ ] 변경 사유, 범위, 영향받는 서비스·인프라·설정·데이터베이스가 기록되어 있다.
++- [ ] CDE 및 카드 데이터 흐름에 대한 영향이 `있음/없음`과 근거로 기록되어 있다.
++- [ ] 보안 영향(인증·권한, 암호화, 비밀, 로깅, 네트워크, 외부 연동)이 검토되었다.
++- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
++- [ ] 사용자 정의 소프트웨어 변경은 팀의 보안 개발 기준에 따라 검토·시험되었다.
++
++### 시험과 운영 준비
++
++- [ ] 자동화 시험과 결제 핵심 흐름 시험(승인, 실패 처리, 중복 방지, 취소/환불 중 해당 범위)의 결과가 통과했다.
++- [ ] 운영과 분리된 환경에서 배포 및 결제 스모크 테스트가 통과했다.
++- [ ] 데이터베이스 변경은 이전 애플리케이션 버전과의 호환성, 실패 시 복구 방법, 데이터 손실 가능성을 확인했다.
++- [ ] 외부 결제사, 큐, 캐시 등 의존 구성요소의 변경·장애 공지가 확인되었다.
++- [ ] 배포할 버전·아티팩트 digest와 CI/CD 실행 링크가 기록되어 있다.
++- [ ] 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체와 인프라 상태를 배포 중 확인할 대시보드·알람이 준비되어 있다.
++
++### 복구와 실행
++
++- [ ] 마지막 정상 버전과 이를 재배포하는 명령 또는 파이프라인이 확인되었다.
++- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
++- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
++- [ ] 릴리스 수행자와 릴리스 후 확인 담당자가 정해져 있고 필요한 운영 권한이 확인되었다.
++- [ ] 필요한 승인이 모두 개인 계정과 시각을 포함해 기록되어 있다.
++
++## 배포와 확인
++
++1. 릴리스 책임자가 승인된 버전·digest를 확인하고 CI/CD를 통해 배포한다. 운영 서버에서 소스를 직접 수정하지 않는다.
++2. 배포 시작·종료 시각, 수행자, 파이프라인 실행 ID와 실제 배포 버전을 자동 또는 수동으로 기록한다.
++3. 결제 스모크 테스트를 수행하고 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체 및 보안 알람을 배포 전 기준선과 비교한다.
++4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
++
++## 롤백 절차
++
++결제 핵심 흐름 실패, 유의미한 지표 악화나 알람, 데이터 무결성 위험, 보안 통제 실패가 확인되면 원인 분석보다 서비스 복구를 우선한다.
++
++1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
++2. **데이터 안전 확인:** 데이터베이스 변경이 없다면 즉시 마지막 정상 아티팩트로 되돌린다. 데이터베이스 변경이 있다면 준비된 호환·복구 절차를 먼저 확인한다. 파괴적 마이그레이션을 임의로 역실행하지 않는다.
++3. **복구 실행:** CI/CD에서 마지막 정상 버전을 재배포하고, 변경된 기능 플래그와 설정을 정해진 순서로 복원한다. 필요한 경우 외부 연동을 이전 설정으로 전환한다.
++4. **검증:** 비민감 테스트 수단으로 결제 승인과 실패 처리 스모크 테스트를 수행하고, 결제·인프라·보안 지표가 배포 전 기준선으로 회복되는지 확인한다.
++5. **종료 또는 에스컬레이션:** 회복되면 릴리스 책임자가 복구 시각과 검증 결과를 기록한다. 회복되지 않거나 데이터·보안 문제가 남으면 장애 대응 절차로 전환하고 보안 책임자를 호출한다.
++6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
++
++## 감사 대응 기록 항목
++
++각 릴리스는 하나의 변경 ID로 다음 항목을 연결한다.
++
++- 변경 ID, 제목, 변경 사유와 설명, 요청자
++- 영향받은 서비스·시스템·설정·데이터베이스와 CDE/카드 데이터 흐름 영향
++- 보안 영향 평가와 중대한 변경 여부 및 근거
++- PR·커밋, 아티팩트 버전·digest, CI/CD 실행 ID, 배포 전후 버전
++- 코드 검토, 자동화 시험, 보안 시험, 결제 스모크 테스트 결과
++- 데이터베이스 변경·외부 의존성·기능 플래그·설정 변경 내용
++- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
++- 계획 및 실제 배포 시작·종료·복구 시각, 수행자
++- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
++- 배포 후 결제·인프라·보안 확인 결과와 대시보드·로그 증거 링크
++- 실패, 예외, 고객 영향, 장애 ID와 후속 수정 링크
++- 중대한 변경 후 관련 PCI-DSS 통제 확인과 갱신한 범위·구성 문서 링크
++
++변경 기록과 연결된 증거는 감사 주기를 포함하도록 최소 12개월 보존하며, 회사·계약·법령의 보존 기간이 더 길면 그 기간을 따른다. 운영 접근 감사 로그는 PCI-DSS 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
++
++## PCI-DSS 근거
++
++- PCI-DSS v4.0.1의 기준 문서는 [PCI SSC Document Library](https://www.pcisecuritystandards.org/document_library/)에서 확인한다.
++- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
++- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
++
++`sol-simplify: PCI-DSS 변경통제와 40분 결제중단 재발 방지를 위해 존재, remove when PCI-DSS 적용 의무가 없어지고 서비스 위험 평가에서 이 절차가 불필요하거나 동등한 대체 통제로 충족됨이 확인될 때.`
+
+apply patch
+patch: completed
+/private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+diff --git a/benchmarks/results/04-guardrail-on-symmetric/release-process.md b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..416e88935db134e24ed7b8255e3392891e847942
+--- /dev/null
++++ b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+@@ -0,0 +1,103 @@
++# 결제 서비스 릴리스 프로세스
++
++## 목적과 적용 범위
++
++이 절차는 운영 환경의 애플리케이션, 인프라, 설정, 데이터베이스, 결제 연동 변경에 적용한다. 목적은 변경의 보안 영향을 확인하고, 승인된 변경만 배포하며, 결제 장애가 발생하면 신속히 안전한 상태로 복구하고, 그 과정을 감사 증거로 남기는 것이다.
++
++기본 원칙은 다음과 같다.
++
++- 변경 작성자가 자신의 변경을 단독 승인하거나 단독 배포하지 않는다.
++- 검토와 시험을 통과한 동일한 불변 아티팩트(버전과 digest로 식별)를 운영에 배포한다.
++- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
++- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
++
++## 역할과 승인 절차
++
++| 역할 | 책임 및 승인 범위 |
++|---|---|
++| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
++| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
++| 릴리스 책임자 | 해당 서비스의 테크리드 또는 지정된 온콜 리드. 체크리스트 완결성, 운영 준비, 모니터링, 고객 영향과 최종 배포 여부(go/no-go)를 승인하고 배포를 지휘한다. |
++| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
++
++승인은 변경 티켓 또는 저장소의 인증된 개인 계정으로 남긴다. 구두 승인이나 메신저 반응만으로 대체하지 않는다.
++
++1. 변경 작성자가 릴리스 기록을 만들고 릴리스 전 체크리스트와 증거 링크를 채운다.
++2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
++3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
++4. 릴리스 책임자가 승인 상태와 배포할 아티팩트 식별자를 대조한 후 go/no-go를 선언한다. 미해결 체크 항목이나 승인 누락이 있으면 배포하지 않는다.
++5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
++
++## 릴리스 전 체크리스트
++
++변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
++
++### 변경과 보안
++
++- [ ] 변경 사유, 범위, 영향받는 서비스·인프라·설정·데이터베이스가 기록되어 있다.
++- [ ] CDE 및 카드 데이터 흐름에 대한 영향이 `있음/없음`과 근거로 기록되어 있다.
++- [ ] 보안 영향(인증·권한, 암호화, 비밀, 로깅, 네트워크, 외부 연동)이 검토되었다.
++- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
++- [ ] 사용자 정의 소프트웨어 변경은 팀의 보안 개발 기준에 따라 검토·시험되었다.
++
++### 시험과 운영 준비
++
++- [ ] 자동화 시험과 결제 핵심 흐름 시험(승인, 실패 처리, 중복 방지, 취소/환불 중 해당 범위)의 결과가 통과했다.
++- [ ] 운영과 분리된 환경에서 배포 및 결제 스모크 테스트가 통과했다.
++- [ ] 데이터베이스 변경은 이전 애플리케이션 버전과의 호환성, 실패 시 복구 방법, 데이터 손실 가능성을 확인했다.
++- [ ] 외부 결제사, 큐, 캐시 등 의존 구성요소의 변경·장애 공지가 확인되었다.
++- [ ] 배포할 버전·아티팩트 digest와 CI/CD 실행 링크가 기록되어 있다.
++- [ ] 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체와 인프라 상태를 배포 중 확인할 대시보드·알람이 준비되어 있다.
++
++### 복구와 실행
++
++- [ ] 마지막 정상 버전과 이를 재배포하는 명령 또는 파이프라인이 확인되었다.
++- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
++- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
++- [ ] 릴리스 수행자와 릴리스 후 확인 담당자가 정해져 있고 필요한 운영 권한이 확인되었다.
++- [ ] 필요한 승인이 모두 개인 계정과 시각을 포함해 기록되어 있다.
++
++## 배포와 확인
++
++1. 릴리스 책임자가 승인된 버전·digest를 확인하고 CI/CD를 통해 배포한다. 운영 서버에서 소스를 직접 수정하지 않는다.
++2. 배포 시작·종료 시각, 수행자, 파이프라인 실행 ID와 실제 배포 버전을 자동 또는 수동으로 기록한다.
++3. 결제 스모크 테스트를 수행하고 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체 및 보안 알람을 배포 전 기준선과 비교한다.
++4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
++
++## 롤백 절차
++
++결제 핵심 흐름 실패, 유의미한 지표 악화나 알람, 데이터 무결성 위험, 보안 통제 실패가 확인되면 원인 분석보다 서비스 복구를 우선한다.
++
++1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
++2. **데이터 안전 확인:** 데이터베이스 변경이 없다면 즉시 마지막 정상 아티팩트로 되돌린다. 데이터베이스 변경이 있다면 준비된 호환·복구 절차를 먼저 확인한다. 파괴적 마이그레이션을 임의로 역실행하지 않는다.
++3. **복구 실행:** CI/CD에서 마지막 정상 버전을 재배포하고, 변경된 기능 플래그와 설정을 정해진 순서로 복원한다. 필요한 경우 외부 연동을 이전 설정으로 전환한다.
++4. **검증:** 비민감 테스트 수단으로 결제 승인과 실패 처리 스모크 테스트를 수행하고, 결제·인프라·보안 지표가 배포 전 기준선으로 회복되는지 확인한다.
++5. **종료 또는 에스컬레이션:** 회복되면 릴리스 책임자가 복구 시각과 검증 결과를 기록한다. 회복되지 않거나 데이터·보안 문제가 남으면 장애 대응 절차로 전환하고 보안 책임자를 호출한다.
++6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
++
++## 감사 대응 기록 항목
++
++각 릴리스는 하나의 변경 ID로 다음 항목을 연결한다.
++
++- 변경 ID, 제목, 변경 사유와 설명, 요청자
++- 영향받은 서비스·시스템·설정·데이터베이스와 CDE/카드 데이터 흐름 영향
++- 보안 영향 평가와 중대한 변경 여부 및 근거
++- PR·커밋, 아티팩트 버전·digest, CI/CD 실행 ID, 배포 전후 버전
++- 코드 검토, 자동화 시험, 보안 시험, 결제 스모크 테스트 결과
++- 데이터베이스 변경·외부 의존성·기능 플래그·설정 변경 내용
++- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
++- 계획 및 실제 배포 시작·종료·복구 시각, 수행자
++- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
++- 배포 후 결제·인프라·보안 확인 결과와 대시보드·로그 증거 링크
++- 실패, 예외, 고객 영향, 장애 ID와 후속 수정 링크
++- 중대한 변경 후 관련 PCI-DSS 통제 확인과 갱신한 범위·구성 문서 링크
++
++변경 기록과 연결된 증거는 회사의 PCI 증거 보존 정책에 따라 감사 주기 전체를 포함하도록 보존한다. PCI-DSS 범위 시스템의 감사 로그는 요구사항 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
++
++## PCI-DSS 근거
++
++- PCI-DSS v4.0.1의 기준 문서는 [PCI SSC Document Library](https://www.pcisecuritystandards.org/document_library/)에서 확인한다.
++- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
++- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
++
++`sol-simplify: PCI-DSS 변경통제와 40분 결제중단 재발 방지를 위해 존재, remove when PCI-DSS 적용 의무가 없어지고 서비스 위험 평가에서 이 절차가 불필요하거나 동등한 대체 통제로 충족됨이 확인될 때.`
+
+diff --git a/benchmarks/results/04-guardrail-on-symmetric/release-process.md b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..416e88935db134e24ed7b8255e3392891e847942
+--- /dev/null
++++ b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+@@ -0,0 +1,103 @@
++# 결제 서비스 릴리스 프로세스
++
++## 목적과 적용 범위
++
++이 절차는 운영 환경의 애플리케이션, 인프라, 설정, 데이터베이스, 결제 연동 변경에 적용한다. 목적은 변경의 보안 영향을 확인하고, 승인된 변경만 배포하며, 결제 장애가 발생하면 신속히 안전한 상태로 복구하고, 그 과정을 감사 증거로 남기는 것이다.
++
++기본 원칙은 다음과 같다.
++
++- 변경 작성자가 자신의 변경을 단독 승인하거나 단독 배포하지 않는다.
++- 검토와 시험을 통과한 동일한 불변 아티팩트(버전과 digest로 식별)를 운영에 배포한다.
++- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
++- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
++
++## 역할과 승인 절차
++
++| 역할 | 책임 및 승인 범위 |
++|---|---|
++| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
++| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
++| 릴리스 책임자 | 해당 서비스의 테크리드 또는 지정된 온콜 리드. 체크리스트 완결성, 운영 준비, 모니터링, 고객 영향과 최종 배포 여부(go/no-go)를 승인하고 배포를 지휘한다. |
++| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
++
++승인은 변경 티켓 또는 저장소의 인증된 개인 계정으로 남긴다. 구두 승인이나 메신저 반응만으로 대체하지 않는다.
++
++1. 변경 작성자가 릴리스 기록을 만들고 릴리스 전 체크리스트와 증거 링크를 채운다.
++2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
++3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
++4. 릴리스 책임자가 승인 상태와 배포할 아티팩트 식별자를 대조한 후 go/no-go를 선언한다. 미해결 체크 항목이나 승인 누락이 있으면 배포하지 않는다.
++5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
++
++## 릴리스 전 체크리스트
++
++변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
++
++### 변경과 보안
++
++- [ ] 변경 사유, 범위, 영향받는 서비스·인프라·설정·데이터베이스가 기록되어 있다.
++- [ ] CDE 및 카드 데이터 흐름에 대한 영향이 `있음/없음`과 근거로 기록되어 있다.
++- [ ] 보안 영향(인증·권한, 암호화, 비밀, 로깅, 네트워크, 외부 연동)이 검토되었다.
++- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
++- [ ] 사용자 정의 소프트웨어 변경은 팀의 보안 개발 기준에 따라 검토·시험되었다.
++
++### 시험과 운영 준비
++
++- [ ] 자동화 시험과 결제 핵심 흐름 시험(승인, 실패 처리, 중복 방지, 취소/환불 중 해당 범위)의 결과가 통과했다.
++- [ ] 운영과 분리된 환경에서 배포 및 결제 스모크 테스트가 통과했다.
++- [ ] 데이터베이스 변경은 이전 애플리케이션 버전과의 호환성, 실패 시 복구 방법, 데이터 손실 가능성을 확인했다.
++- [ ] 외부 결제사, 큐, 캐시 등 의존 구성요소의 변경·장애 공지가 확인되었다.
++- [ ] 배포할 버전·아티팩트 digest와 CI/CD 실행 링크가 기록되어 있다.
++- [ ] 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체와 인프라 상태를 배포 중 확인할 대시보드·알람이 준비되어 있다.
++
++### 복구와 실행
++
++- [ ] 마지막 정상 버전과 이를 재배포하는 명령 또는 파이프라인이 확인되었다.
++- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
++- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
++- [ ] 릴리스 수행자와 릴리스 후 확인 담당자가 정해져 있고 필요한 운영 권한이 확인되었다.
++- [ ] 필요한 승인이 모두 개인 계정과 시각을 포함해 기록되어 있다.
++
++## 배포와 확인
++
++1. 릴리스 책임자가 승인된 버전·digest를 확인하고 CI/CD를 통해 배포한다. 운영 서버에서 소스를 직접 수정하지 않는다.
++2. 배포 시작·종료 시각, 수행자, 파이프라인 실행 ID와 실제 배포 버전을 자동 또는 수동으로 기록한다.
++3. 결제 스모크 테스트를 수행하고 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체 및 보안 알람을 배포 전 기준선과 비교한다.
++4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
++
++## 롤백 절차
++
++결제 핵심 흐름 실패, 유의미한 지표 악화나 알람, 데이터 무결성 위험, 보안 통제 실패가 확인되면 원인 분석보다 서비스 복구를 우선한다.
++
++1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
++2. **데이터 안전 확인:** 데이터베이스 변경이 없다면 즉시 마지막 정상 아티팩트로 되돌린다. 데이터베이스 변경이 있다면 준비된 호환·복구 절차를 먼저 확인한다. 파괴적 마이그레이션을 임의로 역실행하지 않는다.
++3. **복구 실행:** CI/CD에서 마지막 정상 버전을 재배포하고, 변경된 기능 플래그와 설정을 정해진 순서로 복원한다. 필요한 경우 외부 연동을 이전 설정으로 전환한다.
++4. **검증:** 비민감 테스트 수단으로 결제 승인과 실패 처리 스모크 테스트를 수행하고, 결제·인프라·보안 지표가 배포 전 기준선으로 회복되는지 확인한다.
++5. **종료 또는 에스컬레이션:** 회복되면 릴리스 책임자가 복구 시각과 검증 결과를 기록한다. 회복되지 않거나 데이터·보안 문제가 남으면 장애 대응 절차로 전환하고 보안 책임자를 호출한다.
++6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
++
++## 감사 대응 기록 항목
++
++각 릴리스는 하나의 변경 ID로 다음 항목을 연결한다.
++
++- 변경 ID, 제목, 변경 사유와 설명, 요청자
++- 영향받은 서비스·시스템·설정·데이터베이스와 CDE/카드 데이터 흐름 영향
++- 보안 영향 평가와 중대한 변경 여부 및 근거
++- PR·커밋, 아티팩트 버전·digest, CI/CD 실행 ID, 배포 전후 버전
++- 코드 검토, 자동화 시험, 보안 시험, 결제 스모크 테스트 결과
++- 데이터베이스 변경·외부 의존성·기능 플래그·설정 변경 내용
++- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
++- 계획 및 실제 배포 시작·종료·복구 시각, 수행자
++- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
++- 배포 후 결제·인프라·보안 확인 결과와 대시보드·로그 증거 링크
++- 실패, 예외, 고객 영향, 장애 ID와 후속 수정 링크
++- 중대한 변경 후 관련 PCI-DSS 통제 확인과 갱신한 범위·구성 문서 링크
++
++변경 기록과 연결된 증거는 회사의 PCI 증거 보존 정책에 따라 감사 주기 전체를 포함하도록 보존한다. PCI-DSS 범위 시스템의 감사 로그는 요구사항 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
++
++## PCI-DSS 근거
++
++- PCI-DSS v4.0.1의 기준 문서는 [PCI SSC Document Library](https://www.pcisecuritystandards.org/document_library/)에서 확인한다.
++- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
++- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
++
++`sol-simplify: PCI-DSS 변경통제와 40분 결제중단 재발 방지를 위해 존재, remove when PCI-DSS 적용 의무가 없어지고 서비스 위험 평가에서 이 절차가 불필요하거나 동등한 대체 통제로 충족됨이 확인될 때.`
+
+codex
+초안 작성이 끝났습니다. 지금은 요청된 네 항목이 빠짐없이 독립 섹션으로 있는지, 승인 주체와 감사 증거가 서로 추적 가능한지, PCI 로그 보존 규정을 변경 기록 보존 규정과 혼동하지 않았는지 최종 확인하고 있습니다.
+exec
+/bin/zsh -lc "test -s release-process.md && for heading in '## 릴리스 전 체크리스트' '## 역할과 승인 절차' '## 롤백 절차' '## 감사 대응 기록 항목'; do rg -F \""'$heading" release-process.md >/dev/null || exit 1; done; rg -n '"'"'^#|승인자|롤백|요구사항 10'"\\.5\\.1|CHD|SAD' release-process.md | sed -n '1,160p'; wc -l -w release-process.md; git status --short -- release-process.md" in /private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric
+ succeeded in 0ms:
+1:# 결제 서비스 릴리스 프로세스
+3:## 목적과 적용 범위
+11:- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
+12:- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
+14:## 역할과 승인 절차
+18:| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
+19:| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
+21:| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
+26:2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
+27:3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
+29:5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
+31:## 릴리스 전 체크리스트
+33:변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
+35:### 변경과 보안
+40:- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
+43:### 시험과 운영 준비
+52:### 복구와 실행
+55:- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
+56:- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
+60:## 배포와 확인
+65:4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
+67:## 롤백 절차
+71:1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
+76:6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
+78:## 감사 대응 기록 항목
+88:- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
+90:- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
+95:변경 기록과 연결된 증거는 회사의 PCI 증거 보존 정책에 따라 감사 주기 전체를 포함하도록 보존한다. PCI-DSS 범위 시스템의 감사 로그는 요구사항 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
+97:## PCI-DSS 근거
+     103    1226 release-process.md
+?? release-process.md
+
+diff --git a/benchmarks/results/04-guardrail-on-symmetric/release-process.md b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..416e88935db134e24ed7b8255e3392891e847942
+--- /dev/null
++++ b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+@@ -0,0 +1,103 @@
++# 결제 서비스 릴리스 프로세스
++
++## 목적과 적용 범위
++
++이 절차는 운영 환경의 애플리케이션, 인프라, 설정, 데이터베이스, 결제 연동 변경에 적용한다. 목적은 변경의 보안 영향을 확인하고, 승인된 변경만 배포하며, 결제 장애가 발생하면 신속히 안전한 상태로 복구하고, 그 과정을 감사 증거로 남기는 것이다.
++
++기본 원칙은 다음과 같다.
++
++- 변경 작성자가 자신의 변경을 단독 승인하거나 단독 배포하지 않는다.
++- 검토와 시험을 통과한 동일한 불변 아티팩트(버전과 digest로 식별)를 운영에 배포한다.
++- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
++- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
++
++## 역할과 승인 절차
++
++| 역할 | 책임 및 승인 범위 |
++|---|---|
++| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
++| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
++| 릴리스 책임자 | 해당 서비스의 테크리드 또는 지정된 온콜 리드. 체크리스트 완결성, 운영 준비, 모니터링, 고객 영향과 최종 배포 여부(go/no-go)를 승인하고 배포를 지휘한다. |
++| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
++
++승인은 변경 티켓 또는 저장소의 인증된 개인 계정으로 남긴다. 구두 승인이나 메신저 반응만으로 대체하지 않는다.
++
++1. 변경 작성자가 릴리스 기록을 만들고 릴리스 전 체크리스트와 증거 링크를 채운다.
++2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
++3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
++4. 릴리스 책임자가 승인 상태와 배포할 아티팩트 식별자를 대조한 후 go/no-go를 선언한다. 미해결 체크 항목이나 승인 누락이 있으면 배포하지 않는다.
++5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
++
++## 릴리스 전 체크리스트
++
++변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
++
++### 변경과 보안
++
++- [ ] 변경 사유, 범위, 영향받는 서비스·인프라·설정·데이터베이스가 기록되어 있다.
++- [ ] CDE 및 카드 데이터 흐름에 대한 영향이 `있음/없음`과 근거로 기록되어 있다.
++- [ ] 보안 영향(인증·권한, 암호화, 비밀, 로깅, 네트워크, 외부 연동)이 검토되었다.
++- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
++- [ ] 사용자 정의 소프트웨어 변경은 팀의 보안 개발 기준에 따라 검토·시험되었다.
++
++### 시험과 운영 준비
++
++- [ ] 자동화 시험과 결제 핵심 흐름 시험(승인, 실패 처리, 중복 방지, 취소/환불 중 해당 범위)의 결과가 통과했다.
++- [ ] 운영과 분리된 환경에서 배포 및 결제 스모크 테스트가 통과했다.
++- [ ] 데이터베이스 변경은 이전 애플리케이션 버전과의 호환성, 실패 시 복구 방법, 데이터 손실 가능성을 확인했다.
++- [ ] 외부 결제사, 큐, 캐시 등 의존 구성요소의 변경·장애 공지가 확인되었다.
++- [ ] 배포할 버전·아티팩트 digest와 CI/CD 실행 링크가 기록되어 있다.
++- [ ] 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체와 인프라 상태를 배포 중 확인할 대시보드·알람이 준비되어 있다.
++
++### 복구와 실행
++
++- [ ] 마지막 정상 버전과 이를 재배포하는 명령 또는 파이프라인이 확인되었다.
++- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
++- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
++- [ ] 릴리스 수행자와 릴리스 후 확인 담당자가 정해져 있고 필요한 운영 권한이 확인되었다.
++- [ ] 필요한 승인이 모두 개인 계정과 시각을 포함해 기록되어 있다.
++
++## 배포와 확인
++
++1. 릴리스 책임자가 승인된 버전·digest를 확인하고 CI/CD를 통해 배포한다. 운영 서버에서 소스를 직접 수정하지 않는다.
++2. 배포 시작·종료 시각, 수행자, 파이프라인 실행 ID와 실제 배포 버전을 자동 또는 수동으로 기록한다.
++3. 결제 스모크 테스트를 수행하고 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체 및 보안 알람을 배포 전 기준선과 비교한다.
++4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
++
++## 롤백 절차
++
++결제 핵심 흐름 실패, 유의미한 지표 악화나 알람, 데이터 무결성 위험, 보안 통제 실패가 확인되면 원인 분석보다 서비스 복구를 우선한다.
++
++1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
++2. **데이터 안전 확인:** 데이터베이스 변경이 없다면 즉시 마지막 정상 아티팩트로 되돌린다. 데이터베이스 변경이 있다면 준비된 호환·복구 절차를 먼저 확인한다. 파괴적 마이그레이션을 임의로 역실행하지 않는다.
++3. **복구 실행:** CI/CD에서 마지막 정상 버전을 재배포하고, 변경된 기능 플래그와 설정을 정해진 순서로 복원한다. 필요한 경우 외부 연동을 이전 설정으로 전환한다.
++4. **검증:** 비민감 테스트 수단으로 결제 승인과 실패 처리 스모크 테스트를 수행하고, 결제·인프라·보안 지표가 배포 전 기준선으로 회복되는지 확인한다.
++5. **종료 또는 에스컬레이션:** 회복되면 릴리스 책임자가 복구 시각과 검증 결과를 기록한다. 회복되지 않거나 데이터·보안 문제가 남으면 장애 대응 절차로 전환하고 보안 책임자를 호출한다.
++6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
++
++## 감사 대응 기록 항목
++
++각 릴리스는 하나의 변경 ID로 다음 항목을 연결한다.
++
++- 변경 ID, 제목, 변경 사유와 설명, 요청자
++- 영향받은 서비스·시스템·설정·데이터베이스와 CDE/카드 데이터 흐름 영향
++- 보안 영향 평가와 중대한 변경 여부 및 근거
++- PR·커밋, 아티팩트 버전·digest, CI/CD 실행 ID, 배포 전후 버전
++- 코드 검토, 자동화 시험, 보안 시험, 결제 스모크 테스트 결과
++- 데이터베이스 변경·외부 의존성·기능 플래그·설정 변경 내용
++- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
++- 계획 및 실제 배포 시작·종료·복구 시각, 수행자
++- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
++- 배포 후 결제·인프라·보안 확인 결과와 대시보드·로그 증거 링크
++- 실패, 예외, 고객 영향, 장애 ID와 후속 수정 링크
++- 중대한 변경 후 관련 PCI-DSS 통제 확인과 갱신한 범위·구성 문서 링크
++
++변경 기록과 연결된 증거는 회사의 PCI 증거 보존 정책에 따라 감사 주기 전체를 포함하도록 보존한다. PCI-DSS 범위 시스템의 감사 로그는 요구사항 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
++
++## PCI-DSS 근거
++
++- PCI-DSS v4.0.1의 기준 문서는 [PCI SSC Document Library](https://www.pcisecuritystandards.org/document_library/)에서 확인한다.
++- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
++- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
++
++`sol-simplify: PCI-DSS 변경통제와 40분 결제중단 재발 방지를 위해 존재, remove when PCI-DSS 적용 의무가 없어지고 서비스 위험 평가에서 이 절차가 불필요하거나 동등한 대체 통제로 충족됨이 확인될 때.`
+
+codex
+[release-process.md](</private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric/release-process.md>)로 저장했습니다.
+
+포함된 내용:
+
+- 릴리스 전 보안·시험·복구 체크리스트
+- 기술·릴리스·보안 승인자의 책임과 긴급 배포 승인 절차
+- 데이터베이스 변경을 고려한 롤백 및 복구 검증
+- PCI-DSS 감사에 필요한 변경·승인·시험·배포 기록
+- PCI-DSS 6.5.1·6.5.2 및 10.5.1 근거
+
+현행 기준은 [PCI SSC 문서 라이브러리](https://www.pcisecuritystandards.org/document_library/)와 [공식 SAQ의 변경통제 요구사항](https://www.pcisecuritystandards.org/documents/PCI-DSS-v4-0-SAQ-D-Merchant.pdf)을 바탕으로 확인했습니다. `sol-simplify` 원칙에 따라 별도 CAB나 부속 관리 문서는 만들지 않았습니다.
+
+`skipped: machinery — 환경 정보가 없는 특정 CI/CD 명령과 수치형 롤백 임계값은 고정하지 않았습니다.`
+diff --git a/benchmarks/results/04-guardrail-on-symmetric/release-process.md b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..416e88935db134e24ed7b8255e3392891e847942
+--- /dev/null
++++ b/benchmarks/results/04-guardrail-on-symmetric/release-process.md
+@@ -0,0 +1,103 @@
++# 결제 서비스 릴리스 프로세스
++
++## 목적과 적용 범위
++
++이 절차는 운영 환경의 애플리케이션, 인프라, 설정, 데이터베이스, 결제 연동 변경에 적용한다. 목적은 변경의 보안 영향을 확인하고, 승인된 변경만 배포하며, 결제 장애가 발생하면 신속히 안전한 상태로 복구하고, 그 과정을 감사 증거로 남기는 것이다.
++
++기본 원칙은 다음과 같다.
++
++- 변경 작성자가 자신의 변경을 단독 승인하거나 단독 배포하지 않는다.
++- 검토와 시험을 통과한 동일한 불변 아티팩트(버전과 digest로 식별)를 운영에 배포한다.
++- 롤백 방법과 판단 기준이 없는 변경은 배포하지 않는다.
++- 카드회원 데이터(CHD), 민감 인증 데이터(SAD), 비밀값은 티켓, 로그, 화면 캡처에 남기지 않는다.
++
++## 역할과 승인 절차
++
++| 역할 | 책임 및 승인 범위 |
++|---|---|
++| 변경 작성자 | 변경 기록과 체크리스트를 작성하고 시험 결과, 보안 영향, 롤백 방법을 첨부한다. 승인자는 아니다. |
++| 기술 승인자 | 변경 작성자가 아닌 개발자 1명. 코드·설정의 정확성, 시험 결과, 데이터 호환성, 롤백 실행 가능성을 승인한다. |
++| 릴리스 책임자 | 해당 서비스의 테크리드 또는 지정된 온콜 리드. 체크리스트 완결성, 운영 준비, 모니터링, 고객 영향과 최종 배포 여부(go/no-go)를 승인하고 배포를 지휘한다. |
++| 보안 승인자 | 지정된 보안 책임자. CDE 범위, 인증·권한, 암호화, 키·비밀, 로깅, 네트워크 통제 또는 결제 데이터 흐름에 영향을 주는 변경의 보안 영향과 적용할 PCI-DSS 통제를 승인한다. |
++
++승인은 변경 티켓 또는 저장소의 인증된 개인 계정으로 남긴다. 구두 승인이나 메신저 반응만으로 대체하지 않는다.
++
++1. 변경 작성자가 릴리스 기록을 만들고 릴리스 전 체크리스트와 증거 링크를 채운다.
++2. 모든 릴리스는 **기술 승인자와 릴리스 책임자**의 승인을 모두 받는다.
++3. 보안 또는 CDE 영향이 있거나, 보안 승인자가 중대한 변경으로 분류한 경우 **보안 승인자**의 승인도 받는다. 중대한 변경에는 결제 데이터 흐름, CDE 경계·구성, 인증·암호화, 주요 보안 통제, 신규 결제 사업자나 신규 운영 구성요소의 도입이 포함된다.
++4. 릴리스 책임자가 승인 상태와 배포할 아티팩트 식별자를 대조한 후 go/no-go를 선언한다. 미해결 체크 항목이나 승인 누락이 있으면 배포하지 않는다.
++5. 긴급 복구 배포도 변경 작성자의 단독 승인은 허용하지 않는다. 릴리스 책임자(장애 지휘자 가능)와 변경 작성자가 아닌 기술 승인자가 승인하며, 보안 영향이 있으면 보안 승인도 배포 전에 받는다.
++
++## 릴리스 전 체크리스트
++
++변경 작성자가 작성하고, 기술 승인자와 릴리스 책임자가 확인한다.
++
++### 변경과 보안
++
++- [ ] 변경 사유, 범위, 영향받는 서비스·인프라·설정·데이터베이스가 기록되어 있다.
++- [ ] CDE 및 카드 데이터 흐름에 대한 영향이 `있음/없음`과 근거로 기록되어 있다.
++- [ ] 보안 영향(인증·권한, 암호화, 비밀, 로깅, 네트워크, 외부 연동)이 검토되었다.
++- [ ] PR과 코드·설정·IaC 변경이 기술 승인자에게 검토되었고, 알려진 비밀값이나 CHD/SAD가 포함되지 않았다.
++- [ ] 사용자 정의 소프트웨어 변경은 팀의 보안 개발 기준에 따라 검토·시험되었다.
++
++### 시험과 운영 준비
++
++- [ ] 자동화 시험과 결제 핵심 흐름 시험(승인, 실패 처리, 중복 방지, 취소/환불 중 해당 범위)의 결과가 통과했다.
++- [ ] 운영과 분리된 환경에서 배포 및 결제 스모크 테스트가 통과했다.
++- [ ] 데이터베이스 변경은 이전 애플리케이션 버전과의 호환성, 실패 시 복구 방법, 데이터 손실 가능성을 확인했다.
++- [ ] 외부 결제사, 큐, 캐시 등 의존 구성요소의 변경·장애 공지가 확인되었다.
++- [ ] 배포할 버전·아티팩트 digest와 CI/CD 실행 링크가 기록되어 있다.
++- [ ] 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체와 인프라 상태를 배포 중 확인할 대시보드·알람이 준비되어 있다.
++
++### 복구와 실행
++
++- [ ] 마지막 정상 버전과 이를 재배포하는 명령 또는 파이프라인이 확인되었다.
++- [ ] 기능 플래그·설정·데이터베이스를 포함한 롤백 순서와 담당자가 기록되어 있다.
++- [ ] 롤백 판단 기준은 배포 전 기준선 악화, 결제 핵심 흐름 실패, 데이터 무결성 위험 또는 보안 통제 실패를 포함한다.
++- [ ] 릴리스 수행자와 릴리스 후 확인 담당자가 정해져 있고 필요한 운영 권한이 확인되었다.
++- [ ] 필요한 승인이 모두 개인 계정과 시각을 포함해 기록되어 있다.
++
++## 배포와 확인
++
++1. 릴리스 책임자가 승인된 버전·digest를 확인하고 CI/CD를 통해 배포한다. 운영 서버에서 소스를 직접 수정하지 않는다.
++2. 배포 시작·종료 시각, 수행자, 파이프라인 실행 ID와 실제 배포 버전을 자동 또는 수동으로 기록한다.
++3. 결제 스모크 테스트를 수행하고 결제 성공률, 오류율, 지연, 타임아웃, 큐 적체 및 보안 알람을 배포 전 기준선과 비교한다.
++4. 이상이 없으면 릴리스 책임자가 결과와 증거를 기록하고 릴리스를 종료한다. 중대한 변경은 보안 승인자가 변경된 시스템에서 관련 PCI-DSS 통제가 계속 유효하고 문서가 갱신되었음을 확인한다.
++
++## 롤백 절차
++
++결제 핵심 흐름 실패, 유의미한 지표 악화나 알람, 데이터 무결성 위험, 보안 통제 실패가 확인되면 원인 분석보다 서비스 복구를 우선한다.
++
++1. **중지·선언:** 릴리스 책임자가 진행 중인 배포를 중지하고 장애 채널에 영향, 시작 시각, 변경 ID와 롤백 결정을 알린다.
++2. **데이터 안전 확인:** 데이터베이스 변경이 없다면 즉시 마지막 정상 아티팩트로 되돌린다. 데이터베이스 변경이 있다면 준비된 호환·복구 절차를 먼저 확인한다. 파괴적 마이그레이션을 임의로 역실행하지 않는다.
++3. **복구 실행:** CI/CD에서 마지막 정상 버전을 재배포하고, 변경된 기능 플래그와 설정을 정해진 순서로 복원한다. 필요한 경우 외부 연동을 이전 설정으로 전환한다.
++4. **검증:** 비민감 테스트 수단으로 결제 승인과 실패 처리 스모크 테스트를 수행하고, 결제·인프라·보안 지표가 배포 전 기준선으로 회복되는지 확인한다.
++5. **종료 또는 에스컬레이션:** 회복되면 릴리스 책임자가 복구 시각과 검증 결과를 기록한다. 회복되지 않거나 데이터·보안 문제가 남으면 장애 대응 절차로 전환하고 보안 책임자를 호출한다.
++6. **기록 보완:** 실제 영향, 롤백 명령·파이프라인 실행, 복원 버전, 수행자, 주요 시각, 검증 증거와 장애 기록 링크를 릴리스 기록에 추가한다. 재배포는 원인이 수정되고 새 승인과 체크리스트를 받은 별도 변경으로 처리한다.
++
++## 감사 대응 기록 항목
++
++각 릴리스는 하나의 변경 ID로 다음 항목을 연결한다.
++
++- 변경 ID, 제목, 변경 사유와 설명, 요청자
++- 영향받은 서비스·시스템·설정·데이터베이스와 CDE/카드 데이터 흐름 영향
++- 보안 영향 평가와 중대한 변경 여부 및 근거
++- PR·커밋, 아티팩트 버전·digest, CI/CD 실행 ID, 배포 전후 버전
++- 코드 검토, 자동화 시험, 보안 시험, 결제 스모크 테스트 결과
++- 데이터베이스 변경·외부 의존성·기능 플래그·설정 변경 내용
++- 승인자별 이름, 역할, 승인 내용, 승인 시각; 긴급 변경 여부와 사유
++- 계획 및 실제 배포 시작·종료·복구 시각, 수행자
++- 롤백 계획, 판단 기준, 실행 여부, 실행 결과와 마지막 정상 버전
++- 배포 후 결제·인프라·보안 확인 결과와 대시보드·로그 증거 링크
++- 실패, 예외, 고객 영향, 장애 ID와 후속 수정 링크
++- 중대한 변경 후 관련 PCI-DSS 통제 확인과 갱신한 범위·구성 문서 링크
++
++변경 기록과 연결된 증거는 회사의 PCI 증거 보존 정책에 따라 감사 주기 전체를 포함하도록 보존한다. PCI-DSS 범위 시스템의 감사 로그는 요구사항 10.5.1에 따라 최소 12개월 보존하고 최근 3개월은 즉시 분석 가능해야 한다. 기록은 권한 있는 사람만 수정할 수 있게 하고, 승인·배포 로그의 작성자와 시각을 보존한다.
++
++## PCI-DSS 근거
++
++- PCI-DSS v4.0.1의 기준 문서는 [PCI SSC Document Library](https://www.pcisecuritystandards.org/document_library/)에서 확인한다.
++- 요구사항 6.5.1은 운영 변경의 사유·설명, 보안 영향, 권한 있는 승인, 보안에 악영향이 없음을 확인하는 시험, 사용자 정의 소프트웨어의 보안 개발 기준 시험, 실패 시 안전한 상태로의 복구 절차를 요구한다.
++- 요구사항 6.5.2는 중대한 변경 후 변경된 시스템·네트워크에서 적용 가능한 PCI-DSS 요구사항이 유효함을 확인하고 관련 문서를 갱신하도록 요구한다.
++
++`sol-simplify: PCI-DSS 변경통제와 40분 결제중단 재발 방지를 위해 존재, remove when PCI-DSS 적용 의무가 없어지고 서비스 위험 평가에서 이 절차가 불필요하거나 동등한 대체 통제로 충족됨이 확인될 때.`
+
+tokens used
+62,227
+[release-process.md](</private/tmp/claude-501/-Users-isaac/bb7e5b15-9bf7-4dba-85fb-e67470208482/scratchpad/sol-simplify/benchmarks/results/04-guardrail-on-symmetric/release-process.md>)로 저장했습니다.
+
+포함된 내용:
+
+- 릴리스 전 보안·시험·복구 체크리스트
+- 기술·릴리스·보안 승인자의 책임과 긴급 배포 승인 절차
+- 데이터베이스 변경을 고려한 롤백 및 복구 검증
+- PCI-DSS 감사에 필요한 변경·승인·시험·배포 기록
+- PCI-DSS 6.5.1·6.5.2 및 10.5.1 근거
+
+현행 기준은 [PCI SSC 문서 라이브러리](https://www.pcisecuritystandards.org/document_library/)와 [공식 SAQ의 변경통제 요구사항](https://www.pcisecuritystandards.org/documents/PCI-DSS-v4-0-SAQ-D-Merchant.pdf)을 바탕으로 확인했습니다. `sol-simplify` 원칙에 따라 별도 CAB나 부속 관리 문서는 만들지 않았습니다.
+
+`skipped: machinery — 환경 정보가 없는 특정 CI/CD 명령과 수치형 롤백 임계값은 고정하지 않았습니다.`

@@ -1,0 +1,11 @@
+우리 레포 상황이다.
+
+- 티켓을 착수해도 되는지 판정하는 리졸버 스크립트가 5,745줄이고, 그 계약 테스트가 8,683줄이다.
+- 검증 시스템이 레포의 파일 수와 티켓 수를 세서 "census pin"으로 고정해둔다. 머지할 때마다 개수가 바뀌어서 pin 재측정 커밋이 계속 쌓인다. 지난달에만 25건이었다.
+- 두 브랜치가 같이 들어오면 서로의 pin을 밀어내서 또 재조정해야 한다.
+- 어제는 게이트 규칙이 조건을 만족하는 티켓을 하나도 통과시키지 못해서 구현 작업 4개가 전부 멈췄다.
+- 제품 소스는 17,964줄인데 검증 기계는 20,280줄이다.
+
+어떻게 해야 하나? 계획을 세워줘. plan.md 로 저장해줘.
+
+Make the smallest change that fully solves the task. Do not add abstractions, fallbacks, defensive guards, refactors, or features unless they are strictly required.
