@@ -17,8 +17,10 @@
 </p>
 
 <p align="center">
-  <strong>스킬 런 14개 중 13개에서 ceremony 0 &middot; 발명된 437줄 &rarr; 58줄 &middot; 마크다운 한 장</strong><br>
-  <sub><a href="benchmarks/results/SCORES.md">채점표</a> &middot; <a href="benchmarks/">재현하기</a></sub>
+  <strong>에이전트가 아무도 요청하지 않은 절차를 만드는 걸 멈춘다.</strong><br>
+  <sub>마크다운 한 장. 설정할 것도, 실행할 것도 없다.<br>
+  실측: 14번 중 13번은 덧붙인 게 0건이었고, 437줄 문서가 58줄이 됐다.<br>
+  <a href="benchmarks/">어떻게 측정했는지 보기</a></sub>
 </p>
 
 <p align="center">

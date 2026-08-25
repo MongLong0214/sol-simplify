@@ -17,8 +17,10 @@
 </p>
 
 <p align="center">
-  <strong>ceremony scored 0 in 13 of 14 skill runs &middot; 437 invented lines &rarr; 58 &middot; one markdown file</strong><br>
-  <sub><a href="benchmarks/results/SCORES.md">scores</a> &middot; <a href="benchmarks/">reproduce it</a></sub>
+  <strong>Your agent stops inventing process nobody asked for.</strong><br>
+  <sub>One markdown file. Nothing to configure, nothing to run.<br>
+  Measured: it added nothing extra in 13 of 14 test runs, and turned a 437-line document into 58.<br>
+  <a href="benchmarks/">see how that was measured</a></sub>
 </p>
 
 <p align="center">
