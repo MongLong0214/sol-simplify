@@ -209,17 +209,6 @@ is one dependency-free POSIX script ([`scripts/measure.sh`](skills/sol-simplify-
 that computes the ceremony ratio, loop commits, and churn fresh from HEAD — installed
 automatically by the plugin route. It is the only executable in this repository, and it only reads.
 
-## sol-simplify vs Ponytail
-
-[Ponytail](https://github.com/DietrichGebert/ponytail) is excellent and solves a different problem. They compose — run both.
-
-| | Ponytail | sol-simplify |
-|---|---|---|
-| Cuts | code | process |
-| Asks | *can this be one line?* | *should this check exist at all?* |
-| Catches | an interface with one implementation | a gate registry with one maintainer |
-| Misses | a 6,288-line traceability matrix | a hand-rolled date parser |
-
 ## What it never cuts
 
 Correctness. Tests that exercise real behavior. Input validation at trust boundaries. Error handling that prevents data loss. Security. Accessibility. Data migrations. Anything you explicitly asked for.
@@ -227,6 +216,12 @@ Correctness. Tests that exercise real behavior. Input validation at trust bounda
 Restraint applies to process the agent invented, never to the product's real obligations. In the `02-process` run the skill kept every isolation test, the full provenance record, the credential-redaction rule, and the determinism requirement — and deleted the release checklist.
 
 ## FAQ
+
+**How is this different from code-minimalism skills like Ponytail?**
+Different layer. Those ask *"can this be one line?"* about code; sol-simplify asks *"should
+this check exist at all?"* about process. Code-level rules would not have prevented anything
+in the audited repository — every file there is individually fine. They compose; run both if
+you want both.
 
 **Does a shorter document mean a better one?**
 No, and the benchmark refuses to claim it. Ceremony count is the measured axis; line count is reported next to it as context. The outputs are committed so you can read them and disagree.
