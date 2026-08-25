@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
-    <img src="assets/logo.svg" width="480" alt="sol-simplify — a tangled line straightens into one clean line">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg?v=3">
+    <img src="assets/logo.svg?v=3" width="480" alt="sol-simplify — a tangled line straightens into one clean line">
   </picture>
 </p>
 
@@ -84,7 +84,7 @@ CI 운영 모델 (PR 필수 검사, 야간 검사, CI 규율)
 ## 실측된 실패
 
 <p align="center">
-  <img src="assets/hero.svg" width="900" alt="감사 대상 레포의 git 히스토리 라인 차트: 검증 기계 라인이 20일 내내 제품 라인을 앞서고, 6일차에 기계 13,090줄 대 제품 3,561줄, 17일차에 자기 규칙이 모든 작업을 거부, 최종 기계 20,280줄 대 제품 17,964줄.">
+  <img src="assets/hero.svg?v=3" width="900" alt="감사 대상 레포의 git 히스토리 라인 차트: 검증 기계 라인이 20일 내내 제품 라인을 앞서고, 6일차에 기계 13,090줄 대 제품 3,561줄, 17일차에 자기 규칙이 모든 작업을 거부, 최종 기계 20,280줄 대 제품 17,964줄.">
 </p>
 
 가설이 아니다. 에이전트가 20일간 만든 실제 레포의 git 히스토리 전수 측정:

@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
-    <img src="assets/logo.svg" width="480" alt="sol-simplify — a tangled line straightens into one clean line">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg?v=3">
+    <img src="assets/logo.svg?v=3" width="480" alt="sol-simplify — a tangled line straightens into one clean line">
   </picture>
 </p>
 
@@ -87,7 +87,7 @@ The skill was never mentioned in the prompt. Codex found it and applied it on it
 ## The failure mode
 
 <p align="center">
-  <img src="assets/hero.svg" width="900" alt="Line chart from the audited repository's git history: the verification-machinery line leads the product line for all 20 days, reaching 13,090 lines by day 6 while the product has 3,561; a day-17 marker notes the agent's own rule refusing all work; final values are machinery 20,280 lines, product 17,964.">
+  <img src="assets/hero.svg?v=3" width="900" alt="Line chart from the audited repository's git history: the verification-machinery line leads the product line for all 20 days, reaching 13,090 lines by day 6 while the product has 3,561; a day-17 marker notes the agent's own rule refusing all work; final values are machinery 20,280 lines, product 17,964.">
 </p>
 
 Not hypothetical. Measured across the full git history of one repository an agent built over 20 days:
