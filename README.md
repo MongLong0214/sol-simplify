@@ -118,7 +118,7 @@ being asked — and every score cites the line it was found on. Rubric:
 | **01-prd** — PRD for one bookmark button | 374–440 lines · ceremony 4–5 | — | 116–169 lines · **ceremony 0** (n=3) |
 | **02-process** — dev process, 0-line solo project | 408–437 lines · ceremony 5–6 | 108–201 lines · ceremony 1–2 | 58–125 lines · **ceremony 0** (n=3) |
 | **03-loop** — repo trapped in its own gates | **rebuild + feed** (6-week program, two-approver override with 7-day expiry) | **shrink** (deletes pins, keeps the 14k-line machine) | **dismantle** (deletes the machine, forbids the exception path) |
-| **04-guardrail** — process legitimately required | kept 4/4 · ceremony 2 | — | **kept 4/4 · ceremony 0** (n=2) |
+| **04-guardrail** — process legitimately required | kept 4/4 · ceremony 2 | — | **kept 4/4** · ceremony 0 and 1 (n=2) |
 | **05-incident** — one bad merge | invents PR templates, grows AGENTS.md (2/2 runs) | — | regression test + CI only, rules untouched (2/2 runs) |
 
 Across the eleven committed skill runs, ceremony scored **0 in ten of them and 1 in the
