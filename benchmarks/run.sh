@@ -28,15 +28,17 @@ printf 'model = "%s"\napproval_policy = "never"\nsandbox_mode = "workspace-write
 run() { # $1 = arm, $2 = codex home, $3 = extra instruction (optional)
   local out="$HERE/results/$P-$1"
   mkdir -p "$out"
-  [ -d "$HERE/seeds/$P" ] && cp -R "$HERE/seeds/$P/." "$out/"
+  if [ -d "$HERE/seeds/$P" ]; then cp -R "$HERE/seeds/$P/." "$out/"; fi
   cp "$HERE/prompts/$P.md" "$out/req.md"
-  [ -n "${3:-}" ] && printf '\n%s\n' "$3" >> "$out/req.md"
+  if [ -n "${3:-}" ]; then printf '\n%s\n' "$3" >> "$out/req.md"; fi
   ( cd "$out" && CODEX_HOME="$2" codex exec -m "$MODEL" -c model_reasoning_effort="$EFFORT" \
       --sandbox workspace-write --skip-git-repo-check - < req.md > run.log 2>&1 )
   local n; n=$(cat "$out"/*.md 2>/dev/null | grep -vc '^$' || echo 0)
-  local leak; leak=$(grep -rl 'sol-simplify:' "$out" 2>/dev/null | grep -v req.md | wc -l | tr -d ' ')
+  local leak; leak=$(grep -rl 'sol-simplify:' "$out" 2>/dev/null | grep -cv req.md || true)
   printf '%-11s %5s lines' "$1" "$n"
-  [ "$1" != on ] && [ "$leak" != 0 ] && printf '   ⚠ CONTAMINATED — skill reached a control arm'
+  if [ "$1" != on ] && [ "$leak" != 0 ]; then
+    printf '   ⚠ CONTAMINATED — skill reached a control arm'
+  fi
   echo
 }
 
