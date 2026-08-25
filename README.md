@@ -17,9 +17,9 @@
 </p>
 
 <p align="center">
-  <strong>Your agent stops inventing process nobody asked for.</strong><br>
+  <strong>Your agent stops building bureaucracy around its own work.</strong><br>
   <sub>One markdown file. Nothing to configure, nothing to run.<br>
-  <b>Every single run without it invented process nobody asked for.</b> With it, almost none did.<br>
+  <b>Measured: every run without it invented process nobody asked for. Almost every run with it invented none.</b><br>
   <a href="benchmarks/">see how that was measured</a></sub>
 </p>
 
@@ -51,7 +51,7 @@ codex plugin add sol-simplify@sol-simplify
 /plugin install sol-simplify@sol-simplify
 ```
 
-**Or just copy the file** — into `~/.codex/skills/`, `~/.claude/skills/`, or any tool's rules directory (Cursor, Windsurf, Cline, Copilot). It is plain markdown with standard frontmatter.
+**Or just copy the file** — into its own folder under `~/.codex/skills/`, `~/.claude/skills/`, or any tool's rules directory (Cursor, Windsurf, Cline, Copilot). It is plain markdown with standard frontmatter. Keep the folder: a loose `SKILL.md` sitting directly in `skills/` still loads, but it will shadow a plugin install and quietly serve the older copy.
 
 ```bash
 mkdir -p ~/.codex/skills/sol-simplify
@@ -130,7 +130,7 @@ Stages 3 and 4 are what nothing else addresses, and the reason a one-line prompt
 Five ordinary requests, each sent three ways — plain, with a *"keep it simple"* sentence added,
 and with the skill installed. Same model, same prompt every time.
 
-The number is **how many things the model added that nobody asked for**: a made-up latency
+The number counts **things the model added that were never requested**: a made-up latency
 target, a staged rollout, an approval step for a team of one. **0 is best.**
 
 | request | plain | "keep it simple" | **with the skill** |
@@ -139,11 +139,11 @@ target, a staged rollout, an approval step for a team of one. **0 is best.**
 | Dev process for a solo project with no code yet | 5–6 | 1–2 | **0** |
 | Payments team facing an audit asks for 4 process docs | all 4 + 2 extra | all 4 + 2 extra | **all 4 + 0 extra** |
 | Prevent a repeat of one bad merge | a PR template and permanent new rules | a test, but nothing enforcing it | **a test, and the CI check that enforces it** |
-| The agent's own gates now block all work — what now? | rebuilds them | leaves the 14,000-line machine standing | **deletes it** |
+| The agent's own gates now block all work — what now? | rebuilds them | clears the immediate irritant, leaves the machinery standing | **deletes the machinery** |
 
-Same second request, two documents: **437 lines without it, 58 with.** Nothing was dropped —
-what went missing was the release-candidate checklist, the defect taxonomy, and the six test
-tiers, none of which had been asked for.
+Nothing was dropped to get the second row to 0: what left that document was the
+release-candidate checklist, the defect taxonomy, and the six test tiers, none of which had
+been asked for.
 
 Row three is the one to check if you worry this makes an agent cut corners: when the process is
 genuinely required, it keeps all of it.
