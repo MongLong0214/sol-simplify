@@ -1,44 +1,44 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 124" width="720" height="124" role="img" aria-labelledby="ss-t ss-d">
   <title id="ss-t">sol-simplify</title>
-  <desc id="ss-d">A tangled red line draws itself, then straightens into a single clean line that keeps flowing, next to the wordmark sol-simplify.</desc>
+  <desc id="ss-d">A pair of scissors snipping continuously, beside the wordmark sol-simplify.</desc>
   <style>
     text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
-
-    /* 한 사이클(7s): 매듭이 그려지고(0-38%) → 직선이 뻗고(38-52%) → 점이 찍히고 → 흐름 유지 → 리셋 */
-    @keyframes ss-tangle {
-      0%       { stroke-dashoffset: 100 }
-      38%, 96% { stroke-dashoffset: 0 }
-      100%     { stroke-dashoffset: 100 }
+    .h1, .h2 { transform-box: view-box; transform-origin: 152px 62px; }
+    .h1 { animation: snip1 1.6s ease-in-out infinite }
+    .h2 { animation: snip2 1.6s ease-in-out infinite }
+    @keyframes snip1 {
+      0%, 100% { transform: rotate(-13deg) }
+      45%      { transform: rotate(-1.5deg) }
+      55%      { transform: rotate(-1.5deg) }
     }
-    @keyframes ss-line {
-      0%, 36%  { stroke-dashoffset: 100 }
-      52%, 96% { stroke-dashoffset: 0 }
-      100%     { stroke-dashoffset: 100 }
+    @keyframes snip2 {
+      0%, 100% { transform: rotate(13deg) }
+      45%      { transform: rotate(1.5deg) }
+      55%      { transform: rotate(1.5deg) }
     }
-    @keyframes ss-dot {
-      0%, 50%  { opacity: 0; transform: scale(0.4) }
-      56%, 94% { opacity: 1; transform: scale(1) }
-      100%     { opacity: 0; transform: scale(0.4) }
-    }
-    @keyframes ss-flow { to { stroke-dashoffset: -44 } }
-
-    .ss-tangle { stroke-dasharray: 100; animation: ss-tangle 7s ease-in-out infinite }
-    .ss-line   { stroke-dasharray: 100; animation: ss-line   7s ease-in-out infinite }
-    .ss-dot    { animation: ss-dot 7s ease-in-out infinite;
-                  transform-box: fill-box; transform-origin: center }
-    .ss-flow   { animation: ss-flow 2.2s linear infinite }
-
     @media (prefers-reduced-motion: reduce) {
-      .ss-tangle, .ss-line { animation: none !important; stroke-dashoffset: 0 }
-      .ss-dot  { animation: none !important; opacity: 1; transform: scale(1) }
-      .ss-flow { animation: none !important; opacity: 0 }
+      .h1 { animation: none !important; transform: rotate(-9deg) }
+      .h2 { animation: none !important; transform: rotate(9deg) }
     }
   </style>
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path class="ss-tangle" pathLength="100" d="M 20 70 C 34 24, 84 12, 100 40 C 112 62, 82 86, 62 74 C 40 60, 58 30, 92 30 C 120 30, 130 52, 116 66 C 102 80, 82 72, 88 54 C 94 36, 128 34, 146 48 C 160 58, 158 62, 174 62" stroke="#e05d52" stroke-width="8.5" opacity="0.96"/>
-    <path class="ss-line" pathLength="100" d="M 174 62 H 262" stroke="#1f1f1f" stroke-width="8.5"/>
-    <path class="ss-flow" pathLength="100" d="M 174 62 H 262" stroke="#1f1f1f" stroke-width="9" stroke-dasharray="14 30" opacity="0.45"/>
-    <circle class="ss-dot" cx="262" cy="62" r="6" fill="#1f1f1f"/>
+
+  <!-- half 1: 위쪽 날 + 아래쪽 손잡이 -->
+  <g class="h1">
+    <path d="M 154 57 C 118 51, 72 46.5, 44 50 C 36.5 51, 36 56.5, 44 57.5 C 92 62.5, 132 62.5, 154 65 Z" fill="#1f1f1f"/>
+    <path d="M 152 62 C 162 66, 170 70, 177 75" fill="none" stroke="#e05d52" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="192" cy="86" rx="17" ry="12.5" fill="none" stroke="#e05d52" stroke-width="6.5" transform="rotate(32 192 86)"/>
   </g>
-  <text x="304" y="78" fill="#1f1f1f" font-size="46" font-weight="650" letter-spacing="0.5">sol-<tspan fill="#e05d52">simplify</tspan></text>
+
+  <!-- half 2: 아래쪽 날 + 위쪽 손잡이 -->
+  <g class="h2">
+    <path d="M 154 67 C 118 73, 72 77.5, 44 74 C 36.5 73, 36 67.5, 44 66.5 C 92 61.5, 132 61.5, 154 59 Z" fill="#1f1f1f"/>
+    <path d="M 152 62 C 162 58, 170 54, 177 49" fill="none" stroke="#e05d52" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="192" cy="38" rx="17" ry="12.5" fill="none" stroke="#e05d52" stroke-width="6.5" transform="rotate(-32 192 38)"/>
+  </g>
+
+  <!-- 피벗 나사 -->
+  <circle cx="152" cy="62" r="5" fill="#1f1f1f"/>
+  <circle cx="152" cy="62" r="1.8" fill="#e05d52"/>
+
+  <text x="258" y="78" fill="#1f1f1f" font-size="46" font-weight="650" letter-spacing="0.5">sol-<tspan fill="#e05d52">simplify</tspan></text>
 </svg>

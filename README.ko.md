@@ -213,7 +213,10 @@ curl -sL https://raw.githubusercontent.com/MongLong0214/sol-simplify/main/skills
   -o ~/.codex/skills/sol-simplify-audit/SKILL.md
 ```
 
-그 다음: *"audit this repo for ceremony"*.
+그 다음: *"audit this repo for ceremony"*. 판단은 에이전트가 하고, 산수는 의존성 0의 POSIX 스크립트
+([`scripts/measure.sh`](skills/sol-simplify-audit/scripts/measure.sh)) 하나가 한다 — ceremony ratio,
+루프 커밋, churn을 HEAD에서 매번 새로 계산한다. 플러그인 설치 경로면 자동으로 따라온다.
+이 레포의 유일한 실행 파일이고, 읽기만 한다.
 
 ## sol-simplify vs Ponytail
 

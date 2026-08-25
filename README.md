@@ -42,16 +42,18 @@ Asked to design a development process for a project with **no code yet and one m
 ```
 437 lines · 35 sections
 
-품질 목표와 불변 조건
-변경 단위와 개발 흐름 (자기 리뷰, 완료 정의)
-위험 기반 품질 게이트
-테스트 및 검증 구조 (정적/단위/계약/통합/E2E/실제공급자)
-평가 도구 자체의 유효성 검증
-CI 운영 모델 (PR 필수 검사, 야간 검사, CI 규율)
-릴리스 절차 + 릴리스 후보 체크리스트
-결함 분류와 대응
-프로젝트 건강 지표
-문서 유지
+Quality goals and invariants
+Change units and dev flow (self-review, definition of done)
+Risk-based quality gates
+Test & verification tiers (static / unit / contract /
+  integration / E2E / live-provider)
+Validating the evaluation tool itself
+CI operating model (required PR checks, nightly runs,
+  CI discipline)
+Release procedure + release-candidate checklist
+Defect taxonomy and response
+Project health metrics
+Maintaining this document
 ```
 
 </td><td>
@@ -59,27 +61,28 @@ CI 운영 모델 (PR 필수 검사, 야간 검사, CI 규율)
 ```
 58 lines · 6 sections
 
-전제와 품질 기준
-개발 흐름
-최소 제품 검증
-평가 신뢰성
-변경과 릴리스
+Premises and quality bar
+Development flow
+Minimum product verification
+Evaluation reliability
+Changes and releases
 ```
 
-> 혼자 작업할 때는 의례적인 자기 승인 PR을
-> 요구하지 않는다.
+> No ceremonial self-approval PRs
+> when working alone.
 >
-> 한 번의 실수 때문에 새 문서나 전역 규칙을
-> 추가하지 않는다.
+> No new documents or global rules
+> because of a single mistake.
 >
-> 검사가 제품 동작과 무관하게 실패하면
-> 예외 절차를 만드는 대신 그 검사를
-> 수정하거나 삭제한다.
+> When a check fails for reasons unrelated
+> to product behavior, fix or delete the
+> check instead of building an exception
+> procedure around it.
 
 </td></tr>
 </table>
 
-The skill was never mentioned in the prompt. Codex found it and applied it on its own.
+The skill was never mentioned in the prompt. Codex found it and applied it on its own. (Both runs answered in Korean — the prompt was Korean; excerpts above are translated, originals are committed in [`benchmarks/results/`](benchmarks/results/).)
 
 ## The failure mode
 
@@ -158,7 +161,7 @@ Three details worth more than the totals:
   exact mechanism that deadlocked the audited repository. The one-line arm wrote one too.
 - **On the guardrail scenario the skill kept every requested item** — checklist, approval
   flow, rollback, audit records, mapped to real PCI DSS v4.0.1 controls — and used its own
-  marker to *protect* them: `sol-simplify: 독립 승인과 증적은 PCI DSS 6.5.1…을 위해 존재한다.`
+  marker to *protect* them (translated): `sol-simplify: independent approval and evidence exist for PCI DSS 6.5.1… reduce only if PCI scope or the audit obligation goes away.`
   Cutting requested process is a defect, and the benchmark checks for it.
 
 **Where the one-line prompt is enough:** the widely-shared sentence — *"Make the smallest
@@ -230,7 +233,10 @@ curl -sL https://raw.githubusercontent.com/MongLong0214/sol-simplify/main/skills
   -o ~/.codex/skills/sol-simplify-audit/SKILL.md
 ```
 
-Then: *"audit this repo for ceremony"*.
+Then: *"audit this repo for ceremony"*. The judgment calls stay with the agent; the arithmetic
+is one dependency-free POSIX script ([`scripts/measure.sh`](skills/sol-simplify-audit/scripts/measure.sh))
+that computes the ceremony ratio, loop commits, and churn fresh from HEAD — installed
+automatically by the plugin route. It is the only executable in this repository, and it only reads.
 
 ## sol-simplify vs Ponytail
 

@@ -10,7 +10,21 @@ Report only; the user decides what dies.
 
 ## Measure
 
-Run these against the repository. Report raw numbers — they are the whole argument.
+First decide, by reading the tree, which path patterns are *machinery* (validators, resolvers,
+gate/contract/planning tests, governance registries) and which are *product* (application and
+library source). That classification is your judgment and you must state it in the report.
+
+The arithmetic is not your judgment. If this skill is installed with its directory, run:
+
+```bash
+scripts/measure.sh '<machinery-path-regex>' '<product-path-regex>'
+```
+
+It computes the ceremony ratio, loop-commit count and share, self-refusal mentions, the churn
+top-20, and the worst loop day — fresh from HEAD, nothing cached, read-only. Use its output
+verbatim; do not re-derive numbers it already printed.
+
+If only this file was installed, fall back to the same measurements by hand:
 
 **Ceremony ratio.** Lines of process machinery against lines of product.
 
