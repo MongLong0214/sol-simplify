@@ -257,18 +257,30 @@ PASS | BLOCK | INCOMPLETE
 
 Coverage and verdict are two axes. Report both:
 
-- coverage: COMPLETE | INCOMPLETE. INCOMPLETE is mandatory if any item is UNVERIFIED, any changed
-  file is NOT_READ, the head does not match, required evidence is unavailable, or a site sweep could
-  not be completed.
+- enumeration: COMPLETE | INCOMPLETE. This is about whether the *space was bounded*: every changed
+  file read, every obligation extracted, every class instantiated, every site sweep finished.
+  INCOMPLETE if any changed file is NOT_READ, the head does not match, or a sweep could not be
+  finished.
+- verification: COMPLETE | PARTIAL. PARTIAL when one or more items are UNVERIFIED because the
+  environment could not exercise them — an unavailable platform, a blocked network, an absent
+  integration. Those items stay UNVERIFIED and are carried, by ID, into round 2.
+
+Keep these apart. An inventory can bound the space perfectly and still contain an item this machine
+cannot execute; a linux-only path reviewed from a mac, or one blocked call, must not void the whole
+inventory. Only a failure to *enumerate* does that.
 - verdict: PASS | BLOCK | INCOMPLETE.
   BLOCK whenever at least one BLOCKER FAIL was reproduced -- **even when coverage is INCOMPLETE**.
   A reproduced blocker is a fact; an unfinished sweep does not unmake it, and burying it under a
   verdict that reads as a process note is how a reader ships it.
-  PASS requires every item PASS or N/A, no blocker, and COMPLETE coverage.
-  INCOMPLETE as a *verdict* is only for the case where coverage is incomplete and nothing blocking
-  was reproduced -- there the honest answer is that the review did not establish enough to judge.
+  PASS requires every item PASS, N/A or NOTED, no blocker, and COMPLETE enumeration. A PASS
+  carrying UNVERIFIED items must name them and say the merge rests on evidence this review could
+  not obtain.
+  INCOMPLETE as a *verdict* is only for the case where the enumeration itself failed and nothing
+  blocking was reproduced -- there the honest answer is that the review did not establish enough
+  to judge.
 
-Two-round convergence may be promised only from a COMPLETE inventory, whatever the verdict.
+Two-round convergence may be promised from an inventory whose **enumeration** is COMPLETE, even when
+verification is PARTIAL. It may never be promised from an incomplete enumeration.
 ```
 
 ## Between rounds
@@ -328,9 +340,14 @@ REMEDIATION_CHANGED.txt lists that patch's files.
 The expected inventory digest and round-1 head come from a reviewer-owned channel, not from the
 implementation branch. The host must verify the digest and ancestry before invoking you.
 
-If inventory integrity is not VERIFIED, the checkout is not Remediation head, Round-1 head is not
-an ancestor of Remediation head, or the round-1 inventory says INCOMPLETE, stop with
-PROTOCOL_ERROR or RESTART_ROUND_1. Do not approximate closure.
+If inventory integrity is not VERIFIED, the checkout is not Remediation head, or Round-1 head is not
+an ancestor of Remediation head, stop with PROTOCOL_ERROR. If the round-1 **enumeration** is
+INCOMPLETE, stop with RESTART_ROUND_1 — a scope that was never bounded cannot be closed.
+
+A round-1 **verification** of PARTIAL does not stop you. Verify the items that were verifiable,
+carry each UNVERIFIED item forward by ID with the reason it could not be exercised, and report it in
+the closure section as UNVERIFIABLE rather than treating the whole inventory as void. Say plainly in
+the verdict that those items rest on evidence neither round obtained.
 
 Do not perform another full review of the original PR. Do not deliberately seek new categories in
 unchanged round-1 code.
