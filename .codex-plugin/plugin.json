@@ -1,6 +1,6 @@
 {
   "name": "sol-simplify",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Stops an agent from manufacturing process around its own work: invented gates, approval flows, verification machinery, and governance documents nobody asked for.",
   "author": {
     "name": "MongLong0214",
@@ -9,14 +9,22 @@
   "homepage": "https://github.com/MongLong0214/sol-simplify",
   "repository": "https://github.com/MongLong0214/sol-simplify",
   "license": "MIT",
-  "keywords": ["over-engineering", "yagni", "process", "governance", "productivity"],
+  "keywords": [
+    "over-engineering",
+    "yagni",
+    "process",
+    "governance",
+    "productivity"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "sol-simplify",
     "shortDescription": "Cuts the bureaucracy agents build around their own work",
     "developerName": "MongLong0214",
     "category": "Productivity",
-    "capabilities": ["Instructions"],
+    "capabilities": [
+      "Instructions"
+    ],
     "websiteURL": "https://github.com/MongLong0214/sol-simplify"
   }
 }
