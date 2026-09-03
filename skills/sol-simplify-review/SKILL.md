@@ -1,6 +1,6 @@
 ---
 name: sol-simplify-review
-description: Converges a large or high-risk merge-gate review by exhaustively inventorying the reviewed head once, then verifying only closure and remediation regressions. Use when the user explicitly asks for a two-round review, review closure, or help with repeated real findings across review rounds. Do not use for an ordinary small one-pass code review.
+description: The default protocol for any merge-gate or pre-merge review: inventory the reviewed head once, exhaustively, then verify only closure and remediation regressions. Use whenever a change is about to be merged and someone is reviewing it — not only when asked for it by name, and not only when rounds have already gone badly. Writing a fresh ad-hoc review prompt for a merge is the failure this replaces, and it happens most under time pressure or when a usual reviewing model is unavailable: swap the model inside this protocol rather than abandoning it. Skip only for an ordinary small one-pass read where nothing merges.
 metadata:
   author: MongLong0214 <MongLong0214@users.noreply.github.com>
 
@@ -16,6 +16,19 @@ not rediscover it.
 
 `sol-simplify: the inventory prevents repeated class-local fixes; remove it when the change is
 merged or abandoned.`
+
+## Reach for this by default
+
+If a change is about to merge and someone is reviewing it, this is the protocol. That includes the
+cases where it is least convenient: a deadline, an outage of the model you normally review with, a
+PR you have already reviewed several times, a change you believe you understand.
+
+Those are the moments an ad-hoc review prompt gets written instead, and an ad-hoc prompt samples
+findings rather than bounding them — which is the whole reason this exists. A model being
+unavailable changes who executes the round; it does not change the round.
+
+Switching to it late is cheap. A reviewer that has already read the code can produce the round-1
+inventory as a change of output shape, not a restart.
 
 ## Why this is not a registry
 
