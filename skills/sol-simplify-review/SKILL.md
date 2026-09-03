@@ -33,9 +33,15 @@ passes.
 
 Round 1 needs:
 
-- An exact base commit and head commit.
+- An exact base commit and head commit. **Base means the merge-base of the target branch and the
+  head**, not the target branch tip: the seal script enforces that base is an ancestor of the head,
+  and on a PR that has diverged -- which is most PRs big enough to need this protocol -- the tip is
+  not. If the head has diverged from the target branch, record that in the Binding as a SCOPE-CHANGE
+  risk, because a later merge of the target changes what the inventory bounds.
 - Their diff and changed-file list.
 - A checkout of the head, with permission to read changed files and directly affected code.
+- `DIFF.patch` and `CHANGED.txt` for base..head. The host produces these; if it did not, produce them
+  yourself before reading anything else and say so in the Binding.
 - Permission to run focused tests or an explicit record of which tests and platforms are unavailable.
 - Any issue, specification, acceptance conditions, forbidden implementations, security model, or
   definition of done that the review is expected to enforce.
@@ -72,12 +78,17 @@ Use these as questions, not assumptions:
    restated outside its declared authority?
 8. **Stored artifact authorizes itself.** Can persisted output declare its own validity, coverage,
    claim stage, row set, boundary result, or issuance state without recomputation from evidence?
-9. **Record identity changed silently.** Did the bytes or fields covered by a digest, schema,
+9. **Snapshot and its certificate are not atomic.** Is evidence captured at one instant and
+   digested at another, so a concurrent writer can leave a state that never existed while the
+   comparison reads unchanged? Applies wherever a copy, freeze, baseline, or cache is certified by a
+   digest taken separately from it.
+10. **Record identity changed silently.** Did the bytes or fields covered by a digest, schema,
    cache key, cohort key, or stored record change without a version or migration?
 
 Classes 1, 2, 3, 4, 6, 7, and 8 are portable default questions, although they may be `N/A`.
-Class 5 applies only where provenance or trusted identity matters. Class 9 applies only where
-versioned or persisted identity exists.
+Class 5 applies only where provenance or trusted identity matters. Class 9 applies wherever evidence
+is certified by a separately-taken digest. Class 10 applies only where versioned or persisted
+identity exists.
 
 Project-specific measurement semantics, contract filenames, renderer lists, isolation backends,
 and mutation systems are not portable defaults.
@@ -164,7 +175,8 @@ G5 shape mistaken for provenance.
 G6 private input reaches a public sink.
 G7 second authority.
 G8 stored artifact authorizes itself.
-G9 record identity changed silently.
+G9 snapshot and its certificate are not atomic.
+G10 record identity changed silently.
 
 Status meanings
 
@@ -172,6 +184,11 @@ PASS       Direct inspection or a probe supports the item at every applicable si
 FAIL       At least one failure is reproduced and the class-wide site sweep is complete.
 N/A        The item cannot occur in this change, with a stated reason.
 UNVERIFIED The reviewer cannot reach a conclusion or cannot complete the site sweep.
+NOTED      A site was reached where the class holds in isolation but is judged currently
+           unreachable, latent, or dependent on a precondition that cannot occur today. The
+           argument for unreachability goes in `dismissed_sites`. This is not a pass: a latent
+           fail-open that contradicts its own module's rule is a one-line fix and a future
+           blocker, and burying it inside a PASS is how it survives to the next release.
 
 FAIL is not valid when only the first failing site was examined. Use UNVERIFIED and list the
 confirmed sites if the sweep is incomplete.
@@ -199,13 +216,17 @@ Output exactly this Markdown structure:
 
 ## File accounting
 One line per changed file:
-- <path> — READ | NOT_READ — <role in the change or reason not read>
+- <path> — READ | READ_DIFF_ONLY | NOT_READ — <role in the change, or reason not read>
+
+READ means the file was read in full. READ_DIFF_ONLY means only its hunks were read, which is
+defensible for a one-hunk test change and dishonest for a file whose unchanged half decides the
+behaviour under review.
 
 Then list directly affected unchanged files that were inspected.
 
 ## Inventory
 
-Use stable IDs: O-01... for sourced obligations, G-01...G-09 for portable classes, and P-01...
+Use stable IDs: O-01... for sourced obligations, G-01...G-10 for portable classes, and P-01...
 for project classes. Every explicit obligation and every supplied/default class gets an item.
 
 ### <ID> — <short assertion>
@@ -220,6 +241,8 @@ for project classes. Every explicit obligation and every supplied/default class 
 - evidence: <inspection, command, result, and expected/actual behavior>
 - reproduction: <minimal reproduction, or not applicable>
 - class_sweep: <symbols, searches, counterparts, and platform/lifecycle variants examined>
+- dismissed_sites: <every site where the class holds in isolation but was judged unreachable, each
+  with the precondition that makes it unreachable, or none>
 - closure: <observable condition that would close the item, including the needed regression test>
 - catalog_candidate: <none, or a concise candidate justified by recurrence/standing contract>
 
@@ -232,12 +255,20 @@ For a failing class, distinguish applicable sites that already pass from every s
 ## Verdict
 PASS | BLOCK | INCOMPLETE
 
-PASS requires every item PASS or N/A and no blocker.
-BLOCK requires at least one BLOCKER/FAIL and a COMPLETE inventory.
-INCOMPLETE is mandatory if any item is UNVERIFIED, any changed file is NOT_READ, the head does not
-match, required evidence is unavailable, or the site sweep cannot be completed.
+Coverage and verdict are two axes. Report both:
 
-Do not promise two-round convergence from an INCOMPLETE inventory.
+- coverage: COMPLETE | INCOMPLETE. INCOMPLETE is mandatory if any item is UNVERIFIED, any changed
+  file is NOT_READ, the head does not match, required evidence is unavailable, or a site sweep could
+  not be completed.
+- verdict: PASS | BLOCK | INCOMPLETE.
+  BLOCK whenever at least one BLOCKER FAIL was reproduced -- **even when coverage is INCOMPLETE**.
+  A reproduced blocker is a fact; an unfinished sweep does not unmake it, and burying it under a
+  verdict that reads as a process note is how a reader ships it.
+  PASS requires every item PASS or N/A, no blocker, and COMPLETE coverage.
+  INCOMPLETE as a *verdict* is only for the case where coverage is incomplete and nothing blocking
+  was reproduced -- there the honest answer is that the review did not establish enough to judge.
+
+Two-round convergence may be promised only from a COMPLETE inventory, whatever the verdict.
 ```
 
 ## Between rounds
